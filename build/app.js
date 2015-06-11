@@ -19809,6 +19809,8 @@ module.exports = warning;
 module.exports = require('./lib/React');
 
 },{"./lib/React":29}],157:[function(require,module,exports){
+Parse.initialize("(applicationId)", "(javaScriptKey)");
+
 var React = require('react')
 var MainContent = require('./main-content.jsx')
 
@@ -19821,8 +19823,9 @@ var ProjectsPage = require('./projects-page.jsx');
 
 module.exports = React.createClass({displayName: "exports",
   getInitialState: function() {
+    var page = (Parse.User.current() == null) ? 'signin' : 'projects';
     return {
-      page: 'signin'
+      page: page
     };
   },
   render: function() {
@@ -19846,13 +19849,28 @@ React = require('react')
 
 module.exports = React.createClass({displayName: "exports",
   render: function() {
+    var signOut = '';
+    if (Parse.User.current() != null) {
+      signOut = (
+        React.createElement("li", null, React.createElement("button", {className: "btn-link", onClick: this.handleSignOut}, "サインアウト"))
+      );
+    }
     return (
       React.createElement("div", {className: "navbar navbar-default navbar-static-top"}, 
-        React.createElement("div", {className: "container"}, 
-          React.createElement("h1", null, "Birdwatch ", React.createElement("small", null, this.props.title))
+        React.createElement("div", {className: "container-fluid"}, 
+          React.createElement("h1", null, "Birdwatch ", React.createElement("small", null, this.props.title)), 
+          React.createElement("div", {className: "navbar-collapse collapse navbar-responsive-collapse navbar-right"}, 
+            React.createElement("ul", {className: "nav navbar-nav"}, 
+              signOut
+            )
+          )
         )
       )
     );
+  },
+  handleSignOut: function() {
+    //FIXME: 本当はここでやらない
+    Parse.User.logOut();
   }
 });
 
@@ -19875,29 +19893,47 @@ React = require('react');
 NavBar = require('./nav-bar.jsx');
 
 module.exports = React.createClass({displayName: "exports",
+  getInitialState: function() {
+    return {
+      signinState: "init"
+    }
+  },
   render: function() {
+    var message;
+    var btnClass = "btn btn-block ";
+    if (this.state.signinState == "init") {
+      message = "サインイン";
+      btnClass += "btn-primary";
+    } else if (this.state.signinState == "signingin") {
+      message = "サインイン中…";
+      btnClass += "btn-primary";
+    } else if (this.state.signinState == "error") {
+      message = "エラー";
+      btnClass += "btn-danger";
+    }
+
     return (
       React.createElement("div", null, 
         React.createElement(NavBar, {title: "サインイン"}), 
         React.createElement("div", {className: "container"}, 
-          React.createElement("form", {className: "form-horizontal", onSubmit: this.onSubmit}, 
+          React.createElement("form", {className: "form-horizontal", action: "#", onSubmit: this.handleSubmit}, 
             React.createElement("div", {className: "form-group"}, 
               React.createElement("label", {htmlFor: "user", className: "col-sm-2 col-sm-offset-2 control-label"}, "ユーザー名"), 
               React.createElement("div", {className: "col-sm-5"}, 
-                React.createElement("input", {className: "form-control", type: "text", id: "user"})
+                React.createElement("input", {className: "form-control", type: "text", id: "user", ref: "user"})
               )
             ), 
 
             React.createElement("div", {className: "form-group"}, 
-              React.createElement("label", {className: "col-sm-2 col-sm-offset-2 control-label"}, "パスワード"), 
+              React.createElement("label", {htmlFor: "password", className: "col-sm-2 col-sm-offset-2 control-label"}, "パスワード"), 
               React.createElement("div", {className: "col-sm-5"}, 
-                React.createElement("input", {className: "form-control", type: "password"})
+                React.createElement("input", {className: "form-control", type: "password", id: "password", ref: "password"})
               )
             ), 
 
             React.createElement("div", {className: "form-group"}, 
               React.createElement("div", {className: "col-sm-5 col-sm-offset-4"}, 
-                React.createElement("button", {className: "btn btn-primary btn-block"}, "サインイン")
+                React.createElement("button", {className: btnClass, type: "submit"}, message)
               )
             )
           )
@@ -19905,9 +19941,23 @@ module.exports = React.createClass({displayName: "exports",
       )
     );
   },
-  onSubmit: function() {
-    this.props.onSignedIn();
-    return false;
+  handleSubmit: function(e) {
+    var self = this;
+    e.preventDefault();
+
+    this.changeSigninState("signingin");
+    this.setState({buttonMessage: "サインイン中..."});
+    var userName = React.findDOMNode(this.refs.user).value;
+    var password = React.findDOMNode(this.refs.password).value;
+    Parse.User.logIn(userName, password).then(function(user) {
+      self.props.onSignedIn();
+    }, function(error) {
+      console.log("Failed to sign in: " + JSON.stringify(error));
+      self.changeSigninState("error");
+    });
+  },
+  changeSigninState: function(signinState) {
+    this.setState({signinState: signinState});
   }
 });
 

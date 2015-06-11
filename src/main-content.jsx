@@ -4,8 +4,9 @@ var ProjectsPage = require('./projects-page.jsx');
 
 module.exports = React.createClass({
   getInitialState: function() {
+    var page = (Parse.User.current() == null) ? 'signin' : 'projects';
     return {
-      page: 'signin'
+      page: page
     };
   },
   render: function() {
