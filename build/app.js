@@ -19810,15 +19810,105 @@ module.exports = require('./lib/React');
 
 },{"./lib/React":29}],157:[function(require,module,exports){
 var React = require('react')
+var MainContent = require('./main-content.jsx')
 
-var BirdwatchApp = React.createClass({displayName: "BirdwatchApp",
+React.render(React.createElement(MainContent, null), document.getElementById('main-content'));
+
+},{"./main-content.jsx":158,"react":156}],158:[function(require,module,exports){
+var React = require('react')
+var SigninPage = require('./signin-page.jsx');
+var ProjectsPage = require('./projects-page.jsx');
+
+module.exports = React.createClass({displayName: "exports",
+  getInitialState: function() {
+    return {
+      page: 'signin'
+    };
+  },
+  render: function() {
+    if (this.state.page == 'signin') {
+      return (React.createElement(SigninPage, {onSignedIn: this.onSignedIn}));
+    } else if (this.state.page == 'projects') {
+      return (React.createElement(ProjectsPage, null));
+    } else {
+      return (React.createElement("div", null));
+    }
+  },
+  onSignedIn: function() {
+    this.setState({
+      page: 'projects'
+    });
+  }
+});
+
+},{"./projects-page.jsx":160,"./signin-page.jsx":161,"react":156}],159:[function(require,module,exports){
+React = require('react')
+
+module.exports = React.createClass({displayName: "exports",
   render: function() {
     return (
-      React.createElement("h1", null, "Birdwatch App!")
+      React.createElement("div", {className: "navbar navbar-default navbar-static-top"}, 
+        React.createElement("div", {className: "container"}, 
+          React.createElement("h1", null, "Birdwatch ", React.createElement("small", null, this.props.title))
+        )
+      )
     );
   }
 });
 
-React.render(React.createElement(BirdwatchApp, null), document.getElementById('main-content'));
+},{"react":156}],160:[function(require,module,exports){
+React = require('react');
+NavBar = require('./nav-bar.jsx');
 
-},{"react":156}]},{},[157]);
+module.exports = React.createClass({displayName: "exports",
+  render: function() {
+    return (
+      React.createElement("div", null, 
+        React.createElement(NavBar, {title: "プロジェクト一覧"})
+      )
+    );
+  }
+});
+
+},{"./nav-bar.jsx":159,"react":156}],161:[function(require,module,exports){
+React = require('react');
+NavBar = require('./nav-bar.jsx');
+
+module.exports = React.createClass({displayName: "exports",
+  render: function() {
+    return (
+      React.createElement("div", null, 
+        React.createElement(NavBar, {title: "サインイン"}), 
+        React.createElement("div", {className: "container"}, 
+          React.createElement("form", {className: "form-horizontal", onSubmit: this.onSubmit}, 
+            React.createElement("div", {className: "form-group"}, 
+              React.createElement("label", {htmlFor: "user", className: "col-sm-2 col-sm-offset-2 control-label"}, "ユーザー名"), 
+              React.createElement("div", {className: "col-sm-5"}, 
+                React.createElement("input", {className: "form-control", type: "text", id: "user"})
+              )
+            ), 
+
+            React.createElement("div", {className: "form-group"}, 
+              React.createElement("label", {className: "col-sm-2 col-sm-offset-2 control-label"}, "パスワード"), 
+              React.createElement("div", {className: "col-sm-5"}, 
+                React.createElement("input", {className: "form-control", type: "password"})
+              )
+            ), 
+
+            React.createElement("div", {className: "form-group"}, 
+              React.createElement("div", {className: "col-sm-5 col-sm-offset-4"}, 
+                React.createElement("button", {className: "btn btn-primary btn-block"}, "サインイン")
+              )
+            )
+          )
+        )
+      )
+    );
+  },
+  onSubmit: function() {
+    this.props.onSignedIn();
+    return false;
+  }
+});
+
+},{"./nav-bar.jsx":159,"react":156}]},{},[157,158,159,160,161]);

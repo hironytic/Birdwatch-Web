@@ -1,11 +1,4 @@
 var React = require('react')
+var MainContent = require('./main-content.jsx')
 
-var BirdwatchApp = React.createClass({
-  render: function() {
-    return (
-      <h1>Birdwatch App!</h1>
-    );
-  }
-});
-
-React.render(<BirdwatchApp />, document.getElementById('main-content'));
+React.render(<MainContent />, document.getElementById('main-content'));
