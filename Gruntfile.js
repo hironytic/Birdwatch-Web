@@ -1,29 +1,25 @@
 module.exports = function(grunt) {
   grunt.initConfig({
-    react: {
-      jsx: {
-        files: [
-          {
-            expand: true,
-            cwd: 'src',
-            src: ['**/*.jsx'],
-            dest: 'build',
-            ext: '.js'
-          }
-        ]
+    browserify: {
+      options: {
+        transform: [ require('grunt-react').browserify ]
+      },
+      client: {
+        src: ['src/**/*.jsx'],
+        dest: 'build/app.js'
       }
     },
 
     watch: {
       react: {
         files: 'src/**/*.jsx',
-        tasks: ['react']
+        tasks: ['browserify']
       }
     }
   });
 
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-react');
+  grunt.loadNpmTasks('grunt-browserify');
 
-  grunt.registerTask('default', ['react']);
+  grunt.registerTask('default', ['browserify']);
 };
