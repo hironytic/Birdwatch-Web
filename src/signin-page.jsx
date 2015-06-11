@@ -1,10 +1,13 @@
-React = require('react');
+React = require('react/addons');
 NavBar = require('./nav-bar.jsx');
 
 module.exports = React.createClass({
+  mixins: [React.addons.LinkedStateMixin],
   getInitialState: function() {
     return {
-      signinState: "init"
+      signinState: "init",
+      userName: "",
+      password: ""
     }
   },
   render: function() {
@@ -29,14 +32,14 @@ module.exports = React.createClass({
             <div className="form-group">
               <label htmlFor="user" className="col-sm-2 col-sm-offset-2 control-label">ユーザー名</label>
               <div className="col-sm-5">
-                <input className="form-control" type="text" id="user" ref="user" />
+                <input className="form-control" type="text" id="user" valueLink={this.linkState('userName')} />
               </div>
             </div>
 
             <div className="form-group">
               <label htmlFor="password" className="col-sm-2 col-sm-offset-2 control-label">パスワード</label>
               <div className="col-sm-5">
-                <input className="form-control" type="password" id="password" ref="password" />
+                <input className="form-control" type="password" id="password" valueLink={this.linkState('password')} />
               </div>
             </div>
 
@@ -56,9 +59,7 @@ module.exports = React.createClass({
 
     this.changeSigninState("signingin");
     this.setState({buttonMessage: "サインイン中..."});
-    var userName = React.findDOMNode(this.refs.user).value;
-    var password = React.findDOMNode(this.refs.password).value;
-    Parse.User.logIn(userName, password).then(function(user) {
+    Parse.User.logIn(this.state.userName, this.state.password).then(function(user) {
       self.props.onSignedIn();
     }, function(error) {
       console.log("Failed to sign in: " + JSON.stringify(error));
