@@ -1,5 +1,5 @@
 React = require('react');
-NavBar = require('./nav-bar.jsx');
+NavBar = require('./NavBar.jsx');
 
 module.exports = React.createClass({
   render: function() {

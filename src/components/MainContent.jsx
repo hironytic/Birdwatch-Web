@@ -1,6 +1,6 @@
 var React = require('react')
-var SigninPage = require('./signin-page.jsx');
-var ProjectsPage = require('./projects-page.jsx');
+var SigninPage = require('./SigninPage.jsx');
+var ProjectsPage = require('./ProjectsPage.jsx');
 
 module.exports = React.createClass({
   getInitialState: function() {
