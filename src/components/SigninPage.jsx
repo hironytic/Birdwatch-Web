@@ -20,6 +20,7 @@ module.exports = React.createClass({
   render: function() {
     var message;
     var btnClass = "btn btn-block ";
+    var disabled = {};
     switch (this.state.status) {
       case StatusType.NOT_SIGNED_IN:
         message = "サインイン";
@@ -27,7 +28,8 @@ module.exports = React.createClass({
         break;
       case StatusType.SIGNING_IN:
         message = "サインイン中…";
-        btnClass += "btn-primary";
+        btnClass += "btn-default";
+        disabled = {disabled: "disabled"};
         break;
       case StatusType.FAILED_TO_SIGN_IN:
         message = "エラー";
@@ -60,7 +62,7 @@ module.exports = React.createClass({
 
             <div className="form-group">
               <div className="col-sm-5 col-sm-offset-4">
-                <button className={btnClass} type="submit">{message}</button>
+                <button className={btnClass} type="submit" {...disabled}>{message}</button>
               </div>
             </div>
           </form>
@@ -71,7 +73,9 @@ module.exports = React.createClass({
 
   handleSubmit: function(e) {
     e.preventDefault();
-    UserActionCreator.signin(this.state.userName, this.state.password);
+    if (this.state.status != StatusType.SIGNING_IN) {
+      UserActionCreator.signin(this.state.userName, this.state.password);
+    }
   },
 
   componentDidMount: function() {

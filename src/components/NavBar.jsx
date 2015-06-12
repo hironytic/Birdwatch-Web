@@ -13,7 +13,7 @@ module.exports = React.createClass({
     var signOut = '';
     if (this.state.user != null) {
       signOut = (
-        <li><button className="btn-link" onClick={this.handleSignOut}>サインアウト</button></li>
+        <li><button className="btn btn-link" onClick={this.handleSignOut}>サインアウト</button></li>
       );
     }
     return (

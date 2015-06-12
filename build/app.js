@@ -22623,7 +22623,7 @@ module.exports = React.createClass({displayName: "exports",
     var signOut = '';
     if (this.state.user != null) {
       signOut = (
-        React.createElement("li", null, React.createElement("button", {className: "btn-link", onClick: this.handleSignOut}, "サインアウト"))
+        React.createElement("li", null, React.createElement("button", {className: "btn btn-link", onClick: this.handleSignOut}, "サインアウト"))
       );
     }
     return (
@@ -22698,6 +22698,7 @@ module.exports = React.createClass({displayName: "exports",
   render: function() {
     var message;
     var btnClass = "btn btn-block ";
+    var disabled = {};
     switch (this.state.status) {
       case StatusType.NOT_SIGNED_IN:
         message = "サインイン";
@@ -22705,7 +22706,8 @@ module.exports = React.createClass({displayName: "exports",
         break;
       case StatusType.SIGNING_IN:
         message = "サインイン中…";
-        btnClass += "btn-primary";
+        btnClass += "btn-default";
+        disabled = {disabled: "disabled"};
         break;
       case StatusType.FAILED_TO_SIGN_IN:
         message = "エラー";
@@ -22738,7 +22740,7 @@ module.exports = React.createClass({displayName: "exports",
 
             React.createElement("div", {className: "form-group"}, 
               React.createElement("div", {className: "col-sm-5 col-sm-offset-4"}, 
-                React.createElement("button", {className: btnClass, type: "submit"}, message)
+                React.createElement("button", React.__spread({className: btnClass, type: "submit"},  disabled), message)
               )
             )
           )
@@ -22749,7 +22751,9 @@ module.exports = React.createClass({displayName: "exports",
 
   handleSubmit: function(e) {
     e.preventDefault();
-    UserActionCreator.signin(this.state.userName, this.state.password);
+    if (this.state.status != StatusType.SIGNING_IN) {
+      UserActionCreator.signin(this.state.userName, this.state.password);
+    }
   },
 
   componentDidMount: function() {
