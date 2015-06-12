@@ -1,27 +1,42 @@
-React = require('react/addons');
-NavBar = require('./NavBar.jsx');
+var keyMirror = require("react/lib/keyMirror");
+var React = require("react/addons");
+var NavBar = require("./NavBar.jsx");
+var CurrentUserStore = require("../stores/CurrentUserStore");
+var UserActionCreator = require("../actions/UserActionCreator");
+
+StatusType = CurrentUserStore.StatusType;
 
 module.exports = React.createClass({
   mixins: [React.addons.LinkedStateMixin],
+
   getInitialState: function() {
     return {
-      signinState: "init",
+      status: CurrentUserStore.getStatus(),
       userName: "",
       password: ""
     }
   },
+
   render: function() {
     var message;
     var btnClass = "btn btn-block ";
-    if (this.state.signinState == "init") {
-      message = "サインイン";
-      btnClass += "btn-primary";
-    } else if (this.state.signinState == "signingin") {
-      message = "サインイン中…";
-      btnClass += "btn-primary";
-    } else if (this.state.signinState == "error") {
-      message = "エラー";
-      btnClass += "btn-danger";
+    switch (this.state.status) {
+      case StatusType.NOT_SIGNED_IN:
+        message = "サインイン";
+        btnClass += "btn-primary";
+        break;
+      case StatusType.SIGNING_IN:
+        message = "サインイン中…";
+        btnClass += "btn-primary";
+        break;
+      case StatusType.FAILED_TO_SIGN_IN:
+        message = "エラー";
+        btnClass += "btn-danger";
+        break;
+      case StatusType.SIGNED_IN:
+        message = "成功";
+        btnClass += "btn-success";
+        break;
     }
 
     return (
@@ -53,20 +68,23 @@ module.exports = React.createClass({
       </div>
     );
   },
-  handleSubmit: function(e) {
-    var self = this;
-    e.preventDefault();
 
-    this.changeSigninState("signingin");
-    this.setState({buttonMessage: "サインイン中..."});
-    Parse.User.logIn(this.state.userName, this.state.password).then(function(user) {
-      self.props.onSignedIn();
-    }, function(error) {
-      console.log("Failed to sign in: " + JSON.stringify(error));
-      self.changeSigninState("error");
-    });
+  handleSubmit: function(e) {
+    e.preventDefault();
+    UserActionCreator.signin(this.state.userName, this.state.password);
   },
-  changeSigninState: function(signinState) {
-    this.setState({signinState: signinState});
+
+  componentDidMount: function() {
+    CurrentUserStore.addStatusChangeListener(this.handleUserStatusChange);
+  },
+
+  componentWillUnmount: function() {
+    CurrentUserStore.removeStatusChangeListener(this.handleUserStatusChange);
+  },
+
+  handleUserStatusChange: function(signinState) {
+    this.setState({
+      status: CurrentUserStore.getStatus()
+    });
   }
 });

@@ -1,9 +1,17 @@
-React = require('react')
+var React = require("react")
+var CurrentUserStore = require("../stores/CurrentUserStore");
+var UserActionCreator = require("../actions/UserActionCreator");
 
 module.exports = React.createClass({
+  getInitialState: function() {
+    return {
+      user: CurrentUserStore.getUser()
+    };
+  },
+
   render: function() {
     var signOut = '';
-    if (Parse.User.current() != null) {
+    if (this.state.user != null) {
       signOut = (
         <li><button className="btn-link" onClick={this.handleSignOut}>サインアウト</button></li>
       );
@@ -21,8 +29,24 @@ module.exports = React.createClass({
       </div>
     );
   },
-  handleSignOut: function() {
-    //FIXME: 本当はここでやらない
-    Parse.User.logOut();
+
+  handleSignOut: function(e) {
+    e.preventDefault();
+    UserActionCreator.signout();
+  },
+
+  componentDidMount: function() {
+    CurrentUserStore.addUserChangeListener(this.handleUserChange);
+  },
+
+  componentWillUnmount: function() {
+    CurrentUserStore.removeUserChangeListener(this.handleUserChange);
+  },
+
+  handleUserChange: function(signinState) {
+    this.setState({
+      user: CurrentUserStore.getUser()
+    });
   }
+
 });

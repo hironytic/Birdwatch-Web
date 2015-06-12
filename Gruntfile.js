@@ -5,14 +5,14 @@ module.exports = function(grunt) {
         transform: [ require('grunt-react').browserify ]
       },
       client: {
-        src: ['src/**/*.jsx'],
+        src: ['src/**/*.js', 'src/**/*.jsx'],
         dest: 'build/app.js'
       }
     },
 
     watch: {
       react: {
-        files: 'src/**/*.jsx',
+        files: ['src/**/*.js', 'src/**/*.jsx'],
         tasks: ['browserify']
       }
     }

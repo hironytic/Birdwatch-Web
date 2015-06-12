@@ -9,10 +9,13 @@
   "author": "MetaMoJi Corporation",
   "license": "MIT",
   "devDependencies": {
+    "events": "^1.0.2",
+    "flux": "^2.0.3",
     "grunt": "^0.4.5",
     "grunt-browserify": "^3.8.0",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-react": "^0.12.2",
+    "object-assign": "^3.0.0",
     "react": "^0.13.3"
   }
 }

@@ -1,26 +1,39 @@
-var React = require('react')
-var SigninPage = require('./SigninPage.jsx');
-var ProjectsPage = require('./ProjectsPage.jsx');
+var React = require("react")
+var SigninPage = require("./SigninPage.jsx");
+var ProjectsPage = require("./ProjectsPage.jsx");
+var PageStore = require("../stores/PageStore");
+
+var Page = PageStore.Page;
 
 module.exports = React.createClass({
   getInitialState: function() {
-    var page = (Parse.User.current() == null) ? 'signin' : 'projects';
     return {
-      page: page
+      page: PageStore.getPage()
     };
   },
   render: function() {
-    if (this.state.page == 'signin') {
-      return (<SigninPage onSignedIn={this.onSignedIn}/>);
-    } else if (this.state.page == 'projects') {
-      return (<ProjectsPage/>);
-    } else {
-      return (<div/>);
+    switch (this.state.page) {
+      case Page.SIGNIN:
+        return (<SigninPage/>);
+        break;
+      case Page.PROJECTS:
+        return (<ProjectsPage/>);
+        break;
+
+      default:
+        return (<div/>);
     }
   },
-  onSignedIn: function() {
+  componentDidMount: function() {
+    PageStore.addPageChangeListener(this.handlePageChange);
+  },
+  componentWillUnmount: function() {
+    PageStore.removePageChangeListener(this.handlePageChange);
+  },
+
+  handlePageChange: function() {
     this.setState({
-      page: 'projects'
+      page: PageStore.getPage()
     });
   }
 });
