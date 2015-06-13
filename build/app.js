@@ -22532,7 +22532,31 @@ var MainContent = require('./components/MainContent.jsx')
 
 React.render(React.createElement(MainContent, null), document.getElementById('main-content'));
 
-},{"./components/MainContent.jsx":182,"react":179}],181:[function(require,module,exports){
+},{"./components/MainContent.jsx":183,"react":179}],181:[function(require,module,exports){
+var AppDispatcher = require("../dispatcher/AppDispatcher");
+var AppConstants = require("../constants/AppConstants");
+var Project = require("../objects/Project");
+
+var ActionTypes = AppConstants.ActionTypes;
+
+module.exports = {
+  refreshList: function() {
+    var query = new Parse.Query(Project);
+    query.find({
+      success: function(projects) {
+        AppDispatcher.dispatch({
+          type: ActionTypes.PROJECT_LIST_REFRESHED,
+          projectList: projects
+        });
+      },
+      error: function(error) {
+        // TODO:
+      }
+    });
+  }
+};
+
+},{"../constants/AppConstants":187,"../dispatcher/AppDispatcher":188,"../objects/Project":192}],182:[function(require,module,exports){
 var AppDispatcher = require("../dispatcher/AppDispatcher");
 var AppConstants = require("../constants/AppConstants");
 
@@ -22566,7 +22590,7 @@ module.exports = {
   }
 };
 
-},{"../constants/AppConstants":186,"../dispatcher/AppDispatcher":191}],182:[function(require,module,exports){
+},{"../constants/AppConstants":187,"../dispatcher/AppDispatcher":188}],183:[function(require,module,exports){
 var React = require("react")
 var SigninPage = require("./SigninPage.jsx");
 var ProjectsPage = require("./ProjectsPage.jsx");
@@ -22607,7 +22631,7 @@ module.exports = React.createClass({displayName: "exports",
   }
 });
 
-},{"../stores/PageStore":193,"./ProjectsPage.jsx":184,"./SigninPage.jsx":185,"react":179}],183:[function(require,module,exports){
+},{"../stores/PageStore":194,"./ProjectsPage.jsx":185,"./SigninPage.jsx":186,"react":179}],184:[function(require,module,exports){
 var React = require("react")
 var CurrentUserStore = require("../stores/CurrentUserStore");
 var UserActionCreator = require("../actions/UserActionCreator");
@@ -22661,25 +22685,26 @@ module.exports = React.createClass({displayName: "exports",
 
 });
 
-},{"../actions/UserActionCreator":181,"../stores/CurrentUserStore":192,"react":179}],184:[function(require,module,exports){
+},{"../actions/UserActionCreator":182,"../stores/CurrentUserStore":193,"react":179}],185:[function(require,module,exports){
 var React = require("react");
 var NavBar = require("./NavBar.jsx");
 var ProjectStore = require("../stores/ProjectStore");
-var ProjectKey = require("../constants/ProjectKey");
+var ProjectActionCreator = require("../actions/ProjectActionCreator");
 
 module.exports = React.createClass({displayName: "exports",
   getInitialState: function() {
     return {
-      projects: ProjectStore.getProjects()
+      projectList: ProjectStore.getProjectList()
     };
   },
+
   render: function() {
-    var projectItems = this.state.projects.map(function(project) {
+    var projectItems = this.state.projectList.map(function(project) {
       return (
-        React.createElement("tr", {key: project[ProjectKey.OBJECT_ID]}, 
+        React.createElement("tr", {key: project.id}, 
           /*<td style={{backgroundColor: "#eeccee"}}></td>*/ 
-          React.createElement("td", null, project[ProjectKey.NAME]), 
-          React.createElement("td", null, project[ProjectKey.PROJECT_CODE])
+          React.createElement("td", null, project.getName()), 
+          React.createElement("td", null, project.getProjectCode())
         )
       );
     });
@@ -22703,10 +22728,25 @@ module.exports = React.createClass({displayName: "exports",
         )
       )
     );
+  },
+
+  componentDidMount: function() {
+    ProjectStore.addProjectListChangeListener(this.handleProjectListChange);
+    ProjectActionCreator.refreshList();
+  },
+
+  componentWillUnmount: function() {
+    ProjectStore.removeProjectListChangeListener(this.handleProjectListChange);
+  },
+
+  handleProjectListChange: function() {
+    this.setState({
+      projectList: ProjectStore.getProjectList()
+    });
   }
 });
 
-},{"../constants/ProjectKey":190,"../stores/ProjectStore":194,"./NavBar.jsx":183,"react":179}],185:[function(require,module,exports){
+},{"../actions/ProjectActionCreator":181,"../stores/ProjectStore":195,"./NavBar.jsx":184,"react":179}],186:[function(require,module,exports){
 var React = require("react/addons");
 var NavBar = require("./NavBar.jsx");
 var CurrentUserStore = require("../stores/CurrentUserStore");
@@ -22794,48 +22834,109 @@ module.exports = React.createClass({displayName: "exports",
     CurrentUserStore.removeStatusChangeListener(this.handleUserStatusChange);
   },
 
-  handleUserStatusChange: function(signinState) {
+  handleUserStatusChange: function() {
     this.setState({
       status: CurrentUserStore.getStatus()
     });
   }
 });
 
-},{"../actions/UserActionCreator":181,"../stores/CurrentUserStore":192,"./NavBar.jsx":183,"react/addons":7}],186:[function(require,module,exports){
+},{"../actions/UserActionCreator":182,"../stores/CurrentUserStore":193,"./NavBar.jsx":184,"react/addons":7}],187:[function(require,module,exports){
 var keyMirror = require('react/lib/keyMirror');
 
 module.exports = {
   ActionTypes: keyMirror({
-    USER_SIGNING_IN: null,
-    USER_SIGNED_IN: null,
-    USER_FAILED_TO_SIGN_IN: null,
-    USER_SIGNED_OUT: null,
+    USER_SIGNING_IN: null,          // ユーザーがサインイン中になった
+    USER_SIGNED_IN: null,           // ユーザーがサインインした
+    USER_FAILED_TO_SIGN_IN: null,   // ユーザーのサインインに失敗
+    USER_SIGNED_OUT: null,          // ユーザーがサインアウトした
+
+    PROJECT_LIST_REFRESHED: null,   // プロジェクト一覧の更新
   })
 };
 
-},{"react/lib/keyMirror":163}],187:[function(require,module,exports){
-module.exports = {
-  OBJECT_ID: "objectId",
+},{"react/lib/keyMirror":163}],188:[function(require,module,exports){
+var Dispatcher = require('flux').Dispatcher
+
+module.exports = new Dispatcher();
+
+},{"flux":1}],189:[function(require,module,exports){
+var Key = {
   NAME: "name",
   COLOR_STRING: "colorString"
 };
 
-},{}],188:[function(require,module,exports){
-module.exports = {
-  OBJECT_ID: "objectId",
+var Family = Parse.Object.extend("Family", {
+  getName: function() {
+    return this.get(Key.NAME);
+  },
+
+  setName: function(value) {
+    this.set(Key.NAME, value);
+  },
+
+  getColorString: function() {
+    return this.get(Key.COLOR_STRING);
+  },
+
+  setColorString: function(value) {
+    this.set(Key.COLOR_STRING, value);
+  }
+}, {
+  Key: Key
+});
+
+module.exports = Family;
+
+},{}],190:[function(require,module,exports){
+var Key = {
   NAME: "name",
   ORDER: "order"
 };
 
-},{}],189:[function(require,module,exports){
-module.exports = {
-  OBJECT_ID: "objectId",
+var Milestone = Parse.Object.extend("Milestone", {
+  getName: function() {
+    return this.get(Key.NAME);
+  },
+
+  setName: function(value) {
+    this.set(Key.NAME, value);
+  },
+
+  getOrder: function() {
+    return this.get(Key.ORDER);
+  },
+
+  setOrder: function(value) {
+    this.set(Key.ORDER, value);
+  }
+}, {
+  Key: Key
+});
+
+module.exports = Milestone;
+
+},{}],191:[function(require,module,exports){
+var Key = {
   NAME: "name"
 };
 
-},{}],190:[function(require,module,exports){
-module.exports = {
-  OBJECT_ID: "objectId",
+var Platform = Parse.Object.extend("Platform", {
+  getName: function() {
+    return this.get(Key.NAME);
+  },
+
+  setName: function(value) {
+    this.set(Key.NAME, value);
+  }
+}, {
+  Key: Key
+});
+
+module.exports = Platform;
+
+},{}],192:[function(require,module,exports){
+var Key = {
   NAME: "name",
   FAMILY: "family",
   PLATFORM: "platform",
@@ -22843,12 +22944,53 @@ module.exports = {
   VERSION: "version"
 };
 
-},{}],191:[function(require,module,exports){
-var Dispatcher = require('flux').Dispatcher
+var Project = Parse.Object.extend("Project", {
+  getName: function() {
+    return this.get(Key.NAME);
+  },
 
-module.exports = new Dispatcher();
+  setName: function(value) {
+    this.set(Key.NAME, value);
+  },
 
-},{"flux":1}],192:[function(require,module,exports){
+  getFamily: function() {
+    return this.get(Key.FAMILY);
+  },
+
+  setFamily: function(value) {
+    this.set(Key.FAMILY, value);
+  },
+
+  getPlatform: function() {
+    return this.get(Key.PLATFORM);
+  },
+
+  setPlatform: function(value) {
+    this.set(Key.PLATFORM, value);
+  },
+
+  getProjectCode: function() {
+    return this.get(Key.PROJECT_CODE);
+  },
+
+  setProjectCode: function(value) {
+    this.set(Key.PROJECT_CODE, value);
+  },
+
+  getVersion: function() {
+    return this.get(Key.VERSION);
+  },
+
+  setVersion: function(value) {
+    this.set(Key.VERSION, value);
+  }
+}, {
+  Key: Key
+});
+
+module.exports = Project;
+
+},{}],193:[function(require,module,exports){
 var AppConstants = require("../constants/AppConstants")
 var AppDispatcher = require("../dispatcher/AppDispatcher");
 var EventEmitter = require("events").EventEmitter;
@@ -22935,7 +23077,7 @@ CurrentUserStore.dispatchToken = AppDispatcher.register(function(action) {
 
 module.exports = CurrentUserStore;
 
-},{"../constants/AppConstants":186,"../dispatcher/AppDispatcher":191,"events":4,"object-assign":6,"react/lib/keyMirror":163}],193:[function(require,module,exports){
+},{"../constants/AppConstants":187,"../dispatcher/AppDispatcher":188,"events":4,"object-assign":6,"react/lib/keyMirror":163}],194:[function(require,module,exports){
 var AppConstants = require("../constants/AppConstants")
 var AppDispatcher = require("../dispatcher/AppDispatcher");
 var EventEmitter = require("events").EventEmitter;
@@ -22996,7 +23138,7 @@ PageStore.dispatchToken = AppDispatcher.register(function(action) {
 
 module.exports = PageStore;
 
-},{"../constants/AppConstants":186,"../dispatcher/AppDispatcher":191,"./CurrentUserStore":192,"events":4,"object-assign":6,"react/lib/keyMirror":163}],194:[function(require,module,exports){
+},{"../constants/AppConstants":187,"../dispatcher/AppDispatcher":188,"./CurrentUserStore":193,"events":4,"object-assign":6,"react/lib/keyMirror":163}],195:[function(require,module,exports){
 var AppConstants = require("../constants/AppConstants")
 var AppDispatcher = require("../dispatcher/AppDispatcher");
 var EventEmitter = require("events").EventEmitter;
@@ -23005,40 +23147,39 @@ var keyMirror = require('react/lib/keyMirror');
 
 var ActionTypes = AppConstants.ActionTypes;
 var EventType = keyMirror({
-  PROJECT_CHANGE: null,
+  PROJECT_LIST_CHANGE: null,
 });
 
-var _projects = [
-  {objectId: "1aa", name: "Hogehoge", projectCode: "c<od>e1"},
-  {objectId: "2aa", name: "Abcde", projectCode: "codeaaaa"},
-  {objectId: "10", name: "Xyz", projectCode: "codexxxx"}
-];
+var _projectList = [];
 
 var ProjectStore = assign({}, EventEmitter.prototype, {
-  emitProjectChange: function() {
-    this.emit(EventType.PROJECT_CHANGE);
+  emitProjectListChange: function() {
+    this.emit(EventType.PROJECT_LIST_CHANGE);
   },
 
-  addProjectChangeListener: function(callback) {
-    this.addListener(EventType.PROJECT_CHANGE, callback);
+  addProjectListChangeListener: function(callback) {
+    this.addListener(EventType.PROJECT_LIST_CHANGE, callback);
   },
 
-  removeProjectChangeListener: function(callback) {
-    this.removeListener(EventType.PROJECT_CHANGE, callback);
+  removeProjectListChangeListener: function(callback) {
+    this.removeListener(EventType.PROJECT_LIST_CHANGE, callback);
   },
 
-  getProjects : function() {
-    return _projects;
+  getProjectList : function() {
+    return _projectList;
   }
 
 });
 
 ProjectStore.dispatchToken = AppDispatcher.register(function(action) {
-  // switch (action.type) {
-  //
-  // }
+  switch (action.type) {
+    case ActionTypes.PROJECT_LIST_REFRESHED:
+      _projectList = action.projectList;
+      ProjectStore.emitProjectListChange();
+      break;
+  }
 });
 
 module.exports = ProjectStore;
 
-},{"../constants/AppConstants":186,"../dispatcher/AppDispatcher":191,"events":4,"object-assign":6,"react/lib/keyMirror":163}]},{},[181,186,187,188,189,190,191,192,193,194,180,182,183,184,185]);
+},{"../constants/AppConstants":187,"../dispatcher/AppDispatcher":188,"events":4,"object-assign":6,"react/lib/keyMirror":163}]},{},[181,182,187,188,189,190,191,192,193,194,195,180,183,184,185,186]);

@@ -85,7 +85,7 @@ module.exports = React.createClass({
     CurrentUserStore.removeStatusChangeListener(this.handleUserStatusChange);
   },
 
-  handleUserStatusChange: function(signinState) {
+  handleUserStatusChange: function() {
     this.setState({
       status: CurrentUserStore.getStatus()
     });

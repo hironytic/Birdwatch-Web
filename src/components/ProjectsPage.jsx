@@ -1,21 +1,22 @@
 var React = require("react");
 var NavBar = require("./NavBar.jsx");
 var ProjectStore = require("../stores/ProjectStore");
-var ProjectKey = require("../constants/ProjectKey");
+var ProjectActionCreator = require("../actions/ProjectActionCreator");
 
 module.exports = React.createClass({
   getInitialState: function() {
     return {
-      projects: ProjectStore.getProjects()
+      projectList: ProjectStore.getProjectList()
     };
   },
+
   render: function() {
-    var projectItems = this.state.projects.map(function(project) {
+    var projectItems = this.state.projectList.map(function(project) {
       return (
-        <tr key={project[ProjectKey.OBJECT_ID]}>
+        <tr key={project.id}>
           { /*<td style={{backgroundColor: "#eeccee"}}></td>*/ }
-          <td>{project[ProjectKey.NAME]}</td>
-          <td>{project[ProjectKey.PROJECT_CODE]}</td>
+          <td>{project.getName()}</td>
+          <td>{project.getProjectCode()}</td>
         </tr>
       );
     });
@@ -39,5 +40,20 @@ module.exports = React.createClass({
         </div>
       </div>
     );
+  },
+
+  componentDidMount: function() {
+    ProjectStore.addProjectListChangeListener(this.handleProjectListChange);
+    ProjectActionCreator.refreshList();
+  },
+
+  componentWillUnmount: function() {
+    ProjectStore.removeProjectListChangeListener(this.handleProjectListChange);
+  },
+
+  handleProjectListChange: function() {
+    this.setState({
+      projectList: ProjectStore.getProjectList()
+    });
   }
 });

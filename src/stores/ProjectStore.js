@@ -6,34 +6,37 @@ var keyMirror = require('react/lib/keyMirror');
 
 var ActionTypes = AppConstants.ActionTypes;
 var EventType = keyMirror({
-  PROJECT_CHANGE: null,
+  PROJECT_LIST_CHANGE: null,
 });
 
-var _projects = [];
+var _projectList = [];
 
 var ProjectStore = assign({}, EventEmitter.prototype, {
-  emitProjectChange: function() {
-    this.emit(EventType.PROJECT_CHANGE);
+  emitProjectListChange: function() {
+    this.emit(EventType.PROJECT_LIST_CHANGE);
   },
 
-  addProjectChangeListener: function(callback) {
-    this.addListener(EventType.PROJECT_CHANGE, callback);
+  addProjectListChangeListener: function(callback) {
+    this.addListener(EventType.PROJECT_LIST_CHANGE, callback);
   },
 
-  removeProjectChangeListener: function(callback) {
-    this.removeListener(EventType.PROJECT_CHANGE, callback);
+  removeProjectListChangeListener: function(callback) {
+    this.removeListener(EventType.PROJECT_LIST_CHANGE, callback);
   },
 
-  getProjects : function() {
-    return _projects;
+  getProjectList : function() {
+    return _projectList;
   }
 
 });
 
 ProjectStore.dispatchToken = AppDispatcher.register(function(action) {
-  // switch (action.type) {
-  //
-  // }
+  switch (action.type) {
+    case ActionTypes.PROJECT_LIST_REFRESHED:
+      _projectList = action.projectList;
+      ProjectStore.emitProjectListChange();
+      break;
+  }
 });
 
 module.exports = ProjectStore;
