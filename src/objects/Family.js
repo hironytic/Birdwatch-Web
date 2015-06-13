@@ -1,3 +1,5 @@
+"use strict";
+
 var Key = {
   NAME: "name",
   COLOR_STRING: "colorString"

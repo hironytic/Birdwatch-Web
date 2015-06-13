@@ -1,3 +1,4 @@
+"use strict";
 var React = require("react");
 var NavBar = require("./NavBar.jsx");
 var ProjectStore = require("../stores/ProjectStore");

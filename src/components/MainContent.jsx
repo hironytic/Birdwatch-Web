@@ -1,3 +1,4 @@
+"use strict";
 var React = require("react")
 var SigninPage = require("./SigninPage.jsx");
 var ProjectsPage = require("./ProjectsPage.jsx");

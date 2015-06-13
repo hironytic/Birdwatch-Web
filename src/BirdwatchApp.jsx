@@ -1,3 +1,4 @@
+"use strict";
 var React = require('react')
 var MainContent = require('./components/MainContent.jsx')
 

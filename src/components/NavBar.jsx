@@ -1,3 +1,4 @@
+"use strict";
 var React = require("react")
 var CurrentUserStore = require("../stores/CurrentUserStore");
 var UserActionCreator = require("../actions/UserActionCreator");

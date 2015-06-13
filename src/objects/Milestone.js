@@ -1,3 +1,5 @@
+"use strict";
+
 var Key = {
   NAME: "name",
   ORDER: "order"

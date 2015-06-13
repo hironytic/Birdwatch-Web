@@ -1,9 +1,10 @@
+"use strict";
 var React = require("react/addons");
 var NavBar = require("./NavBar.jsx");
 var CurrentUserStore = require("../stores/CurrentUserStore");
 var UserActionCreator = require("../actions/UserActionCreator");
 
-StatusType = CurrentUserStore.StatusType;
+var StatusType = CurrentUserStore.StatusType;
 
 module.exports = React.createClass({
   mixins: [React.addons.LinkedStateMixin],

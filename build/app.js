@@ -22527,12 +22527,14 @@ module.exports = warning;
 module.exports = require('./lib/React');
 
 },{"./lib/React":37}],180:[function(require,module,exports){
+"use strict";
 var React = require('react')
 var MainContent = require('./components/MainContent.jsx')
 
 React.render(React.createElement(MainContent, null), document.getElementById('main-content'));
 
 },{"./components/MainContent.jsx":183,"react":179}],181:[function(require,module,exports){
+"use strict";
 var AppDispatcher = require("../dispatcher/AppDispatcher");
 var AppConstants = require("../constants/AppConstants");
 var Project = require("../objects/Project");
@@ -22557,6 +22559,7 @@ module.exports = {
 };
 
 },{"../constants/AppConstants":187,"../dispatcher/AppDispatcher":188,"../objects/Project":192}],182:[function(require,module,exports){
+"use strict";
 var AppDispatcher = require("../dispatcher/AppDispatcher");
 var AppConstants = require("../constants/AppConstants");
 
@@ -22591,6 +22594,7 @@ module.exports = {
 };
 
 },{"../constants/AppConstants":187,"../dispatcher/AppDispatcher":188}],183:[function(require,module,exports){
+"use strict";
 var React = require("react")
 var SigninPage = require("./SigninPage.jsx");
 var ProjectsPage = require("./ProjectsPage.jsx");
@@ -22632,6 +22636,7 @@ module.exports = React.createClass({displayName: "exports",
 });
 
 },{"../stores/PageStore":194,"./ProjectsPage.jsx":185,"./SigninPage.jsx":186,"react":179}],184:[function(require,module,exports){
+"use strict";
 var React = require("react")
 var CurrentUserStore = require("../stores/CurrentUserStore");
 var UserActionCreator = require("../actions/UserActionCreator");
@@ -22686,6 +22691,7 @@ module.exports = React.createClass({displayName: "exports",
 });
 
 },{"../actions/UserActionCreator":182,"../stores/CurrentUserStore":193,"react":179}],185:[function(require,module,exports){
+"use strict";
 var React = require("react");
 var NavBar = require("./NavBar.jsx");
 var ProjectStore = require("../stores/ProjectStore");
@@ -22747,12 +22753,13 @@ module.exports = React.createClass({displayName: "exports",
 });
 
 },{"../actions/ProjectActionCreator":181,"../stores/ProjectStore":195,"./NavBar.jsx":184,"react":179}],186:[function(require,module,exports){
+"use strict";
 var React = require("react/addons");
 var NavBar = require("./NavBar.jsx");
 var CurrentUserStore = require("../stores/CurrentUserStore");
 var UserActionCreator = require("../actions/UserActionCreator");
 
-StatusType = CurrentUserStore.StatusType;
+var StatusType = CurrentUserStore.StatusType;
 
 module.exports = React.createClass({displayName: "exports",
   mixins: [React.addons.LinkedStateMixin],
@@ -22842,6 +22849,7 @@ module.exports = React.createClass({displayName: "exports",
 });
 
 },{"../actions/UserActionCreator":182,"../stores/CurrentUserStore":193,"./NavBar.jsx":184,"react/addons":7}],187:[function(require,module,exports){
+"use strict";
 var keyMirror = require('react/lib/keyMirror');
 
 module.exports = {
@@ -22856,11 +22864,14 @@ module.exports = {
 };
 
 },{"react/lib/keyMirror":163}],188:[function(require,module,exports){
+"use strict";
 var Dispatcher = require('flux').Dispatcher
 
 module.exports = new Dispatcher();
 
 },{"flux":1}],189:[function(require,module,exports){
+"use strict";
+
 var Key = {
   NAME: "name",
   COLOR_STRING: "colorString"
@@ -22889,6 +22900,8 @@ var Family = Parse.Object.extend("Family", {
 module.exports = Family;
 
 },{}],190:[function(require,module,exports){
+"use strict";
+
 var Key = {
   NAME: "name",
   ORDER: "order"
@@ -22917,6 +22930,8 @@ var Milestone = Parse.Object.extend("Milestone", {
 module.exports = Milestone;
 
 },{}],191:[function(require,module,exports){
+"use strict";
+
 var Key = {
   NAME: "name"
 };
@@ -22936,6 +22951,8 @@ var Platform = Parse.Object.extend("Platform", {
 module.exports = Platform;
 
 },{}],192:[function(require,module,exports){
+"use strict";
+
 var Key = {
   NAME: "name",
   FAMILY: "family",
@@ -22991,6 +23008,7 @@ var Project = Parse.Object.extend("Project", {
 module.exports = Project;
 
 },{}],193:[function(require,module,exports){
+"use strict";
 var AppConstants = require("../constants/AppConstants")
 var AppDispatcher = require("../dispatcher/AppDispatcher");
 var EventEmitter = require("events").EventEmitter;
@@ -23078,6 +23096,7 @@ CurrentUserStore.dispatchToken = AppDispatcher.register(function(action) {
 module.exports = CurrentUserStore;
 
 },{"../constants/AppConstants":187,"../dispatcher/AppDispatcher":188,"events":4,"object-assign":6,"react/lib/keyMirror":163}],194:[function(require,module,exports){
+"use strict";
 var AppConstants = require("../constants/AppConstants")
 var AppDispatcher = require("../dispatcher/AppDispatcher");
 var EventEmitter = require("events").EventEmitter;
@@ -23139,6 +23158,7 @@ PageStore.dispatchToken = AppDispatcher.register(function(action) {
 module.exports = PageStore;
 
 },{"../constants/AppConstants":187,"../dispatcher/AppDispatcher":188,"./CurrentUserStore":193,"events":4,"object-assign":6,"react/lib/keyMirror":163}],195:[function(require,module,exports){
+"use strict";
 var AppConstants = require("../constants/AppConstants")
 var AppDispatcher = require("../dispatcher/AppDispatcher");
 var EventEmitter = require("events").EventEmitter;
