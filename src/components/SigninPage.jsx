@@ -1,4 +1,3 @@
-var keyMirror = require("react/lib/keyMirror");
 var React = require("react/addons");
 var NavBar = require("./NavBar.jsx");
 var CurrentUserStore = require("../stores/CurrentUserStore");
