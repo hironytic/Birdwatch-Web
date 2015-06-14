@@ -27476,7 +27476,7 @@ module.exports = {
       success: function(projects) {
         AppDispatcher.dispatch({
           type: ActionTypes.PROJECT_LIST_REFRESHED,
-          projectList: new Immutable.List(projects)
+          projectList: Immutable.List(projects)
         });
       },
       error: function(error) {
@@ -28099,7 +28099,7 @@ var EventType = keyMirror({
   PROJECT_LIST_CHANGE: null,
 });
 
-var _projectList = new Immutable.List();
+var _projectList = Immutable.List();
 
 var ProjectStore = assign({}, EventEmitter.prototype, {
   emitProjectListChange: function() {

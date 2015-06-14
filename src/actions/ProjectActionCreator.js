@@ -13,7 +13,7 @@ module.exports = {
       success: function(projects) {
         AppDispatcher.dispatch({
           type: ActionTypes.PROJECT_LIST_REFRESHED,
-          projectList: new Immutable.List(projects)
+          projectList: Immutable.List(projects)
         });
       },
       error: function(error) {
