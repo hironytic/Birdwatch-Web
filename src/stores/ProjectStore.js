@@ -3,14 +3,15 @@ var AppConstants = require("../constants/AppConstants")
 var AppDispatcher = require("../dispatcher/AppDispatcher");
 var EventEmitter = require("events").EventEmitter;
 var assign = require("object-assign");
-var keyMirror = require('react/lib/keyMirror');
+var keyMirror = require("react/lib/keyMirror");
+var Immutable = require("immutable");
 
 var ActionTypes = AppConstants.ActionTypes;
 var EventType = keyMirror({
   PROJECT_LIST_CHANGE: null,
 });
 
-var _projectList = [];
+var _projectList = new Immutable.List();
 
 var ProjectStore = assign({}, EventEmitter.prototype, {
   emitProjectListChange: function() {
