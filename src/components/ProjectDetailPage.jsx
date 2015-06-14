@@ -88,16 +88,12 @@ var ProjectDetailPage = React.createClass({
 
   componentDidMount: function() {
     ProjectDetailStore.addProjectChangeListener(this.handleProjectChange);
-    setTimeout(function() {
-      ProjectDetailActionCreator.loadProjectDetail(this.props.projectId);
-    }.bind(this), 1);
+    ProjectDetailActionCreator.loadProjectDetail(this.props.projectId);
   },
 
   componentWillUnmount: function() {
     ProjectDetailStore.removeProjectChangeListener(this.handleProjectChange);
-    setTimeout(function() {
-      ProjectDetailActionCreator.unloadProjectDetail();
-    }.bind(this), 1);
+    ProjectDetailActionCreator.unloadProjectDetail();
   },
 
   componentWillReceiveProps: function(nextProps) {

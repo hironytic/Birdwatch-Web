@@ -49,9 +49,7 @@ var ProjectListPage = React.createClass({
 
   componentDidMount: function() {
     ProjectListStore.addProjectListChangeListener(this.handleProjectListChange);
-    setTimeout(function() {
-      ProjectListActionCreator.refreshList();
-    }.bind(this), 1);
+    ProjectListActionCreator.refreshList();
   },
 
   componentWillUnmount: function() {

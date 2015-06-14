@@ -23,8 +23,16 @@ module.exports = {
   },
 
   unloadProjectDetail: function() {
-    AppDispatcher.dispatch({
-      type: ActionTypes.PROJECT_DETAIL_UNLOAD
-    });
+    var unloadProc = function() {
+      AppDispatcher.dispatch({
+        type: ActionTypes.PROJECT_DETAIL_UNLOAD
+      });
+    };
+
+    if (AppDispatcher.isDispatching()) {
+      setTimeout(unloadProc, 1);
+    } else {
+      unloadProc();
+    }
   }
 };

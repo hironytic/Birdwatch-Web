@@ -27516,9 +27516,17 @@ module.exports = {
   },
 
   unloadProjectDetail: function() {
-    AppDispatcher.dispatch({
-      type: ActionTypes.PROJECT_DETAIL_UNLOAD
-    });
+    var unloadProc = function() {
+      AppDispatcher.dispatch({
+        type: ActionTypes.PROJECT_DETAIL_UNLOAD
+      });
+    };
+
+    if (AppDispatcher.isDispatching()) {
+      setTimeout(unloadProc, 1);
+    } else {
+      unloadProc();
+    }
   }
 };
 
@@ -27793,16 +27801,12 @@ var ProjectDetailPage = React.createClass({displayName: "ProjectDetailPage",
 
   componentDidMount: function() {
     ProjectDetailStore.addProjectChangeListener(this.handleProjectChange);
-    setTimeout(function() {
-      ProjectDetailActionCreator.loadProjectDetail(this.props.projectId);
-    }.bind(this), 1);
+    ProjectDetailActionCreator.loadProjectDetail(this.props.projectId);
   },
 
   componentWillUnmount: function() {
     ProjectDetailStore.removeProjectChangeListener(this.handleProjectChange);
-    setTimeout(function() {
-      ProjectDetailActionCreator.unloadProjectDetail();
-    }.bind(this), 1);
+    ProjectDetailActionCreator.unloadProjectDetail();
   },
 
   componentWillReceiveProps: function(nextProps) {
@@ -27876,9 +27880,7 @@ var ProjectListPage = React.createClass({displayName: "ProjectListPage",
 
   componentDidMount: function() {
     ProjectListStore.addProjectListChangeListener(this.handleProjectListChange);
-    setTimeout(function() {
-      ProjectListActionCreator.refreshList();
-    }.bind(this), 1);
+    ProjectListActionCreator.refreshList();
   },
 
   componentWillUnmount: function() {
