@@ -13,7 +13,7 @@ var EventType = keyMirror({
 
 var _projectList = Immutable.List();
 
-var ProjectStore = assign({}, EventEmitter.prototype, {
+var ProjectListStore = assign({}, EventEmitter.prototype, {
   emitProjectListChange: function() {
     this.emit(EventType.PROJECT_LIST_CHANGE);
   },
@@ -32,13 +32,13 @@ var ProjectStore = assign({}, EventEmitter.prototype, {
 
 });
 
-ProjectStore.dispatchToken = AppDispatcher.register(function(action) {
+ProjectListStore.dispatchToken = AppDispatcher.register(function(action) {
   switch (action.type) {
     case ActionTypes.PROJECT_LIST_REFRESHED:
       _projectList = action.projectList;
-      ProjectStore.emitProjectListChange();
+      ProjectListStore.emitProjectListChange();
       break;
   }
 });
 
-module.exports = ProjectStore;
+module.exports = ProjectListStore;

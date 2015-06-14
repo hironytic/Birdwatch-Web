@@ -27472,6 +27472,7 @@ var ActionTypes = AppConstants.ActionTypes;
 module.exports = {
   refreshList: function() {
     var query = new Parse.Query(Project);
+    query.include(Project.Key.PLATFORM);
     query.find({
       success: function(projects) {
         AppDispatcher.dispatch({
@@ -27622,13 +27623,13 @@ module.exports = React.createClass({displayName: "exports",
 "use strict";
 var React = require("react");
 var NavBar = require("./NavBar.jsx");
-var ProjectStore = require("../stores/ProjectStore");
-var ProjectActionCreator = require("../actions/ProjectActionCreator");
+var ProjectListStore = require("../stores/ProjectListStore");
+var ProjectListActionCreator = require("../actions/ProjectListActionCreator");
 
 module.exports = React.createClass({displayName: "exports",
   getInitialState: function() {
     return {
-      projectList: ProjectStore.getProjectList()
+      projectList: ProjectListStore.getProjectList()
     };
   },
 
@@ -27637,7 +27638,9 @@ module.exports = React.createClass({displayName: "exports",
       return (
         React.createElement("tr", {key: project.id}, 
           /*<td style={{backgroundColor: "#eeccee"}}></td>*/ 
+          React.createElement("td", null, project.getPlatform().getName()), 
           React.createElement("td", null, project.getName()), 
+          React.createElement("td", null, project.getVersion()), 
           React.createElement("td", null, project.getProjectCode())
         )
       );
@@ -27651,8 +27654,10 @@ module.exports = React.createClass({displayName: "exports",
             React.createElement("table", {className: "table table-hover"}, 
               React.createElement("thead", null, 
                 /* <th style={{width: "20px"}}></th> */
-                React.createElement("th", null, "Name"), 
-                React.createElement("th", null, "Project Code")
+                React.createElement("th", null, "OS"), 
+                React.createElement("th", null, "名称"), 
+                React.createElement("th", null, "内部バージョン"), 
+                React.createElement("th", null, "プロジェクトコード")
               ), 
               React.createElement("tbody", null, 
                 projectItems
@@ -27665,22 +27670,22 @@ module.exports = React.createClass({displayName: "exports",
   },
 
   componentDidMount: function() {
-    ProjectStore.addProjectListChangeListener(this.handleProjectListChange);
-    ProjectActionCreator.refreshList();
+    ProjectListStore.addProjectListChangeListener(this.handleProjectListChange);
+    ProjectListActionCreator.refreshList();
   },
 
   componentWillUnmount: function() {
-    ProjectStore.removeProjectListChangeListener(this.handleProjectListChange);
+    ProjectListStore.removeProjectListChangeListener(this.handleProjectListChange);
   },
 
   handleProjectListChange: function() {
     this.setState({
-      projectList: ProjectStore.getProjectList()
+      projectList: ProjectListStore.getProjectList()
     });
   }
 });
 
-},{"../actions/ProjectActionCreator":182,"../stores/ProjectStore":196,"./NavBar.jsx":185,"react":180}],187:[function(require,module,exports){
+},{"../actions/ProjectListActionCreator":182,"../stores/ProjectListStore":196,"./NavBar.jsx":185,"react":180}],187:[function(require,module,exports){
 "use strict";
 var React = require("react/addons");
 var NavBar = require("./NavBar.jsx");
@@ -28101,7 +28106,7 @@ var EventType = keyMirror({
 
 var _projectList = Immutable.List();
 
-var ProjectStore = assign({}, EventEmitter.prototype, {
+var ProjectListStore = assign({}, EventEmitter.prototype, {
   emitProjectListChange: function() {
     this.emit(EventType.PROJECT_LIST_CHANGE);
   },
@@ -28120,15 +28125,15 @@ var ProjectStore = assign({}, EventEmitter.prototype, {
 
 });
 
-ProjectStore.dispatchToken = AppDispatcher.register(function(action) {
+ProjectListStore.dispatchToken = AppDispatcher.register(function(action) {
   switch (action.type) {
     case ActionTypes.PROJECT_LIST_REFRESHED:
       _projectList = action.projectList;
-      ProjectStore.emitProjectListChange();
+      ProjectListStore.emitProjectListChange();
       break;
   }
 });
 
-module.exports = ProjectStore;
+module.exports = ProjectListStore;
 
 },{"../constants/AppConstants":188,"../dispatcher/AppDispatcher":189,"events":4,"immutable":6,"object-assign":7,"react/lib/keyMirror":164}]},{},[182,183,188,189,190,191,192,193,194,195,196,181,184,185,186,187]);

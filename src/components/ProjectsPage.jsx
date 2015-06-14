@@ -1,13 +1,13 @@
 "use strict";
 var React = require("react");
 var NavBar = require("./NavBar.jsx");
-var ProjectStore = require("../stores/ProjectStore");
-var ProjectActionCreator = require("../actions/ProjectActionCreator");
+var ProjectListStore = require("../stores/ProjectListStore");
+var ProjectListActionCreator = require("../actions/ProjectListActionCreator");
 
 module.exports = React.createClass({
   getInitialState: function() {
     return {
-      projectList: ProjectStore.getProjectList()
+      projectList: ProjectListStore.getProjectList()
     };
   },
 
@@ -16,7 +16,9 @@ module.exports = React.createClass({
       return (
         <tr key={project.id}>
           { /*<td style={{backgroundColor: "#eeccee"}}></td>*/ }
+          <td>{project.getPlatform().getName()}</td>
           <td>{project.getName()}</td>
+          <td>{project.getVersion()}</td>
           <td>{project.getProjectCode()}</td>
         </tr>
       );
@@ -30,8 +32,10 @@ module.exports = React.createClass({
             <table className="table table-hover">
               <thead>
                 {/* <th style={{width: "20px"}}></th> */}
-                <th>Name</th>
-                <th>Project Code</th>
+                <th>OS</th>
+                <th>名称</th>
+                <th>内部バージョン</th>
+                <th>プロジェクトコード</th>
               </thead>
               <tbody>
                 {projectItems}
@@ -44,17 +48,17 @@ module.exports = React.createClass({
   },
 
   componentDidMount: function() {
-    ProjectStore.addProjectListChangeListener(this.handleProjectListChange);
-    ProjectActionCreator.refreshList();
+    ProjectListStore.addProjectListChangeListener(this.handleProjectListChange);
+    ProjectListActionCreator.refreshList();
   },
 
   componentWillUnmount: function() {
-    ProjectStore.removeProjectListChangeListener(this.handleProjectListChange);
+    ProjectListStore.removeProjectListChangeListener(this.handleProjectListChange);
   },
 
   handleProjectListChange: function() {
     this.setState({
-      projectList: ProjectStore.getProjectList()
+      projectList: ProjectListStore.getProjectList()
     });
   }
 });

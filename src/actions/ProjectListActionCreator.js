@@ -9,6 +9,7 @@ var ActionTypes = AppConstants.ActionTypes;
 module.exports = {
   refreshList: function() {
     var query = new Parse.Query(Project);
+    query.include(Project.Key.PLATFORM);
     query.find({
       success: function(projects) {
         AppDispatcher.dispatch({
