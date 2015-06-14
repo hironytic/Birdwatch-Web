@@ -1,7 +1,8 @@
 "use strict";
 var React = require("react")
 var SigninPage = require("./SigninPage.jsx");
-var ProjectsPage = require("./ProjectsPage.jsx");
+var ProjectListPage = require("./ProjectListPage.jsx");
+var ProjectDetailPage = require("./ProjectDetailPage.jsx");
 var PageStore = require("../stores/PageStore");
 
 var Page = PageStore.Page;
@@ -15,10 +16,13 @@ module.exports = React.createClass({
   render: function() {
     switch (this.state.page) {
       case Page.SIGNIN:
-        return (<SigninPage/>);
+        return <SigninPage/>;
         break;
-      case Page.PROJECTS:
-        return (<ProjectsPage/>);
+      case Page.PROJECT_LIST:
+        return <ProjectListPage/>;
+        break;
+      case Page.PROJECT_DETAIL:
+        return <ProjectDetailPage/>;
         break;
 
       default:

@@ -12,14 +12,15 @@ var EventType = keyMirror({
 });
 var Page = keyMirror({
   SIGNIN: null,
-  PROJECTS: null
+  PROJECT_LIST: null,
+  PROJECT_DETAIL: null,
 });
 
 var _page;
 if (CurrentUserStore.getUser() == null) {
   _page = Page.SIGNIN;
 } else {
-  _page = Page.PROJECTS;
+  _page = Page.PROJECT_LIST;
 }
 
 var PageStore = assign({}, EventEmitter.prototype, {
@@ -46,12 +47,16 @@ PageStore.dispatchToken = AppDispatcher.register(function(action) {
   switch (action.type) {
     case ActionTypes.USER_SIGNED_IN:
       AppDispatcher.waitFor([CurrentUserStore.dispatchToken]);
-      _page = Page.PROJECTS;
+      _page = Page.PROJECT_LIST;
       PageStore.emitPageChange();
       break;
     case ActionTypes.USER_SIGNED_OUT:
       AppDispatcher.waitFor([CurrentUserStore.dispatchToken]);
       _page = Page.SIGNIN;
+      PageStore.emitPageChange();
+      break;
+    case ActionTypes.PROJECT_LIST_ITEM_CLICKED:
+      _page = Page.PROJECT_DETAIL;
       PageStore.emitPageChange();
       break;
   }

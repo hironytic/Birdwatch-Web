@@ -21,5 +21,12 @@ module.exports = {
         // TODO:
       }
     });
+  },
+
+  clickListItem: function(itemId) {
+    AppDispatcher.dispatch({
+      type: ActionTypes.PROJECT_LIST_ITEM_CLICKED,
+      itemId: itemId
+    });
   }
 };

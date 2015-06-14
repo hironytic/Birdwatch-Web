@@ -14,7 +14,7 @@ module.exports = React.createClass({
   render: function() {
     var projectItems = this.state.projectList.map(function(project) {
       return (
-        <tr key={project.id}>
+        <tr key={project.id} onClick={this.handleItemClicked.bind(this, project.id)}>
           { /*<td style={{backgroundColor: "#eeccee"}}></td>*/ }
           <td>{project.getPlatform().getName()}</td>
           <td>{project.getName()}</td>
@@ -22,7 +22,7 @@ module.exports = React.createClass({
           <td>{project.getProjectCode()}</td>
         </tr>
       );
-    });
+    }.bind(this));
 
     return (
       <div>
@@ -60,5 +60,9 @@ module.exports = React.createClass({
     this.setState({
       projectList: ProjectListStore.getProjectList()
     });
+  },
+
+  handleItemClicked: function(itemId) {
+    ProjectListActionCreator.clickListItem(itemId);
   }
 });
