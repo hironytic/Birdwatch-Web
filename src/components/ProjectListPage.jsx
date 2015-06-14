@@ -4,7 +4,7 @@ var NavBar = require("./NavBar.jsx");
 var ProjectListStore = require("../stores/ProjectListStore");
 var ProjectListActionCreator = require("../actions/ProjectListActionCreator");
 
-module.exports = React.createClass({
+var ProjectListPage = React.createClass({
   getInitialState: function() {
     return {
       projectList: ProjectListStore.getProjectList()
@@ -68,3 +68,5 @@ module.exports = React.createClass({
     ProjectListActionCreator.clickListItem(itemId);
   }
 });
+
+module.exports = ProjectListPage;

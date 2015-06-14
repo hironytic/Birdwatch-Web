@@ -8,7 +8,7 @@ var PageStore = require("../stores/PageStore");
 
 var Page = AppConstants.Page;
 
-module.exports = React.createClass({
+var MainContent = React.createClass({
   getInitialState: function() {
     return {
       page: PageStore.getPage(),
@@ -45,3 +45,5 @@ module.exports = React.createClass({
     });
   }
 });
+
+module.exports = MainContent;

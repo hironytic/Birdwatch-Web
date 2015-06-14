@@ -27605,7 +27605,7 @@ var PageStore = require("../stores/PageStore");
 
 var Page = AppConstants.Page;
 
-module.exports = React.createClass({displayName: "exports",
+var MainContent = React.createClass({displayName: "MainContent",
   getInitialState: function() {
     return {
       page: PageStore.getPage(),
@@ -27643,13 +27643,15 @@ module.exports = React.createClass({displayName: "exports",
   }
 });
 
+module.exports = MainContent;
+
 },{"../constants/AppConstants":191,"../stores/PageStore":198,"./ProjectDetailPage.jsx":188,"./ProjectListPage.jsx":189,"./SigninPage.jsx":190,"react":180}],187:[function(require,module,exports){
 "use strict";
 var React = require("react")
 var CurrentUserStore = require("../stores/CurrentUserStore");
 var UserActionCreator = require("../actions/UserActionCreator");
 
-module.exports = React.createClass({displayName: "exports",
+var NavBar = React.createClass({displayName: "NavBar",
   getInitialState: function() {
     return {
       user: CurrentUserStore.getUser()
@@ -27698,6 +27700,8 @@ module.exports = React.createClass({displayName: "exports",
 
 });
 
+module.exports = NavBar;
+
 },{"../actions/UserActionCreator":185,"../stores/CurrentUserStore":197,"react":180}],188:[function(require,module,exports){
 "use strict";
 var React = require("react");
@@ -27705,7 +27709,7 @@ var NavBar = require("./NavBar.jsx");
 var ProjectDetailStore = require("../stores/ProjectDetailStore");
 var ProjectDetailActionCreator = require("../actions/ProjectDetailActionCreator");
 
-module.exports = React.createClass({displayName: "exports",
+var ProjectDetailPage = React.createClass({displayName: "ProjectDetailPage",
   getInitialState: function() {
     return {
       project: ProjectDetailStore.getProject()
@@ -27818,6 +27822,8 @@ module.exports = React.createClass({displayName: "exports",
   }
 });
 
+module.exports = ProjectDetailPage;
+
 },{"../actions/ProjectDetailActionCreator":183,"../stores/ProjectDetailStore":199,"./NavBar.jsx":187,"react":180}],189:[function(require,module,exports){
 "use strict";
 var React = require("react");
@@ -27825,7 +27831,7 @@ var NavBar = require("./NavBar.jsx");
 var ProjectListStore = require("../stores/ProjectListStore");
 var ProjectListActionCreator = require("../actions/ProjectListActionCreator");
 
-module.exports = React.createClass({displayName: "exports",
+var ProjectListPage = React.createClass({displayName: "ProjectListPage",
   getInitialState: function() {
     return {
       projectList: ProjectListStore.getProjectList()
@@ -27890,6 +27896,8 @@ module.exports = React.createClass({displayName: "exports",
   }
 });
 
+module.exports = ProjectListPage;
+
 },{"../actions/ProjectListActionCreator":184,"../stores/ProjectListStore":200,"./NavBar.jsx":187,"react":180}],190:[function(require,module,exports){
 "use strict";
 var React = require("react/addons");
@@ -27899,7 +27907,7 @@ var UserActionCreator = require("../actions/UserActionCreator");
 
 var StatusType = CurrentUserStore.StatusType;
 
-module.exports = React.createClass({displayName: "exports",
+var SigninPage = React.createClass({displayName: "SigninPage",
   mixins: [React.addons.LinkedStateMixin],
 
   getInitialState: function() {
@@ -27985,6 +27993,8 @@ module.exports = React.createClass({displayName: "exports",
     });
   }
 });
+
+module.exports = SigninPage;
 
 },{"../actions/UserActionCreator":185,"../stores/CurrentUserStore":197,"./NavBar.jsx":187,"react/addons":8}],191:[function(require,module,exports){
 "use strict";

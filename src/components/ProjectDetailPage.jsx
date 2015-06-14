@@ -4,7 +4,7 @@ var NavBar = require("./NavBar.jsx");
 var ProjectDetailStore = require("../stores/ProjectDetailStore");
 var ProjectDetailActionCreator = require("../actions/ProjectDetailActionCreator");
 
-module.exports = React.createClass({
+var ProjectDetailPage = React.createClass({
   getInitialState: function() {
     return {
       project: ProjectDetailStore.getProject()
@@ -116,3 +116,5 @@ module.exports = React.createClass({
     e.preventDefault();
   }
 });
+
+module.exports = ProjectDetailPage;

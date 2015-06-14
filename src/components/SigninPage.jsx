@@ -6,7 +6,7 @@ var UserActionCreator = require("../actions/UserActionCreator");
 
 var StatusType = CurrentUserStore.StatusType;
 
-module.exports = React.createClass({
+var SigninPage = React.createClass({
   mixins: [React.addons.LinkedStateMixin],
 
   getInitialState: function() {
@@ -92,3 +92,5 @@ module.exports = React.createClass({
     });
   }
 });
+
+module.exports = SigninPage;

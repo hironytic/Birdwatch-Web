@@ -3,7 +3,7 @@ var React = require("react")
 var CurrentUserStore = require("../stores/CurrentUserStore");
 var UserActionCreator = require("../actions/UserActionCreator");
 
-module.exports = React.createClass({
+var NavBar = React.createClass({
   getInitialState: function() {
     return {
       user: CurrentUserStore.getUser()
@@ -51,3 +51,5 @@ module.exports = React.createClass({
   }
 
 });
+
+module.exports = NavBar;
