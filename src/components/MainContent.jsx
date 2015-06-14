@@ -1,11 +1,12 @@
 "use strict";
 var React = require("react")
+var AppConstants = require("../constants/AppConstants");
 var SigninPage = require("./SigninPage.jsx");
 var ProjectListPage = require("./ProjectListPage.jsx");
 var ProjectDetailPage = require("./ProjectDetailPage.jsx");
 var PageStore = require("../stores/PageStore");
 
-var Page = PageStore.Page;
+var Page = AppConstants.Page;
 
 module.exports = React.createClass({
   getInitialState: function() {

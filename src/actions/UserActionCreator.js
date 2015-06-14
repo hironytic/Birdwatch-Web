@@ -1,8 +1,10 @@
 "use strict";
 var AppDispatcher = require("../dispatcher/AppDispatcher");
 var AppConstants = require("../constants/AppConstants");
+var PageUtils = require("./PageUtils");
 
 var ActionTypes = AppConstants.ActionTypes;
+var Page = AppConstants.Page;
 
 module.exports = {
   signin: function(userName, password) {
@@ -15,6 +17,7 @@ module.exports = {
         type: ActionTypes.USER_SIGNED_IN,
         user: user
       });
+      PageUtils.changePage(null);
     }, function(error) {
       console.log("Failed to sign in: " + JSON.stringify(error));
       AppDispatcher.dispatch({
@@ -29,5 +32,6 @@ module.exports = {
     AppDispatcher.dispatch({
       type: ActionTypes.USER_SIGNED_OUT
     });
+    PageUtils.changePage("");
   }
 };

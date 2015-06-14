@@ -27455,12 +27455,37 @@ module.exports = require('./lib/React');
 
 },{"./lib/React":38}],181:[function(require,module,exports){
 "use strict";
-var React = require('react')
-var MainContent = require('./components/MainContent.jsx')
+var React = require("react")
+var MainContent = require("./components/MainContent.jsx")
+var AppDispatcher = require("./dispatcher/AppDispatcher");
+var AppConstants = require("./constants/AppConstants");
 
 React.render(React.createElement(MainContent, null), document.getElementById('main-content'));
 
-},{"./components/MainContent.jsx":184,"react":180}],182:[function(require,module,exports){
+window.addEventListener("hashchange", function(e) {
+  AppDispatcher.dispatch({
+    type: AppConstants.ActionTypes.PAGE_CHANGED,
+  });
+});
+
+},{"./components/MainContent.jsx":185,"./constants/AppConstants":190,"./dispatcher/AppDispatcher":191,"react":180}],182:[function(require,module,exports){
+"use strict";
+var AppDispatcher = require("../dispatcher/AppDispatcher");
+var AppConstants = require("../constants/AppConstants");
+
+module.exports = {
+  changePage: function(page) {
+    if (page != null) {
+      window.location.href = '#' + page;
+    } else {
+      AppDispatcher.dispatch({
+        type: AppConstants.ActionTypes.PAGE_CHANGED,
+      });
+    }
+  }
+};
+
+},{"../constants/AppConstants":190,"../dispatcher/AppDispatcher":191}],183:[function(require,module,exports){
 "use strict";
 var AppDispatcher = require("../dispatcher/AppDispatcher");
 var AppConstants = require("../constants/AppConstants");
@@ -27514,12 +27539,14 @@ module.exports = {
   }
 };
 
-},{"../constants/AppConstants":189,"../dispatcher/AppDispatcher":190,"../objects/Project":194,"immutable":6}],183:[function(require,module,exports){
+},{"../constants/AppConstants":190,"../dispatcher/AppDispatcher":191,"../objects/Project":195,"immutable":6}],184:[function(require,module,exports){
 "use strict";
 var AppDispatcher = require("../dispatcher/AppDispatcher");
 var AppConstants = require("../constants/AppConstants");
+var PageUtils = require("./PageUtils");
 
 var ActionTypes = AppConstants.ActionTypes;
+var Page = AppConstants.Page;
 
 module.exports = {
   signin: function(userName, password) {
@@ -27532,6 +27559,7 @@ module.exports = {
         type: ActionTypes.USER_SIGNED_IN,
         user: user
       });
+      PageUtils.changePage(null);
     }, function(error) {
       console.log("Failed to sign in: " + JSON.stringify(error));
       AppDispatcher.dispatch({
@@ -27546,18 +27574,20 @@ module.exports = {
     AppDispatcher.dispatch({
       type: ActionTypes.USER_SIGNED_OUT
     });
+    PageUtils.changePage("");
   }
 };
 
-},{"../constants/AppConstants":189,"../dispatcher/AppDispatcher":190}],184:[function(require,module,exports){
+},{"../constants/AppConstants":190,"../dispatcher/AppDispatcher":191,"./PageUtils":182}],185:[function(require,module,exports){
 "use strict";
 var React = require("react")
+var AppConstants = require("../constants/AppConstants");
 var SigninPage = require("./SigninPage.jsx");
 var ProjectListPage = require("./ProjectListPage.jsx");
 var ProjectDetailPage = require("./ProjectDetailPage.jsx");
 var PageStore = require("../stores/PageStore");
 
-var Page = PageStore.Page;
+var Page = AppConstants.Page;
 
 module.exports = React.createClass({displayName: "exports",
   getInitialState: function() {
@@ -27595,7 +27625,7 @@ module.exports = React.createClass({displayName: "exports",
   }
 });
 
-},{"../stores/PageStore":196,"./ProjectDetailPage.jsx":186,"./ProjectListPage.jsx":187,"./SigninPage.jsx":188,"react":180}],185:[function(require,module,exports){
+},{"../constants/AppConstants":190,"../stores/PageStore":197,"./ProjectDetailPage.jsx":187,"./ProjectListPage.jsx":188,"./SigninPage.jsx":189,"react":180}],186:[function(require,module,exports){
 "use strict";
 var React = require("react")
 var CurrentUserStore = require("../stores/CurrentUserStore");
@@ -27650,7 +27680,7 @@ module.exports = React.createClass({displayName: "exports",
 
 });
 
-},{"../actions/UserActionCreator":183,"../stores/CurrentUserStore":195,"react":180}],186:[function(require,module,exports){
+},{"../actions/UserActionCreator":184,"../stores/CurrentUserStore":196,"react":180}],187:[function(require,module,exports){
 "use strict";
 var React = require("react");
 var NavBar = require("./NavBar.jsx");
@@ -27757,7 +27787,7 @@ module.exports = React.createClass({displayName: "exports",
   }
 });
 
-},{"../stores/ProjectDetailStore":197,"./NavBar.jsx":185,"react":180}],187:[function(require,module,exports){
+},{"../stores/ProjectDetailStore":198,"./NavBar.jsx":186,"react":180}],188:[function(require,module,exports){
 "use strict";
 var React = require("react");
 var NavBar = require("./NavBar.jsx");
@@ -27827,7 +27857,7 @@ module.exports = React.createClass({displayName: "exports",
   }
 });
 
-},{"../actions/ProjectListActionCreator":182,"../stores/ProjectListStore":198,"./NavBar.jsx":185,"react":180}],188:[function(require,module,exports){
+},{"../actions/ProjectListActionCreator":183,"../stores/ProjectListStore":199,"./NavBar.jsx":186,"react":180}],189:[function(require,module,exports){
 "use strict";
 var React = require("react/addons");
 var NavBar = require("./NavBar.jsx");
@@ -27923,12 +27953,14 @@ module.exports = React.createClass({displayName: "exports",
   }
 });
 
-},{"../actions/UserActionCreator":183,"../stores/CurrentUserStore":195,"./NavBar.jsx":185,"react/addons":8}],189:[function(require,module,exports){
+},{"../actions/UserActionCreator":184,"../stores/CurrentUserStore":196,"./NavBar.jsx":186,"react/addons":8}],190:[function(require,module,exports){
 "use strict";
 var keyMirror = require('react/lib/keyMirror');
 
 module.exports = {
   ActionTypes: keyMirror({
+    PAGE_CHANGED: null,               // ページが変更された
+
     USER_SIGNING_IN: null,            // ユーザーがサインイン中になった
     USER_SIGNED_IN: null,             // ユーザーがサインインした
     USER_FAILED_TO_SIGN_IN: null,     // ユーザーのサインインに失敗
@@ -27939,16 +27971,22 @@ module.exports = {
 
     PROJECT_DETAIL_REFRESHING: null,  // プロジェクト詳細の更新開始
     PROJECT_DETAIL_REFRESHED: null,   // プロジェクト詳細の更新
-  })
+  }),
+
+  Page: {
+    SIGNIN: "signin",
+    PROJECT_LIST: "projects",
+    PROJECT_DETAIL: "project"
+  }
 };
 
-},{"react/lib/keyMirror":164}],190:[function(require,module,exports){
+},{"react/lib/keyMirror":164}],191:[function(require,module,exports){
 "use strict";
 var Dispatcher = require('flux').Dispatcher
 
 module.exports = new Dispatcher();
 
-},{"flux":1}],191:[function(require,module,exports){
+},{"flux":1}],192:[function(require,module,exports){
 "use strict";
 
 var Key = {
@@ -27978,7 +28016,7 @@ var Family = Parse.Object.extend("Family", {
 
 module.exports = Family;
 
-},{}],192:[function(require,module,exports){
+},{}],193:[function(require,module,exports){
 "use strict";
 
 var Key = {
@@ -28008,7 +28046,7 @@ var Milestone = Parse.Object.extend("Milestone", {
 
 module.exports = Milestone;
 
-},{}],193:[function(require,module,exports){
+},{}],194:[function(require,module,exports){
 "use strict";
 
 var Key = {
@@ -28029,7 +28067,7 @@ var Platform = Parse.Object.extend("Platform", {
 
 module.exports = Platform;
 
-},{}],194:[function(require,module,exports){
+},{}],195:[function(require,module,exports){
 "use strict";
 
 var Key = {
@@ -28086,7 +28124,7 @@ var Project = Parse.Object.extend("Project", {
 
 module.exports = Project;
 
-},{}],195:[function(require,module,exports){
+},{}],196:[function(require,module,exports){
 "use strict";
 var AppConstants = require("../constants/AppConstants")
 var AppDispatcher = require("../dispatcher/AppDispatcher");
@@ -28174,7 +28212,7 @@ CurrentUserStore.dispatchToken = AppDispatcher.register(function(action) {
 
 module.exports = CurrentUserStore;
 
-},{"../constants/AppConstants":189,"../dispatcher/AppDispatcher":190,"events":4,"object-assign":7,"react/lib/keyMirror":164}],196:[function(require,module,exports){
+},{"../constants/AppConstants":190,"../dispatcher/AppDispatcher":191,"events":4,"object-assign":7,"react/lib/keyMirror":164}],197:[function(require,module,exports){
 "use strict";
 var AppConstants = require("../constants/AppConstants")
 var AppDispatcher = require("../dispatcher/AppDispatcher");
@@ -28184,21 +28222,34 @@ var keyMirror = require('react/lib/keyMirror');
 var CurrentUserStore = require("./CurrentUserStore");
 
 var ActionTypes = AppConstants.ActionTypes;
+var Page = AppConstants.Page;
 var EventType = keyMirror({
   PAGE_CHANGE: null
 });
-var Page = keyMirror({
-  SIGNIN: null,
-  PROJECT_LIST: null,
-  PROJECT_DETAIL: null,
-});
 
 var _page;
-if (CurrentUserStore.getUser() == null) {
-  _page = Page.SIGNIN;
-} else {
-  _page = Page.PROJECT_LIST;
+var resolvePage = function() {
+  // 認証されていなければサインインページ
+  if (CurrentUserStore.getUser() == null) {
+    _page = Page.SIGNIN;
+    return;
+  }
+
+  var fragment = "";
+  var url = window.location.href;
+  var fragmentIx = url.indexOf("#");
+  if (fragmentIx >= 0) {
+    fragment = url.substring(fragmentIx + 1);
+  }
+
+  if (fragment == "") {
+    _page = Page.PROJECT_LIST;
+  } else {
+    // TODO: fragmentの/以下はパラメータとして扱う
+    _page = fragment;
+  }
 }
+resolvePage();
 
 var PageStore = assign({}, EventEmitter.prototype, {
   emitPageChange: function() {
@@ -28222,26 +28273,33 @@ PageStore.Page = Page;
 
 PageStore.dispatchToken = AppDispatcher.register(function(action) {
   switch (action.type) {
-    case ActionTypes.USER_SIGNED_IN:
-      AppDispatcher.waitFor([CurrentUserStore.dispatchToken]);
-      _page = Page.PROJECT_LIST;
-      PageStore.emitPageChange();
-      break;
-    case ActionTypes.USER_SIGNED_OUT:
-      AppDispatcher.waitFor([CurrentUserStore.dispatchToken]);
-      _page = Page.SIGNIN;
-      PageStore.emitPageChange();
-      break;
-    case ActionTypes.PROJECT_LIST_SHOW_DETAIL:
-      _page = Page.PROJECT_DETAIL;
+    case ActionTypes.PAGE_CHANGED:
+      resolvePage();
       PageStore.emitPageChange();
       break;
   }
+
+  // switch (action.type) {
+  //   case ActionTypes.USER_SIGNED_IN:
+  //     AppDispatcher.waitFor([CurrentUserStore.dispatchToken]);
+  //     _page = Page.PROJECT_LIST;
+  //     PageStore.emitPageChange();
+  //     break;
+  //   case ActionTypes.USER_SIGNED_OUT:
+  //     AppDispatcher.waitFor([CurrentUserStore.dispatchToken]);
+  //     _page = Page.SIGNIN;
+  //     PageStore.emitPageChange();
+  //     break;
+  //   case ActionTypes.PROJECT_LIST_SHOW_DETAIL:
+  //     _page = Page.PROJECT_DETAIL;
+  //     PageStore.emitPageChange();
+  //     break;
+  // }
 });
 
 module.exports = PageStore;
 
-},{"../constants/AppConstants":189,"../dispatcher/AppDispatcher":190,"./CurrentUserStore":195,"events":4,"object-assign":7,"react/lib/keyMirror":164}],197:[function(require,module,exports){
+},{"../constants/AppConstants":190,"../dispatcher/AppDispatcher":191,"./CurrentUserStore":196,"events":4,"object-assign":7,"react/lib/keyMirror":164}],198:[function(require,module,exports){
 "use strict";
 var AppConstants = require("../constants/AppConstants")
 var AppDispatcher = require("../dispatcher/AppDispatcher");
@@ -28290,7 +28348,7 @@ ProjectDetailStore.dispatchToken = AppDispatcher.register(function(action) {
 
 module.exports = ProjectDetailStore;
 
-},{"../constants/AppConstants":189,"../dispatcher/AppDispatcher":190,"events":4,"object-assign":7,"react/lib/keyMirror":164}],198:[function(require,module,exports){
+},{"../constants/AppConstants":190,"../dispatcher/AppDispatcher":191,"events":4,"object-assign":7,"react/lib/keyMirror":164}],199:[function(require,module,exports){
 "use strict";
 var AppConstants = require("../constants/AppConstants")
 var AppDispatcher = require("../dispatcher/AppDispatcher");
@@ -28336,4 +28394,4 @@ ProjectListStore.dispatchToken = AppDispatcher.register(function(action) {
 
 module.exports = ProjectListStore;
 
-},{"../constants/AppConstants":189,"../dispatcher/AppDispatcher":190,"events":4,"immutable":6,"object-assign":7,"react/lib/keyMirror":164}]},{},[182,183,189,190,191,192,193,194,195,196,197,198,181,184,185,186,187,188]);
+},{"../constants/AppConstants":190,"../dispatcher/AppDispatcher":191,"events":4,"immutable":6,"object-assign":7,"react/lib/keyMirror":164}]},{},[182,183,184,190,191,192,193,194,195,196,197,198,199,181,185,186,187,188,189]);

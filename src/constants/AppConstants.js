@@ -3,6 +3,8 @@ var keyMirror = require('react/lib/keyMirror');
 
 module.exports = {
   ActionTypes: keyMirror({
+    PAGE_CHANGED: null,               // ページが変更された
+
     USER_SIGNING_IN: null,            // ユーザーがサインイン中になった
     USER_SIGNED_IN: null,             // ユーザーがサインインした
     USER_FAILED_TO_SIGN_IN: null,     // ユーザーのサインインに失敗
@@ -13,5 +15,11 @@ module.exports = {
 
     PROJECT_DETAIL_REFRESHING: null,  // プロジェクト詳細の更新開始
     PROJECT_DETAIL_REFRESHED: null,   // プロジェクト詳細の更新
-  })
+  }),
+
+  Page: {
+    SIGNIN: "signin",
+    PROJECT_LIST: "projects",
+    PROJECT_DETAIL: "project"
+  }
 };
