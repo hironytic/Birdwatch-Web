@@ -9,8 +9,9 @@ module.exports = {
     USER_SIGNED_OUT: null,            // ユーザーがサインアウトした
 
     PROJECT_LIST_REFRESHED: null,     // プロジェクト一覧の更新
-    PROJECT_LIST_ITEM_CLICKED: null,  // プロジェクト一覧のアイテムをクリック
+    PROJECT_LIST_SHOW_DETAIL: null,   // プロジェクト一覧での詳細表示要求
 
+    PROJECT_DETAIL_REFRESHING: null,  // プロジェクト詳細の更新開始
     PROJECT_DETAIL_REFRESHED: null,   // プロジェクト詳細の更新
   })
 };

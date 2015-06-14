@@ -25,7 +25,27 @@ module.exports = {
 
   clickListItem: function(itemId) {
     AppDispatcher.dispatch({
-      type: ActionTypes.PROJECT_LIST_ITEM_CLICKED,
+      type: ActionTypes.PROJECT_DETAIL_REFRESHING,
+      itemId: itemId
+    });
+
+    var query = new Parse.Query(Project);
+    query.include(Project.Key.FAMILY);
+    query.include(Project.Key.PLATFORM);
+    query.get(itemId, {
+      success: function(project) {
+        AppDispatcher.dispatch({
+          type: ActionTypes.PROJECT_DETAIL_REFRESHED,
+          project: project
+        });
+      },
+      error: function(error) {
+        // TODO:
+      }
+    });
+
+    AppDispatcher.dispatch({
+      type: ActionTypes.PROJECT_LIST_SHOW_DETAIL,
       itemId: itemId
     });
   }

@@ -27488,7 +27488,27 @@ module.exports = {
 
   clickListItem: function(itemId) {
     AppDispatcher.dispatch({
-      type: ActionTypes.PROJECT_LIST_ITEM_CLICKED,
+      type: ActionTypes.PROJECT_DETAIL_REFRESHING,
+      itemId: itemId
+    });
+
+    var query = new Parse.Query(Project);
+    query.include(Project.Key.FAMILY);
+    query.include(Project.Key.PLATFORM);
+    query.get(itemId, {
+      success: function(project) {
+        AppDispatcher.dispatch({
+          type: ActionTypes.PROJECT_DETAIL_REFRESHED,
+          project: project
+        });
+      },
+      error: function(error) {
+        // TODO:
+      }
+    });
+
+    AppDispatcher.dispatch({
+      type: ActionTypes.PROJECT_LIST_SHOW_DETAIL,
       itemId: itemId
     });
   }
@@ -27645,11 +27665,67 @@ module.exports = React.createClass({displayName: "exports",
 
   render: function() {
     var projectPanel;
-    if (this.state.project == null) {
+    var project = this.state.project;
+    if (project == null) {
       projectPanel = React.createElement("div", null)
     } else {
       projectPanel = (
-        React.createElement("div", null
+        React.createElement("div", {className: "container"}, 
+          React.createElement("form", {className: "form-horizontal", action: "#", onSubmit: this.handleSubmit}, 
+            React.createElement("div", {className: "form-group"}, 
+              React.createElement("label", {className: "col-sm-4 control-label"}, "名称"), 
+              React.createElement("div", {className: "col-sm-8"}, 
+                React.createElement("p", {className: "form-control-static"}, project.getName())
+              )
+            ), 
+            React.createElement("div", {className: "form-group"}, 
+              React.createElement("label", {className: "col-sm-4 control-label"}, "プロジェクトコード"), 
+              React.createElement("div", {className: "col-sm-8"}, 
+                React.createElement("p", {className: "form-control-static"}, project.getProjectCode())
+              )
+            ), 
+            React.createElement("div", {className: "form-group"}, 
+              React.createElement("label", {className: "col-sm-4 control-label"}, "プロダクト"), 
+              React.createElement("div", {className: "col-sm-8"}, 
+                React.createElement("p", {className: "form-control-static"}, project.getFamily().getName())
+              )
+            ), 
+            React.createElement("div", {className: "form-group"}, 
+              React.createElement("label", {className: "col-sm-4 control-label"}, "OS"), 
+              React.createElement("div", {className: "col-sm-8"}, 
+                React.createElement("p", {className: "form-control-static"}, project.getPlatform().getName())
+              )
+            ), 
+            React.createElement("div", {className: "form-group"}, 
+              React.createElement("label", {className: "col-sm-4 control-label"}, "内部バージョン"), 
+              React.createElement("div", {className: "col-sm-8"}, 
+                React.createElement("p", {className: "form-control-static"}, project.getVersion())
+              )
+            )
+/*
+            <div className="form-group">
+              <label className="col-sm-4 control-label">マイルストーン</label>
+              <div className="col-sm-8">
+                <table className="table">
+                  <thead>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>開発終了</td>
+                      <td>6月</td>
+                      <td>(2015/06/01)</td>
+                    </tr>
+                    <tr>
+                      <td>コードFix</td>
+                      <td>6/14</td>
+                      <td>(2015/06/14)</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+*/
+          )
         )
       );
     }
@@ -27660,6 +27736,24 @@ module.exports = React.createClass({displayName: "exports",
         projectPanel
       )
     );
+  },
+
+  componentDidMount: function() {
+    ProjectDetailStore.addProjectChangeListener(this.handleProjectChange);
+  },
+
+  componentWillUnmount: function() {
+    ProjectDetailStore.removeProjectChangeListener(this.handleProjectChange);
+  },
+
+  handleProjectChange: function() {
+    this.setState({
+      project: ProjectDetailStore.getProject()
+    });
+  },
+
+  handleSubmit: function(e) {
+    e.preventDefault();
   }
 });
 
@@ -27841,8 +27935,9 @@ module.exports = {
     USER_SIGNED_OUT: null,            // ユーザーがサインアウトした
 
     PROJECT_LIST_REFRESHED: null,     // プロジェクト一覧の更新
-    PROJECT_LIST_ITEM_CLICKED: null,  // プロジェクト一覧のアイテムをクリック
+    PROJECT_LIST_SHOW_DETAIL: null,   // プロジェクト一覧での詳細表示要求
 
+    PROJECT_DETAIL_REFRESHING: null,  // プロジェクト詳細の更新開始
     PROJECT_DETAIL_REFRESHED: null,   // プロジェクト詳細の更新
   })
 };
@@ -28137,7 +28232,7 @@ PageStore.dispatchToken = AppDispatcher.register(function(action) {
       _page = Page.SIGNIN;
       PageStore.emitPageChange();
       break;
-    case ActionTypes.PROJECT_LIST_ITEM_CLICKED:
+    case ActionTypes.PROJECT_LIST_SHOW_DETAIL:
       _page = Page.PROJECT_DETAIL;
       PageStore.emitPageChange();
       break;
@@ -28182,6 +28277,14 @@ var ProjectDetailStore = assign({}, EventEmitter.prototype, {
 
 ProjectDetailStore.dispatchToken = AppDispatcher.register(function(action) {
   switch (action.type) {
+    case ActionTypes.PROJECT_DETAIL_REFRESHING:
+      _project = null;
+      ProjectDetailStore.emitProjectChange();
+      break;
+    case ActionTypes.PROJECT_DETAIL_REFRESHED:
+      _project = action.project;
+      ProjectDetailStore.emitProjectChange();
+      break;
   }
 });
 

@@ -33,6 +33,14 @@ var ProjectDetailStore = assign({}, EventEmitter.prototype, {
 
 ProjectDetailStore.dispatchToken = AppDispatcher.register(function(action) {
   switch (action.type) {
+    case ActionTypes.PROJECT_DETAIL_REFRESHING:
+      _project = null;
+      ProjectDetailStore.emitProjectChange();
+      break;
+    case ActionTypes.PROJECT_DETAIL_REFRESHED:
+      _project = action.project;
+      ProjectDetailStore.emitProjectChange();
+      break;
   }
 });
 

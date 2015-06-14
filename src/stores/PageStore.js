@@ -55,7 +55,7 @@ PageStore.dispatchToken = AppDispatcher.register(function(action) {
       _page = Page.SIGNIN;
       PageStore.emitPageChange();
       break;
-    case ActionTypes.PROJECT_LIST_ITEM_CLICKED:
+    case ActionTypes.PROJECT_LIST_SHOW_DETAIL:
       _page = Page.PROJECT_DETAIL;
       PageStore.emitPageChange();
       break;
