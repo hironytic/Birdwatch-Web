@@ -13,10 +13,12 @@ var EventType = keyMirror({
 });
 
 var _page;
+var _parameter;
 var resolvePage = function() {
   // 認証されていなければサインインページ
   if (CurrentUserStore.getUser() == null) {
     _page = Page.SIGNIN;
+    _parameter = null;
     return;
   }
 
@@ -29,9 +31,18 @@ var resolvePage = function() {
 
   if (fragment == "") {
     _page = Page.PROJECT_LIST;
+    _parameter = null;
   } else {
-    // TODO: fragmentの/以下はパラメータとして扱う
-    _page = fragment;
+    // fragmentの/以下はパラメータとして扱う
+    var paramIx = fragment.indexOf("/");
+    if (paramIx >= 0) {
+      _page = fragment.substring(0, paramIx);
+      _parameter = fragment.substring(paramIx + 1);
+      // FIXME: decode parameter
+    } else {
+      _page = fragment;
+      _parameter = null;
+    }
   }
 }
 resolvePage();
@@ -51,6 +62,10 @@ var PageStore = assign({}, EventEmitter.prototype, {
 
   getPage: function() {
     return _page;
+  },
+
+  getParameter: function() {
+    return _parameter;
   }
 });
 

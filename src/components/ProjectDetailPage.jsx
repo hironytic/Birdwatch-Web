@@ -2,6 +2,7 @@
 var React = require("react");
 var NavBar = require("./NavBar.jsx");
 var ProjectDetailStore = require("../stores/ProjectDetailStore");
+var ProjectDetailActionCreator = require("../actions/ProjectDetailActionCreator");
 
 module.exports = React.createClass({
   getInitialState: function() {
@@ -87,10 +88,22 @@ module.exports = React.createClass({
 
   componentDidMount: function() {
     ProjectDetailStore.addProjectChangeListener(this.handleProjectChange);
+    setTimeout(function() {
+      ProjectDetailActionCreator.loadProjectDetail(this.props.projectId);
+    }.bind(this), 1);
   },
 
   componentWillUnmount: function() {
     ProjectDetailStore.removeProjectChangeListener(this.handleProjectChange);
+    setTimeout(function() {
+      ProjectDetailActionCreator.unloadProjectDetail();
+    }.bind(this), 1);
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    setTimeout(function() {
+      ProjectDetailActionCreator.loadProjectDetail(nextProps.projectId);
+    }.bind(this), 1);
   },
 
   handleProjectChange: function() {

@@ -49,7 +49,9 @@ module.exports = React.createClass({
 
   componentDidMount: function() {
     ProjectListStore.addProjectListChangeListener(this.handleProjectListChange);
-    ProjectListActionCreator.refreshList();
+    setTimeout(function() {
+      ProjectListActionCreator.refreshList();
+    }.bind(this), 1);
   },
 
   componentWillUnmount: function() {

@@ -11,7 +11,8 @@ var Page = AppConstants.Page;
 module.exports = React.createClass({
   getInitialState: function() {
     return {
-      page: PageStore.getPage()
+      page: PageStore.getPage(),
+      parameter: PageStore.getParameter()
     };
   },
   render: function() {
@@ -23,7 +24,7 @@ module.exports = React.createClass({
         return <ProjectListPage/>;
         break;
       case Page.PROJECT_DETAIL:
-        return <ProjectDetailPage/>;
+        return <ProjectDetailPage projectId={this.state.parameter}/>;
         break;
 
       default:
@@ -39,7 +40,8 @@ module.exports = React.createClass({
 
   handlePageChange: function() {
     this.setState({
-      page: PageStore.getPage()
+      page: PageStore.getPage(),
+      parameter: PageStore.getParameter()
     });
   }
 });
