@@ -1,5 +1,8 @@
 "use strict";
 var React = require("react/addons");
+var ReactBootstrap = require('react-bootstrap')
+var Input = ReactBootstrap.Input;
+var ButtonInput = ReactBootstrap.ButtonInput;
 var HeaderBar = require("./HeaderBar.jsx");
 var CurrentUserStore = require("../stores/CurrentUserStore");
 var UserActionCreator = require("../actions/UserActionCreator");
@@ -19,25 +22,25 @@ var SigninPage = React.createClass({
 
   render: function() {
     var message;
-    var btnClass = "btn btn-block ";
-    var disabled = {};
+    var bsStyle = "primary";
+    var disabled = false;
     switch (this.state.status) {
       case StatusType.NOT_SIGNED_IN:
         message = "サインイン";
-        btnClass += "btn-primary";
+        bsStyle = "primary";
         break;
       case StatusType.SIGNING_IN:
         message = "サインイン中…";
-        btnClass += "btn-default";
-        disabled = {disabled: "disabled"};
+        bsStyle = "default";
+        disabled = true;
         break;
       case StatusType.FAILED_TO_SIGN_IN:
         message = "エラー";
-        btnClass += "btn-danger";
+        bsStyle = "danger";
         break;
       case StatusType.SIGNED_IN:
         message = "成功";
-        btnClass += "btn-success";
+        bsStyle = "success";
         break;
     }
 
@@ -46,25 +49,22 @@ var SigninPage = React.createClass({
         <HeaderBar/>
         <div className="container">
           <form className="form-horizontal" action="#" onSubmit={this.handleSubmit}>
-            <div className="form-group">
-              <label htmlFor="user" className="col-sm-2 col-sm-offset-2 control-label">ユーザー名</label>
-              <div className="col-sm-5">
-                <input className="form-control" type="text" id="user" valueLink={this.linkState('userName')} />
-              </div>
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="password" className="col-sm-2 col-sm-offset-2 control-label">パスワード</label>
-              <div className="col-sm-5">
-                <input className="form-control" type="password" id="password" valueLink={this.linkState('password')} />
-              </div>
-            </div>
-
-            <div className="form-group">
-              <div className="col-sm-5 col-sm-offset-4">
-                <button className={btnClass} type="submit" {...disabled}>{message}</button>
-              </div>
-            </div>
+            <Input type="text"
+                  label="ユーザー名"
+                  labelClassName="col-xs-2 col-xs-offset-2"
+                  wrapperClassName="col-xs-5"
+                  valueLink={this.linkState('userName')}/>
+            <Input type="password"
+                  label="パスワード"
+                  labelClassName="col-xs-2 col-xs-offset-2"
+                  wrapperClassName="col-xs-5"
+                  valueLink={this.linkState('password')}/>
+            <ButtonInput type="submit"
+                        wrapperClassName="col-xs-5 col-xs-offset-4"
+                        bsStyle={bsStyle}
+                        disabled={disabled}
+                        value={message}
+                        block/>
           </form>
         </div>
       </div>
