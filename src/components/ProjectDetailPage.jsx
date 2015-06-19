@@ -1,6 +1,6 @@
 "use strict";
 var React = require("react");
-var NavBar = require("./NavBar.jsx");
+var HeaderBar = require("./HeaderBar.jsx");
 var ProjectDetailStore = require("../stores/ProjectDetailStore");
 var ProjectDetailActionCreator = require("../actions/ProjectDetailActionCreator");
 
@@ -80,7 +80,7 @@ var ProjectDetailPage = React.createClass({
 
     return (
       <div>
-        <NavBar title="プロジェクト詳細" />
+        <HeaderBar/>
         {projectPanel}
       </div>
     );

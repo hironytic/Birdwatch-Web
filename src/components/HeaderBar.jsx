@@ -1,9 +1,13 @@
 "use strict";
 var React = require("react")
+var ReactBootstrap = require('react-bootstrap')
+var Navbar = ReactBootstrap.Navbar;
+var Nav = ReactBootstrap.Nav;
+var NavItem = ReactBootstrap.NavItem;
 var CurrentUserStore = require("../stores/CurrentUserStore");
 var UserActionCreator = require("../actions/UserActionCreator");
 
-var NavBar = React.createClass({
+var HeaderBar = React.createClass({
   getInitialState: function() {
     return {
       user: CurrentUserStore.getUser()
@@ -14,20 +18,16 @@ var NavBar = React.createClass({
     var signOut = '';
     if (this.state.user != null) {
       signOut = (
-        <li><button className="btn btn-link" onClick={this.handleSignOut}>サインアウト</button></li>
+        <NavItem onClick={this.handleSignOut}>サインアウト</NavItem>
       );
     }
+
     return (
-      <div className="navbar navbar-default navbar-static-top">
-        <div className="container-fluid">
-          <h1>Birdwatch <small>{this.props.title}</small></h1>
-          <div className="navbar-collapse collapse navbar-responsive-collapse navbar-right">
-            <ul className="nav navbar-nav">
-              {signOut}
-            </ul>
-          </div>
-        </div>
-      </div>
+      <Navbar brand="Birdwatch">
+        <Nav right>
+          {signOut}
+        </Nav>
+      </Navbar>
     );
   },
 
@@ -52,4 +52,4 @@ var NavBar = React.createClass({
 
 });
 
-module.exports = NavBar;
+module.exports = HeaderBar;

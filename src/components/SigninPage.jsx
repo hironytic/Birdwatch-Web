@@ -1,6 +1,6 @@
 "use strict";
 var React = require("react/addons");
-var NavBar = require("./NavBar.jsx");
+var HeaderBar = require("./HeaderBar.jsx");
 var CurrentUserStore = require("../stores/CurrentUserStore");
 var UserActionCreator = require("../actions/UserActionCreator");
 
@@ -43,7 +43,7 @@ var SigninPage = React.createClass({
 
     return (
       <div>
-        <NavBar title="サインイン" />
+        <HeaderBar/>
         <div className="container">
           <form className="form-horizontal" action="#" onSubmit={this.handleSubmit}>
             <div className="form-group">

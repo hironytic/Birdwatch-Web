@@ -1,6 +1,6 @@
 "use strict";
 var React = require("react");
-var NavBar = require("./NavBar.jsx");
+var HeaderBar = require("./HeaderBar.jsx");
 var ProjectListStore = require("../stores/ProjectListStore");
 var ProjectListActionCreator = require("../actions/ProjectListActionCreator");
 
@@ -26,7 +26,7 @@ var ProjectListPage = React.createClass({
 
     return (
       <div>
-        <NavBar title="プロジェクト一覧" />
+        <HeaderBar/>
         <div className="container">
           <div className="table-responsive">
             <table className="table table-hover">
