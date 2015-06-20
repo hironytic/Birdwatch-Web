@@ -1,5 +1,8 @@
 "use strict";
 var React = require("react");
+var ReactBootstrap = require('react-bootstrap')
+var Panel = ReactBootstrap.Panel;
+var Table = ReactBootstrap.Table;
 var HeaderBar = require("./HeaderBar.jsx");
 var ProjectListStore = require("../stores/ProjectListStore");
 var ProjectListActionCreator = require("../actions/ProjectListActionCreator");
@@ -28,8 +31,8 @@ var ProjectListPage = React.createClass({
       <div>
         <HeaderBar/>
         <div className="container">
-          <div className="table-responsive">
-            <table className="table table-hover">
+          <Panel header="プロジェクト一覧" bsStyle="primary">
+            <Table hover fill>
               <thead>
                 {/* <th style={{width: "20px"}}></th> */}
                 <th>OS</th>
@@ -40,9 +43,28 @@ var ProjectListPage = React.createClass({
               <tbody>
                 {projectItems}
               </tbody>
+            </Table>
+          </Panel>
+        </div>
+
+{/*
+        <div className="container">
+          <div className="table-responsive">
+            <table className="table table-hover">
+              <thead>
+                <th style={{width: "20px"}}></th>
+                <th>OS</th>
+                <th>名称</th>
+                <th>内部バージョン</th>
+                <th>プロジェクトコード</th>
+              </thead>
+              <tbody>
+                projectItems
+              </tbody>
             </table>
           </div>
         </div>
+*/}
       </div>
     );
   },

@@ -35370,6 +35370,9 @@ module.exports = MainContent;
 },{"../constants/AppConstants":263,"../stores/PageStore":270,"./ProjectDetailPage.jsx":260,"./ProjectListPage.jsx":261,"./SigninPage.jsx":262,"react":252}],260:[function(require,module,exports){
 "use strict";
 var React = require("react");
+var ReactBootstrap = require('react-bootstrap')
+var Panel = ReactBootstrap.Panel;
+var FormControls = ReactBootstrap.FormControls;
 var HeaderBar = require("./HeaderBar.jsx");
 var ProjectDetailStore = require("../stores/ProjectDetailStore");
 var ProjectDetailActionCreator = require("../actions/ProjectDetailActionCreator");
@@ -35390,36 +35393,11 @@ var ProjectDetailPage = React.createClass({displayName: "ProjectDetailPage",
       projectPanel = (
         React.createElement("div", {className: "container"}, 
           React.createElement("form", {className: "form-horizontal", action: "#", onSubmit: this.handleSubmit}, 
-            React.createElement("div", {className: "form-group"}, 
-              React.createElement("label", {className: "col-sm-4 control-label"}, "名称"), 
-              React.createElement("div", {className: "col-sm-8"}, 
-                React.createElement("p", {className: "form-control-static"}, project.getName())
-              )
-            ), 
-            React.createElement("div", {className: "form-group"}, 
-              React.createElement("label", {className: "col-sm-4 control-label"}, "プロジェクトコード"), 
-              React.createElement("div", {className: "col-sm-8"}, 
-                React.createElement("p", {className: "form-control-static"}, project.getProjectCode())
-              )
-            ), 
-            React.createElement("div", {className: "form-group"}, 
-              React.createElement("label", {className: "col-sm-4 control-label"}, "プロダクト"), 
-              React.createElement("div", {className: "col-sm-8"}, 
-                React.createElement("p", {className: "form-control-static"}, project.getFamily().getName())
-              )
-            ), 
-            React.createElement("div", {className: "form-group"}, 
-              React.createElement("label", {className: "col-sm-4 control-label"}, "OS"), 
-              React.createElement("div", {className: "col-sm-8"}, 
-                React.createElement("p", {className: "form-control-static"}, project.getPlatform().getName())
-              )
-            ), 
-            React.createElement("div", {className: "form-group"}, 
-              React.createElement("label", {className: "col-sm-4 control-label"}, "内部バージョン"), 
-              React.createElement("div", {className: "col-sm-8"}, 
-                React.createElement("p", {className: "form-control-static"}, project.getVersion())
-              )
-            )
+            React.createElement(FormControls.Static, {label: "名称", labelClassName: "col-xs-4", wrapperClassName: "col-xs-8", value: project.getName()}), 
+            React.createElement(FormControls.Static, {label: "プロジェクトコード", labelClassName: "col-xs-4", wrapperClassName: "col-xs-8", value: project.getProjectCode()}), 
+            React.createElement(FormControls.Static, {label: "プロダクト", labelClassName: "col-xs-4", wrapperClassName: "col-xs-8", value: project.getFamily().getName()}), 
+            React.createElement(FormControls.Static, {label: "OS", labelClassName: "col-xs-4", wrapperClassName: "col-xs-8", value: project.getPlatform().getName()}), 
+            React.createElement(FormControls.Static, {label: "内部バージョン", labelClassName: "col-xs-4", wrapperClassName: "col-xs-8", value: project.getVersion()})
 /*
             <div className="form-group">
               <label className="col-sm-4 control-label">マイルストーン</label>
@@ -35485,9 +35463,12 @@ var ProjectDetailPage = React.createClass({displayName: "ProjectDetailPage",
 
 module.exports = ProjectDetailPage;
 
-},{"../actions/ProjectDetailActionCreator":255,"../stores/ProjectDetailStore":271,"./HeaderBar.jsx":258,"react":252}],261:[function(require,module,exports){
+},{"../actions/ProjectDetailActionCreator":255,"../stores/ProjectDetailStore":271,"./HeaderBar.jsx":258,"react":252,"react-bootstrap":66}],261:[function(require,module,exports){
 "use strict";
 var React = require("react");
+var ReactBootstrap = require('react-bootstrap')
+var Panel = ReactBootstrap.Panel;
+var Table = ReactBootstrap.Table;
 var HeaderBar = require("./HeaderBar.jsx");
 var ProjectListStore = require("../stores/ProjectListStore");
 var ProjectListActionCreator = require("../actions/ProjectListActionCreator");
@@ -35516,8 +35497,8 @@ var ProjectListPage = React.createClass({displayName: "ProjectListPage",
       React.createElement("div", null, 
         React.createElement(HeaderBar, null), 
         React.createElement("div", {className: "container"}, 
-          React.createElement("div", {className: "table-responsive"}, 
-            React.createElement("table", {className: "table table-hover"}, 
+          React.createElement(Panel, {header: "プロジェクト一覧", bsStyle: "primary"}, 
+            React.createElement(Table, {hover: true, fill: true}, 
               React.createElement("thead", null, 
                 /* <th style={{width: "20px"}}></th> */
                 React.createElement("th", null, "OS"), 
@@ -35531,6 +35512,25 @@ var ProjectListPage = React.createClass({displayName: "ProjectListPage",
             )
           )
         )
+
+/*
+        <div className="container">
+          <div className="table-responsive">
+            <table className="table table-hover">
+              <thead>
+                <th style={{width: "20px"}}></th>
+                <th>OS</th>
+                <th>名称</th>
+                <th>内部バージョン</th>
+                <th>プロジェクトコード</th>
+              </thead>
+              <tbody>
+                projectItems
+              </tbody>
+            </table>
+          </div>
+        </div>
+*/
       )
     );
   },
@@ -35557,7 +35557,7 @@ var ProjectListPage = React.createClass({displayName: "ProjectListPage",
 
 module.exports = ProjectListPage;
 
-},{"../actions/ProjectListActionCreator":256,"../stores/ProjectListStore":272,"./HeaderBar.jsx":258,"react":252}],262:[function(require,module,exports){
+},{"../actions/ProjectListActionCreator":256,"../stores/ProjectListStore":272,"./HeaderBar.jsx":258,"react":252,"react-bootstrap":66}],262:[function(require,module,exports){
 "use strict";
 var React = require("react/addons");
 var ReactBootstrap = require('react-bootstrap')
@@ -35625,28 +35625,6 @@ var SigninPage = React.createClass({displayName: "SigninPage",
                         disabled: disabled, 
                         value: message, 
                         block: true})
-/*
-
-
-            <div className="form-group">
-              <label htmlFor="user" className="col-sm-2 col-sm-offset-2 control-label">ユーザー名</label>
-              <div className="col-sm-5">
-                <input className="form-control" type="text" id="user" valueLink={this.linkState('userName')} />
-              </div>
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="password" className="col-sm-2 col-sm-offset-2 control-label">パスワード</label>
-              <div className="col-sm-5">
-                <input className="form-control" type="password" id="password" valueLink={this.linkState('password')} />
-              </div>
-            </div>
-            <div className="form-group">
-              <div className="col-sm-5 col-sm-offset-4">
-                <button className={btnClass} type="submit" {...disabled}>{message}</button>
-              </div>
-            </div>
-            */
           )
         )
       )
