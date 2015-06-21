@@ -1,13 +1,22 @@
 "use strict";
-var React = require("react")
-var MainContent = require("./components/MainContent.jsx")
-var AppDispatcher = require("./dispatcher/AppDispatcher");
-var AppConstants = require("./constants/AppConstants");
+var React = require("react");
+var ReactRouter = require("react-router");
+var Router = ReactRouter.Router;
+var Route = ReactRouter.Route;
+var HashHistory = require("react-router/lib/HashHistory");
 
-React.render(<MainContent />, document.getElementById('main-content'));
+var AppFrame = require("./components/AppFrame.jsx");
+var Signin = require("./components/Signin.jsx");
+var Project = require("./components/Project.jsx");
+var ProjectDetail = require("./components/ProjectDetail.jsx");
 
-window.addEventListener("hashchange", function(e) {
-  AppDispatcher.dispatch({
-    type: AppConstants.ActionTypes.PAGE_CHANGED,
-  });
-});
+React.render((
+  <Router history={new HashHistory}>
+    <Route path="/" component={AppFrame}>
+      <Route path="signin" component={Signin}/>
+      <Route path="project" component={Project}>
+        <Route path=":id" component={ProjectDetail}/>
+      </Route>
+    </Route>
+  </Router>
+), document.getElementById('main-content'));

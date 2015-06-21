@@ -1,16 +1,18 @@
 "use strict";
 var React = require("react/addons");
+var ReactRouter = require("react-router");
 var ReactBootstrap = require('react-bootstrap')
 var Input = ReactBootstrap.Input;
 var ButtonInput = ReactBootstrap.ButtonInput;
+
 var HeaderBar = require("./HeaderBar.jsx");
 var CurrentUserStore = require("../stores/CurrentUserStore");
 var UserActionCreator = require("../actions/UserActionCreator");
 
 var StatusType = CurrentUserStore.StatusType;
 
-var SigninPage = React.createClass({
-  mixins: [React.addons.LinkedStateMixin],
+var Signin = React.createClass({
+  mixins: [React.addons.LinkedStateMixin, ReactRouter.Navigation],
 
   getInitialState: function() {
     return {
@@ -38,15 +40,10 @@ var SigninPage = React.createClass({
         message = "エラー";
         bsStyle = "danger";
         break;
-      case StatusType.SIGNED_IN:
-        message = "成功";
-        bsStyle = "success";
-        break;
     }
 
     return (
       <div>
-        <HeaderBar/>
         <div className="container">
           <form className="form-horizontal" action="#" onSubmit={this.handleSubmit}>
             <Input type="text"
@@ -87,10 +84,23 @@ var SigninPage = React.createClass({
   },
 
   handleUserStatusChange: function() {
-    this.setState({
-      status: CurrentUserStore.getStatus()
-    });
+    var status = CurrentUserStore.getStatus();
+    if (status == StatusType.SIGNED_IN) {
+      // サインインしたら元のページへ
+      var path = this.props.location.query.path;
+      if (path.lastIndexOf("/signin", 0) == 0) {
+        path = null;
+      }
+      if (path == null) {
+        path = "/project";
+      }
+      this.replaceWith(path);
+    } else {
+      this.setState({
+        status: status
+      });
+    }
   }
 });
 
-module.exports = SigninPage;
+module.exports = Signin;
