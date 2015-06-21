@@ -87,9 +87,12 @@ var Signin = React.createClass({
     var status = CurrentUserStore.getStatus();
     if (status == StatusType.SIGNED_IN) {
       // サインインしたら元のページへ
-      var path = this.props.location.query.path;
-      if (path.lastIndexOf("/signin", 0) == 0) {
-        path = null;
+      var path = null;
+      if (this.props.location.query != null) {
+        path = this.props.location.query.path;
+        if (path.lastIndexOf("/signin", 0) == 0) {
+          path = null;
+        }
       }
       if (path == null) {
         path = "/project";
