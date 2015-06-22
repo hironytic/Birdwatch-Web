@@ -37966,7 +37966,7 @@ React.render((
   )
 ), document.getElementById('main-content'));
 
-},{"./components/AppFrame.jsx":288,"./components/Project.jsx":291,"./components/ProjectDetail.jsx":292,"./components/Signin.jsx":295,"react":282,"react-router":101,"react-router/lib/HashHistory":83}],284:[function(require,module,exports){
+},{"./components/AppFrame.jsx":288,"./components/Project.jsx":290,"./components/ProjectDetail.jsx":291,"./components/Signin.jsx":292,"react":282,"react-router":101,"react-router/lib/HashHistory":83}],284:[function(require,module,exports){
 "use strict";
 var AppDispatcher = require("../dispatcher/AppDispatcher");
 var AppConstants = require("../constants/AppConstants");
@@ -37988,7 +37988,7 @@ module.exports = {
   }
 };
 
-},{"../constants/AppConstants":296,"../dispatcher/AppDispatcher":297}],285:[function(require,module,exports){
+},{"../constants/AppConstants":293,"../dispatcher/AppDispatcher":294}],285:[function(require,module,exports){
 "use strict";
 var AppDispatcher = require("../dispatcher/AppDispatcher");
 var AppConstants = require("../constants/AppConstants");
@@ -38028,7 +38028,7 @@ module.exports = {
   }
 };
 
-},{"../constants/AppConstants":296,"../dispatcher/AppDispatcher":297,"../objects/Project":301}],286:[function(require,module,exports){
+},{"../constants/AppConstants":293,"../dispatcher/AppDispatcher":294,"../objects/Project":298}],286:[function(require,module,exports){
 "use strict";
 var AppDispatcher = require("../dispatcher/AppDispatcher");
 var AppConstants = require("../constants/AppConstants");
@@ -38061,7 +38061,7 @@ module.exports = {
   }
 };
 
-},{"../constants/AppConstants":296,"../dispatcher/AppDispatcher":297,"../objects/Project":301,"./PageUtils":284,"immutable":6}],287:[function(require,module,exports){
+},{"../constants/AppConstants":293,"../dispatcher/AppDispatcher":294,"../objects/Project":298,"./PageUtils":284,"immutable":6}],287:[function(require,module,exports){
 "use strict";
 var AppDispatcher = require("../dispatcher/AppDispatcher");
 var AppConstants = require("../constants/AppConstants");
@@ -38096,7 +38096,7 @@ module.exports = {
   }
 };
 
-},{"../constants/AppConstants":296,"../dispatcher/AppDispatcher":297}],288:[function(require,module,exports){
+},{"../constants/AppConstants":293,"../dispatcher/AppDispatcher":294}],288:[function(require,module,exports){
 "use strict";
 var React = require("react");
 var ReactRouter = require("react-router");
@@ -38141,7 +38141,7 @@ var AppFrame = React.createClass({displayName: "AppFrame",
 
 module.exports = AppFrame;
 
-},{"../stores/CurrentUserStore":302,"./HeaderBar.jsx":289,"react":282,"react-router":101}],289:[function(require,module,exports){
+},{"../stores/CurrentUserStore":299,"./HeaderBar.jsx":289,"react":282,"react-router":101}],289:[function(require,module,exports){
 "use strict";
 var React = require("react")
 var ReactBootstrap = require('react-bootstrap')
@@ -38198,58 +38198,7 @@ var HeaderBar = React.createClass({displayName: "HeaderBar",
 
 module.exports = HeaderBar;
 
-},{"../actions/UserActionCreator":287,"../stores/CurrentUserStore":302,"react":282,"react-bootstrap":66}],290:[function(require,module,exports){
-"use strict";
-var React = require("react")
-var AppConstants = require("../constants/AppConstants");
-//var SigninPage = require("./SigninPage.jsx");
-var ProjectListPage = require("./ProjectListPage.jsx");
-var ProjectDetailPage = require("./ProjectDetailPage.jsx");
-var PageStore = require("../stores/PageStore");
-
-var Page = AppConstants.Page;
-
-var MainContent = React.createClass({displayName: "MainContent",
-  getInitialState: function() {
-    return {
-      page: PageStore.getPage(),
-      parameter: PageStore.getParameter()
-    };
-  },
-  render: function() {
-    switch (this.state.page) {
-      // case Page.SIGNIN:
-      //   return <SigninPage/>;
-      //   break;
-      case Page.PROJECT_LIST:
-        return React.createElement(ProjectListPage, null);
-        break;
-      case Page.PROJECT_DETAIL:
-        return React.createElement(ProjectDetailPage, {projectId: this.state.parameter});
-        break;
-
-      default:
-        return (React.createElement("div", null));
-    }
-  },
-  componentDidMount: function() {
-    PageStore.addPageChangeListener(this.handlePageChange);
-  },
-  componentWillUnmount: function() {
-    PageStore.removePageChangeListener(this.handlePageChange);
-  },
-
-  handlePageChange: function() {
-    this.setState({
-      page: PageStore.getPage(),
-      parameter: PageStore.getParameter()
-    });
-  }
-});
-
-module.exports = MainContent;
-
-},{"../constants/AppConstants":296,"../stores/PageStore":303,"./ProjectDetailPage.jsx":293,"./ProjectListPage.jsx":294,"react":282}],291:[function(require,module,exports){
+},{"../actions/UserActionCreator":287,"../stores/CurrentUserStore":299,"react":282,"react-bootstrap":66}],290:[function(require,module,exports){
 "use strict";
 var React = require("react/addons");
 var ReactRouter = require("react-router");
@@ -38335,59 +38284,18 @@ var Project = React.createClass({displayName: "Project",
 
 module.exports = Project;
 
-},{"../actions/ProjectListActionCreator":286,"../stores/ProjectListStore":305,"react-bootstrap":66,"react-router":101,"react/addons":110}],292:[function(require,module,exports){
+},{"../actions/ProjectListActionCreator":286,"../stores/ProjectListStore":302,"react-bootstrap":66,"react-router":101,"react/addons":110}],291:[function(require,module,exports){
 "use strict";
 var React = require("react/addons");
 var ReactRouter = require("react-router");
 var ReactBootstrap = require('react-bootstrap');
-
-var ProjectDetail = React.createClass({displayName: "ProjectDetail",
-  render: function() {
-    return (
-      React.createElement("div", null, 
-        "しょうさい", React.createElement("br", null), 
-        "しょうさい", React.createElement("br", null), 
-        "しょうさい", React.createElement("br", null), 
-        "しょうさい", React.createElement("br", null), 
-        "しょうさい", React.createElement("br", null), 
-        "しょうさい", React.createElement("br", null), 
-        "しょうさい", React.createElement("br", null), 
-        "しょうさい", React.createElement("br", null), 
-        "しょうさい", React.createElement("br", null), 
-        "しょうさい", React.createElement("br", null), 
-        "しょうさい", React.createElement("br", null), 
-        "しょうさい", React.createElement("br", null), 
-        "しょうさい", React.createElement("br", null), 
-        "しょうさい", React.createElement("br", null), 
-        "しょうさい", React.createElement("br", null), 
-        "しょうさい", React.createElement("br", null), 
-        "しょうさい", React.createElement("br", null), 
-        "しょうさい", React.createElement("br", null), 
-        "しょうさい", React.createElement("br", null), 
-        "しょうさい", React.createElement("br", null), 
-        "しょうさい", React.createElement("br", null), 
-        "しょうさい", React.createElement("br", null), 
-        "しょうさい", React.createElement("br", null), 
-        "しょうさい", React.createElement("br", null), 
-        "しょうさい", React.createElement("br", null)
-      )
-    );
-  }
-});
-
-module.exports = ProjectDetail;
-
-},{"react-bootstrap":66,"react-router":101,"react/addons":110}],293:[function(require,module,exports){
-"use strict";
-var React = require("react");
-var ReactBootstrap = require('react-bootstrap')
 var Panel = ReactBootstrap.Panel;
 var FormControls = ReactBootstrap.FormControls;
-var HeaderBar = require("./HeaderBar.jsx");
+
 var ProjectDetailStore = require("../stores/ProjectDetailStore");
 var ProjectDetailActionCreator = require("../actions/ProjectDetailActionCreator");
 
-var ProjectDetailPage = React.createClass({displayName: "ProjectDetailPage",
+var ProjectDetail = React.createClass({displayName: "ProjectDetail",
   getInitialState: function() {
     return {
       project: ProjectDetailStore.getProject()
@@ -38395,68 +38303,65 @@ var ProjectDetailPage = React.createClass({displayName: "ProjectDetailPage",
   },
 
   render: function() {
-    var projectPanel;
+    var projectForm;
     var project = this.state.project;
     if (project == null) {
-      projectPanel = React.createElement("div", null)
+      projectForm = "";
     } else {
-      projectPanel = (
-        React.createElement("div", {className: "container"}, 
-          React.createElement("form", {className: "form-horizontal", action: "#", onSubmit: this.handleSubmit}, 
-            React.createElement(FormControls.Static, {label: "名称", labelClassName: "col-xs-4", wrapperClassName: "col-xs-8", value: project.getName()}), 
-            React.createElement(FormControls.Static, {label: "プロジェクトコード", labelClassName: "col-xs-4", wrapperClassName: "col-xs-8", value: project.getProjectCode()}), 
-            React.createElement(FormControls.Static, {label: "プロダクト", labelClassName: "col-xs-4", wrapperClassName: "col-xs-8", value: project.getFamily().getName()}), 
-            React.createElement(FormControls.Static, {label: "OS", labelClassName: "col-xs-4", wrapperClassName: "col-xs-8", value: project.getPlatform().getName()}), 
-            React.createElement(FormControls.Static, {label: "内部バージョン", labelClassName: "col-xs-4", wrapperClassName: "col-xs-8", value: project.getVersion()})
+      projectForm = (
+        React.createElement("form", {className: "form-horizontal", action: "#", onSubmit: this.handleSubmit}, 
+          React.createElement(FormControls.Static, {label: "名称", labelClassName: "col-xs-4", wrapperClassName: "col-xs-8", value: project.getName()}), 
+          React.createElement(FormControls.Static, {label: "プロジェクトコード", labelClassName: "col-xs-4", wrapperClassName: "col-xs-8", value: project.getProjectCode()}), 
+          React.createElement(FormControls.Static, {label: "プロダクト", labelClassName: "col-xs-4", wrapperClassName: "col-xs-8", value: project.getFamily().getName()}), 
+          React.createElement(FormControls.Static, {label: "OS", labelClassName: "col-xs-4", wrapperClassName: "col-xs-8", value: project.getPlatform().getName()}), 
+          React.createElement(FormControls.Static, {label: "内部バージョン", labelClassName: "col-xs-4", wrapperClassName: "col-xs-8", value: project.getVersion()})
 /*
-            <div className="form-group">
-              <label className="col-sm-4 control-label">マイルストーン</label>
-              <div className="col-sm-8">
-                <table className="table">
-                  <thead>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>開発終了</td>
-                      <td>6月</td>
-                      <td>(2015/06/01)</td>
-                    </tr>
-                    <tr>
-                      <td>コードFix</td>
-                      <td>6/14</td>
-                      <td>(2015/06/14)</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+          <div className="form-group">
+            <label className="col-sm-4 control-label">マイルストーン</label>
+            <div className="col-sm-8">
+              <table className="table">
+                <thead>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>開発終了</td>
+                    <td>6月</td>
+                    <td>(2015/06/01)</td>
+                  </tr>
+                  <tr>
+                    <td>コードFix</td>
+                    <td>6/14</td>
+                    <td>(2015/06/14)</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
+          </div>
 */
-          )
         )
       );
     }
 
     return (
-      React.createElement("div", null, 
-        React.createElement(HeaderBar, null), 
-        projectPanel
+      React.createElement(Panel, null, 
+        projectForm
       )
     );
   },
 
   componentDidMount: function() {
     ProjectDetailStore.addProjectChangeListener(this.handleProjectChange);
-    ProjectDetailActionCreator.loadProjectDetail(this.props.projectId);
+    ProjectDetailActionCreator.loadProjectDetail(this.props.params.id);
   },
 
   componentWillUnmount: function() {
     ProjectDetailStore.removeProjectChangeListener(this.handleProjectChange);
-    ProjectDetailActionCreator.unloadProjectDetail();
+//    ProjectDetailActionCreator.unloadProjectDetail();
   },
 
   componentWillReceiveProps: function(nextProps) {
     setTimeout(function() {
-      ProjectDetailActionCreator.loadProjectDetail(nextProps.projectId);
+      ProjectDetailActionCreator.loadProjectDetail(nextProps.params.id);
     }.bind(this), 1);
   },
 
@@ -38471,103 +38376,9 @@ var ProjectDetailPage = React.createClass({displayName: "ProjectDetailPage",
   }
 });
 
-module.exports = ProjectDetailPage;
+module.exports = ProjectDetail;
 
-},{"../actions/ProjectDetailActionCreator":285,"../stores/ProjectDetailStore":304,"./HeaderBar.jsx":289,"react":282,"react-bootstrap":66}],294:[function(require,module,exports){
-"use strict";
-var React = require("react");
-var ReactBootstrap = require('react-bootstrap')
-var Panel = ReactBootstrap.Panel;
-var Table = ReactBootstrap.Table;
-var HeaderBar = require("./HeaderBar.jsx");
-var ProjectListStore = require("../stores/ProjectListStore");
-var ProjectListActionCreator = require("../actions/ProjectListActionCreator");
-
-var ProjectListPage = React.createClass({displayName: "ProjectListPage",
-  getInitialState: function() {
-    return {
-      projectList: ProjectListStore.getProjectList()
-    };
-  },
-
-  render: function() {
-    var projectItems = this.state.projectList.map(function(project) {
-      return (
-        React.createElement("tr", {key: project.id, onClick: this.handleItemClicked.bind(this, project.id)}, 
-          /*<td style={{backgroundColor: "#eeccee"}}></td>*/ 
-          React.createElement("td", null, project.getPlatform().getName()), 
-          React.createElement("td", null, project.getName()), 
-          React.createElement("td", null, project.getVersion()), 
-          React.createElement("td", null, project.getProjectCode())
-        )
-      );
-    }.bind(this));
-
-    return (
-      React.createElement("div", null, 
-        React.createElement(HeaderBar, null), 
-        React.createElement("div", {className: "container"}, 
-          React.createElement(Panel, {header: "プロジェクト一覧", bsStyle: "primary"}, 
-            React.createElement(Table, {hover: true, fill: true}, 
-              React.createElement("thead", null, 
-                /* <th style={{width: "20px"}}></th> */
-                React.createElement("th", null, "OS"), 
-                React.createElement("th", null, "名称"), 
-                React.createElement("th", null, "内部バージョン"), 
-                React.createElement("th", null, "プロジェクトコード")
-              ), 
-              React.createElement("tbody", null, 
-                projectItems
-              )
-            )
-          )
-        )
-
-/*
-        <div className="container">
-          <div className="table-responsive">
-            <table className="table table-hover">
-              <thead>
-                <th style={{width: "20px"}}></th>
-                <th>OS</th>
-                <th>名称</th>
-                <th>内部バージョン</th>
-                <th>プロジェクトコード</th>
-              </thead>
-              <tbody>
-                projectItems
-              </tbody>
-            </table>
-          </div>
-        </div>
-*/
-      )
-    );
-  },
-
-  componentDidMount: function() {
-    ProjectListStore.addProjectListChangeListener(this.handleProjectListChange);
-    ProjectListActionCreator.refreshList();
-  },
-
-  componentWillUnmount: function() {
-    ProjectListStore.removeProjectListChangeListener(this.handleProjectListChange);
-  },
-
-  handleProjectListChange: function() {
-    this.setState({
-      projectList: ProjectListStore.getProjectList()
-    });
-  },
-
-  handleItemClicked: function(itemId) {
-    ProjectListActionCreator.clickListItem(itemId);
-  }
-});
-
-module.exports = ProjectListPage;
-
-},{"../actions/ProjectListActionCreator":286,"../stores/ProjectListStore":305,"./HeaderBar.jsx":289,"react":282,"react-bootstrap":66}],295:[function(require,module,exports){
+},{"../actions/ProjectDetailActionCreator":285,"../stores/ProjectDetailStore":301,"react-bootstrap":66,"react-router":101,"react/addons":110}],292:[function(require,module,exports){
 "use strict";
 var React = require("react/addons");
 var ReactRouter = require("react-router");
@@ -38678,7 +38489,7 @@ var Signin = React.createClass({displayName: "Signin",
 
 module.exports = Signin;
 
-},{"../actions/UserActionCreator":287,"../stores/CurrentUserStore":302,"./HeaderBar.jsx":289,"react-bootstrap":66,"react-router":101,"react/addons":110}],296:[function(require,module,exports){
+},{"../actions/UserActionCreator":287,"../stores/CurrentUserStore":299,"./HeaderBar.jsx":289,"react-bootstrap":66,"react-router":101,"react/addons":110}],293:[function(require,module,exports){
 "use strict";
 var keyMirror = require('react/lib/keyMirror');
 
@@ -38704,13 +38515,13 @@ module.exports = {
   }
 };
 
-},{"react/lib/keyMirror":266}],297:[function(require,module,exports){
+},{"react/lib/keyMirror":266}],294:[function(require,module,exports){
 "use strict";
 var Dispatcher = require('flux').Dispatcher
 
 module.exports = new Dispatcher();
 
-},{"flux":1}],298:[function(require,module,exports){
+},{"flux":1}],295:[function(require,module,exports){
 "use strict";
 
 var Key = {
@@ -38740,7 +38551,7 @@ var Family = Parse.Object.extend("Family", {
 
 module.exports = Family;
 
-},{}],299:[function(require,module,exports){
+},{}],296:[function(require,module,exports){
 "use strict";
 
 var Key = {
@@ -38770,7 +38581,7 @@ var Milestone = Parse.Object.extend("Milestone", {
 
 module.exports = Milestone;
 
-},{}],300:[function(require,module,exports){
+},{}],297:[function(require,module,exports){
 "use strict";
 
 var Key = {
@@ -38791,7 +38602,7 @@ var Platform = Parse.Object.extend("Platform", {
 
 module.exports = Platform;
 
-},{}],301:[function(require,module,exports){
+},{}],298:[function(require,module,exports){
 "use strict";
 
 var Key = {
@@ -38848,7 +38659,7 @@ var Project = Parse.Object.extend("Project", {
 
 module.exports = Project;
 
-},{}],302:[function(require,module,exports){
+},{}],299:[function(require,module,exports){
 "use strict";
 var AppConstants = require("../constants/AppConstants")
 var AppDispatcher = require("../dispatcher/AppDispatcher");
@@ -38936,7 +38747,7 @@ CurrentUserStore.dispatchToken = AppDispatcher.register(function(action) {
 
 module.exports = CurrentUserStore;
 
-},{"../constants/AppConstants":296,"../dispatcher/AppDispatcher":297,"events":4,"object-assign":7,"react/lib/keyMirror":266}],303:[function(require,module,exports){
+},{"../constants/AppConstants":293,"../dispatcher/AppDispatcher":294,"events":4,"object-assign":7,"react/lib/keyMirror":266}],300:[function(require,module,exports){
 "use strict";
 var AppConstants = require("../constants/AppConstants")
 var AppDispatcher = require("../dispatcher/AppDispatcher");
@@ -39021,7 +38832,7 @@ PageStore.dispatchToken = AppDispatcher.register(function(action) {
 
 module.exports = PageStore;
 
-},{"../constants/AppConstants":296,"../dispatcher/AppDispatcher":297,"./CurrentUserStore":302,"events":4,"object-assign":7,"react/lib/keyMirror":266}],304:[function(require,module,exports){
+},{"../constants/AppConstants":293,"../dispatcher/AppDispatcher":294,"./CurrentUserStore":299,"events":4,"object-assign":7,"react/lib/keyMirror":266}],301:[function(require,module,exports){
 "use strict";
 var AppConstants = require("../constants/AppConstants")
 var AppDispatcher = require("../dispatcher/AppDispatcher");
@@ -39070,7 +38881,7 @@ ProjectDetailStore.dispatchToken = AppDispatcher.register(function(action) {
 
 module.exports = ProjectDetailStore;
 
-},{"../constants/AppConstants":296,"../dispatcher/AppDispatcher":297,"events":4,"object-assign":7,"react/lib/keyMirror":266}],305:[function(require,module,exports){
+},{"../constants/AppConstants":293,"../dispatcher/AppDispatcher":294,"events":4,"object-assign":7,"react/lib/keyMirror":266}],302:[function(require,module,exports){
 "use strict";
 var AppConstants = require("../constants/AppConstants")
 var AppDispatcher = require("../dispatcher/AppDispatcher");
@@ -39116,4 +38927,4 @@ ProjectListStore.dispatchToken = AppDispatcher.register(function(action) {
 
 module.exports = ProjectListStore;
 
-},{"../constants/AppConstants":296,"../dispatcher/AppDispatcher":297,"events":4,"immutable":6,"object-assign":7,"react/lib/keyMirror":266}]},{},[284,285,286,287,296,297,298,299,300,301,302,303,304,305,283,288,289,290,291,292,293,294,295]);
+},{"../constants/AppConstants":293,"../dispatcher/AppDispatcher":294,"events":4,"immutable":6,"object-assign":7,"react/lib/keyMirror":266}]},{},[284,285,286,287,293,294,295,296,297,298,299,300,301,302,283,288,289,290,291,292]);
