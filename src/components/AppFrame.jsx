@@ -12,7 +12,9 @@ var AppFrame = React.createClass({
     return (
       <div>
         <HeaderBar/>
-        {this.props.children}
+        <div style={{padding: "70px"}}>
+          {this.props.children}
+        </div>
       </div>
     );
   },

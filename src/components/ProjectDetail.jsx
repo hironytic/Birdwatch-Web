@@ -5,7 +5,35 @@ var ReactBootstrap = require('react-bootstrap');
 
 var ProjectDetail = React.createClass({
   render: function() {
-    return (<div>しょうさい</div>);
+    return (
+      <div>
+        しょうさい<br/>
+        しょうさい<br/>
+        しょうさい<br/>
+        しょうさい<br/>
+        しょうさい<br/>
+        しょうさい<br/>
+        しょうさい<br/>
+        しょうさい<br/>
+        しょうさい<br/>
+        しょうさい<br/>
+        しょうさい<br/>
+        しょうさい<br/>
+        しょうさい<br/>
+        しょうさい<br/>
+        しょうさい<br/>
+        しょうさい<br/>
+        しょうさい<br/>
+        しょうさい<br/>
+        しょうさい<br/>
+        しょうさい<br/>
+        しょうさい<br/>
+        しょうさい<br/>
+        しょうさい<br/>
+        しょうさい<br/>
+        しょうさい<br/>
+      </div>
+    );
   }
 });
 

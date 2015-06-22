@@ -23,7 +23,7 @@ var HeaderBar = React.createClass({
     }
 
     return (
-      <Navbar brand="Birdwatch">
+      <Navbar brand="Birdwatch" fixedTop>
         <Nav right>
           {signOut}
         </Nav>

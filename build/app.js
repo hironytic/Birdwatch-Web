@@ -38111,7 +38111,9 @@ var AppFrame = React.createClass({displayName: "AppFrame",
     return (
       React.createElement("div", null, 
         React.createElement(HeaderBar, null), 
-        this.props.children
+        React.createElement("div", {style: {padding: "70px"}}, 
+          this.props.children
+        )
       )
     );
   },
@@ -38165,7 +38167,7 @@ var HeaderBar = React.createClass({displayName: "HeaderBar",
     }
 
     return (
-      React.createElement(Navbar, {brand: "Birdwatch"}, 
+      React.createElement(Navbar, {brand: "Birdwatch", fixedTop: true}, 
         React.createElement(Nav, {right: true}, 
           signOut
         )
@@ -38255,6 +38257,13 @@ var ReactBootstrap = require('react-bootstrap');
 var Panel = ReactBootstrap.Panel;
 var ListGroup = ReactBootstrap.ListGroup;
 var ListGroupItem = ReactBootstrap.ListGroupItem;
+var Grid = ReactBootstrap.Grid;
+var Row = ReactBootstrap.Row;
+var Col = ReactBootstrap.Col;
+var ButtonGroup = ReactBootstrap.ButtonGroup;
+var Button = ReactBootstrap.Button;
+var Glyphicon = ReactBootstrap.Glyphicon;
+var Label = ReactBootstrap.Label;
 
 var ProjectListStore = require("../stores/ProjectListStore");
 var ProjectListActionCreator = require("../actions/ProjectListActionCreator");
@@ -38270,21 +38279,36 @@ var Project = React.createClass({displayName: "Project",
 
   render: function() {
     var projectItems = this.state.projectList.map(function(project) {
-      var href = this.makeHref("/project");
+      // var href = this.makeHref("/project/" + project.id);
+      var href = "#/project/" + project.id;
       var isActive = this.isActive("/project/" + project.id);
+      var header = project.getName();
+      var header = (
+        React.createElement("span", null, project.getName(), " ", React.createElement(Label, {bsStyle: "warning"}, project.getPlatform().getName()))
+      );
       return (
-        React.createElement(ListGroupItem, {key: project.id, active: isActive, href: href}, project.getName())
+        React.createElement(ListGroupItem, {key: "id_" + project.id, active: isActive, href: href, header: header}, project.getProjectCode())
       );
     }.bind(this)).toArray();
 
     return (
-      React.createElement("div", {className: "container"}, 
-        React.createElement(Panel, {header: "プロジェクト"}, 
-          React.createElement(ListGroup, {fill: true}, 
-            projectItems
+      React.createElement(Grid, null, 
+        React.createElement(Row, null, 
+          React.createElement(Col, {xs: 4}, 
+            React.createElement(Panel, {header: "プロジェクト", style: {position: "fixed", "height": "512"}}, 
+              React.createElement(ListGroup, {fill: true, style: {height: "470", "overflowY": "scroll"}}, 
+                projectItems, 
+                React.createElement(ListGroupItem, {key: "new", href: "#", onClick: this.handleNewProject}, 
+                  React.createElement(Glyphicon, {glyph: "plus"}), 
+                  "プロジェクトを作成"
+                )
+              )
+            )
+          ), 
+          React.createElement(Col, {xs: 8}, 
+            this.props.children
           )
-        ), 
-        this.props.children
+        )
       )
     );
   },
@@ -38302,6 +38326,10 @@ var Project = React.createClass({displayName: "Project",
     this.setState({
       projectList: ProjectListStore.getProjectList()
     });
+  },
+
+  handleNewProject: function(e) {
+    e.preventDefault();
   }
 });
 
@@ -38315,7 +38343,35 @@ var ReactBootstrap = require('react-bootstrap');
 
 var ProjectDetail = React.createClass({displayName: "ProjectDetail",
   render: function() {
-    return (React.createElement("div", null, "しょうさい"));
+    return (
+      React.createElement("div", null, 
+        "しょうさい", React.createElement("br", null), 
+        "しょうさい", React.createElement("br", null), 
+        "しょうさい", React.createElement("br", null), 
+        "しょうさい", React.createElement("br", null), 
+        "しょうさい", React.createElement("br", null), 
+        "しょうさい", React.createElement("br", null), 
+        "しょうさい", React.createElement("br", null), 
+        "しょうさい", React.createElement("br", null), 
+        "しょうさい", React.createElement("br", null), 
+        "しょうさい", React.createElement("br", null), 
+        "しょうさい", React.createElement("br", null), 
+        "しょうさい", React.createElement("br", null), 
+        "しょうさい", React.createElement("br", null), 
+        "しょうさい", React.createElement("br", null), 
+        "しょうさい", React.createElement("br", null), 
+        "しょうさい", React.createElement("br", null), 
+        "しょうさい", React.createElement("br", null), 
+        "しょうさい", React.createElement("br", null), 
+        "しょうさい", React.createElement("br", null), 
+        "しょうさい", React.createElement("br", null), 
+        "しょうさい", React.createElement("br", null), 
+        "しょうさい", React.createElement("br", null), 
+        "しょうさい", React.createElement("br", null), 
+        "しょうさい", React.createElement("br", null), 
+        "しょうさい", React.createElement("br", null)
+      )
+    );
   }
 });
 
