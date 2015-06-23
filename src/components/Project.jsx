@@ -28,10 +28,10 @@ var Project = React.createClass({
 
   render: function() {
     return (
-      <Grid>
+      <Grid fluid>
         <Row>
           <Col xs={4}>
-            <Panel header="プロジェクト" style={{position: "fixed", "height": "512"}}>
+            <Panel header="プロジェクト" style={{height: "512"}}>
               {this.renderProjectList()}
             </Panel>
           </Col>

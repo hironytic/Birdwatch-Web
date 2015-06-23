@@ -38194,10 +38194,10 @@ var Project = React.createClass({displayName: "Project",
 
   render: function() {
     return (
-      React.createElement(Grid, null, 
+      React.createElement(Grid, {fluid: true}, 
         React.createElement(Row, null, 
           React.createElement(Col, {xs: 4}, 
-            React.createElement(Panel, {header: "プロジェクト", style: {position: "fixed", "height": "512"}}, 
+            React.createElement(Panel, {header: "プロジェクト", style: {height: "512"}}, 
               this.renderProjectList()
             )
           ), 
