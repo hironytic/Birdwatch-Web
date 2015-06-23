@@ -38473,7 +38473,7 @@ var Signin = React.createClass({displayName: "Signin",
       var path = null;
       if (this.props.location.query != null) {
         path = this.props.location.query.path;
-        if (path.lastIndexOf("/signin", 0) == 0) {
+        if (path.lastIndexOf("/signin", 0) == 0 || path == "/") {
           path = null;
         }
       }
