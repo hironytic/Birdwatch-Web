@@ -12,6 +12,7 @@ var EventType = keyMirror({
 });
 
 var _projectList = Immutable.List();
+var _loading = false;
 
 var ProjectListStore = assign({}, EventEmitter.prototype, {
   emitProjectListChange: function() {
@@ -26,15 +27,24 @@ var ProjectListStore = assign({}, EventEmitter.prototype, {
     this.removeListener(EventType.PROJECT_LIST_CHANGE, callback);
   },
 
-  getProjectList : function() {
+  getProjectList: function() {
     return _projectList;
-  }
+  },
 
+  isLoading: function() {
+    return _loading;
+  }
 });
 
 ProjectListStore.dispatchToken = AppDispatcher.register(function(action) {
   switch (action.type) {
-    case ActionTypes.PROJECT_LIST_REFRESHED:
+    case ActionTypes.PROJECT_LIST_LOADING:
+      _loading = true;
+      _projectList = Immutable.List();
+      ProjectListStore.emitProjectListChange();
+      break;
+    case ActionTypes.PROJECT_LIST_LOADED:
+      _loading = false;
       _projectList = action.projectList;
       ProjectListStore.emitProjectListChange();
       break;

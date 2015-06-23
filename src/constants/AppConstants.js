@@ -8,10 +8,11 @@ module.exports = {
     USER_FAILED_TO_SIGN_IN: null,     // ユーザーのサインインに失敗
     USER_SIGNED_OUT: null,            // ユーザーがサインアウトした
 
-    PROJECT_LIST_REFRESHED: null,     // プロジェクト一覧の更新
+    PROJECT_LIST_LOADING: null,       // プロジェクト一覧のロード中
+    PROJECT_LIST_LOADED: null,        // プロジェクト一覧のロード完了
 
+    PROJECT_DETAIL_LOADING: null,     // プロジェクト詳細のロード中
     PROJECT_DETAIL_LOADED: null,      // プロジェクト詳細のロード完了
-    PROJECT_DETAIL_UNLOAD: null,      // プロジェクト詳細のアンロード
   }),
 
   Page: {

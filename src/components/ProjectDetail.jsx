@@ -11,7 +11,8 @@ var ProjectDetailActionCreator = require("../actions/ProjectDetailActionCreator"
 var ProjectDetail = React.createClass({
   getInitialState: function() {
     return {
-      project: ProjectDetailStore.getProject()
+      project: ProjectDetailStore.getProject(),
+      isLoading: ProjectDetailStore.isLoading()
     };
   },
 
@@ -20,6 +21,13 @@ var ProjectDetail = React.createClass({
     var project = this.state.project;
     if (project == null) {
       projectForm = "";
+      if (this.state.isLoading) {
+        projectForm = (
+          <div className="text-center">
+            <img src="image/loading.gif"/>
+          </div>
+        );
+      }
     } else {
       projectForm = (
         <form className="form-horizontal" action="#" onSubmit={this.handleSubmit}>
@@ -64,12 +72,13 @@ var ProjectDetail = React.createClass({
 
   componentDidMount: function() {
     ProjectDetailStore.addProjectChangeListener(this.handleProjectChange);
-    ProjectDetailActionCreator.loadProjectDetail(this.props.params.id);
+    setTimeout(function() {
+      ProjectDetailActionCreator.loadProjectDetail(this.props.params.id);
+    }.bind(this), 0);
   },
 
   componentWillUnmount: function() {
     ProjectDetailStore.removeProjectChangeListener(this.handleProjectChange);
-//    ProjectDetailActionCreator.unloadProjectDetail();
   },
 
   componentWillReceiveProps: function(nextProps) {
@@ -80,7 +89,8 @@ var ProjectDetail = React.createClass({
 
   handleProjectChange: function() {
     this.setState({
-      project: ProjectDetailStore.getProject()
+      project: ProjectDetailStore.getProject(),
+      isLoading: ProjectDetailStore.isLoading()
     });
   },
 

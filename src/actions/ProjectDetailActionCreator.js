@@ -6,6 +6,10 @@ var ActionTypes = AppConstants.ActionTypes;
 
 module.exports = {
   loadProjectDetail: function(projectId) {
+    AppDispatcher.dispatch({
+      type: ActionTypes.PROJECT_DETAIL_LOADING
+    });
+
     var query = new Parse.Query(Project);
     query.include(Project.Key.FAMILY);
     query.include(Project.Key.PLATFORM);
@@ -20,19 +24,5 @@ module.exports = {
         // TODO:
       }
     });
-  },
-
-  unloadProjectDetail: function() {
-    var unloadProc = function() {
-      AppDispatcher.dispatch({
-        type: ActionTypes.PROJECT_DETAIL_UNLOAD
-      });
-    };
-
-    if (AppDispatcher.isDispatching()) {
-      setTimeout(unloadProc, 1);
-    } else {
-      unloadProc();
-    }
   }
 };

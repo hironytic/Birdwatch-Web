@@ -37975,6 +37975,10 @@ var ActionTypes = AppConstants.ActionTypes;
 
 module.exports = {
   loadProjectDetail: function(projectId) {
+    AppDispatcher.dispatch({
+      type: ActionTypes.PROJECT_DETAIL_LOADING
+    });
+
     var query = new Parse.Query(Project);
     query.include(Project.Key.FAMILY);
     query.include(Project.Key.PLATFORM);
@@ -37989,20 +37993,6 @@ module.exports = {
         // TODO:
       }
     });
-  },
-
-  unloadProjectDetail: function() {
-    var unloadProc = function() {
-      AppDispatcher.dispatch({
-        type: ActionTypes.PROJECT_DETAIL_UNLOAD
-      });
-    };
-
-    if (AppDispatcher.isDispatching()) {
-      setTimeout(unloadProc, 1);
-    } else {
-      unloadProc();
-    }
   }
 };
 
@@ -38017,13 +38007,17 @@ var ActionTypes = AppConstants.ActionTypes;
 var Page = AppConstants.Page;
 
 module.exports = {
-  refreshList: function() {
+  loadProjectList: function() {
+    AppDispatcher.dispatch({
+      type: ActionTypes.PROJECT_LIST_LOADING
+    })
+
     var query = new Parse.Query(Project);
     query.include(Project.Key.PLATFORM);
     query.find({
       success: function(projects) {
         AppDispatcher.dispatch({
-          type: ActionTypes.PROJECT_LIST_REFRESHED,
+          type: ActionTypes.PROJECT_LIST_LOADED,
           projectList: Immutable.List(projects)
         });
       },
@@ -38195,36 +38189,18 @@ var Project = React.createClass({displayName: "Project",
 
   getInitialState: function() {
     return {
-      projectList: ProjectListStore.getProjectList()
+      projectList: ProjectListStore.getProjectList(),
+      isLoading: ProjectListStore.isLoading()
     };
   },
 
   render: function() {
-    var projectItems = this.state.projectList.map(function(project) {
-      // var href = this.makeHref("/project/" + project.id);
-      var href = "#/project/" + project.id;
-      var isActive = this.isActive("/project/" + project.id);
-      var header = project.getName();
-      var header = (
-        React.createElement("span", null, project.getName(), " ", React.createElement(Label, {bsStyle: "warning"}, project.getPlatform().getName()))
-      );
-      return (
-        React.createElement(ListGroupItem, {key: "id_" + project.id, active: isActive, href: href, header: header}, project.getProjectCode())
-      );
-    }.bind(this)).toArray();
-
     return (
       React.createElement(Grid, null, 
         React.createElement(Row, null, 
           React.createElement(Col, {xs: 4}, 
             React.createElement(Panel, {header: "プロジェクト", style: {position: "fixed", "height": "512"}}, 
-              React.createElement(ListGroup, {fill: true, style: {height: "470", "overflowY": "scroll"}}, 
-                projectItems, 
-                React.createElement(ListGroupItem, {key: "new", href: "#", onClick: this.handleNewProject}, 
-                  React.createElement(Glyphicon, {glyph: "plus"}), 
-                  "プロジェクトを作成"
-                )
-              )
+              this.renderProjectList()
             )
           ), 
           React.createElement(Col, {xs: 8}, 
@@ -38235,9 +38211,53 @@ var Project = React.createClass({displayName: "Project",
     );
   },
 
+  renderProjectList: function() {
+    var projectItems;
+
+    if (this.state.isLoading) {
+      projectItems = (
+        React.createElement(ListGroupItem, {key: "loading"}, 
+          React.createElement("div", {className: "text-center"}, 
+            React.createElement("img", {src: "image/loading.gif"})
+          )
+        )
+      );
+    } else {
+      projectItems = this.state.projectList.map(function(project) {
+        // var href = this.makeHref("/project/" + project.id);
+        var href = "#/project/" + project.id;
+        var isActive = this.isActive("/project/" + project.id);
+        var header = project.getName();
+        var header = (
+          React.createElement("span", null, project.getName(), " ", React.createElement(Label, {bsStyle: "warning"}, project.getPlatform().getName()))
+        );
+        return (
+          React.createElement(ListGroupItem, {key: "id_" + project.id, active: isActive, href: href, header: header}, project.getProjectCode())
+        );
+      }.bind(this));
+      if (true) {
+        projectItems = projectItems.push(
+          React.createElement(ListGroupItem, {key: "new", href: "#", onClick: this.handleNewProject}, 
+            React.createElement(Glyphicon, {glyph: "plus"}), 
+            "プロジェクトを作成"
+          )
+        );
+      }
+      projectItems = projectItems.toArray();
+    }
+
+    return (
+      React.createElement(ListGroup, {fill: true, style: {height: "470", "overflowY": "scroll"}}, 
+        projectItems
+      )
+    );
+  },
+
   componentDidMount: function() {
     ProjectListStore.addProjectListChangeListener(this.handleProjectListChange);
-    ProjectListActionCreator.refreshList();
+    setTimeout(function() {
+      ProjectListActionCreator.loadProjectList();
+    }.bind(this), 0);
   },
 
   componentWillUnmount: function() {
@@ -38246,7 +38266,8 @@ var Project = React.createClass({displayName: "Project",
 
   handleProjectListChange: function() {
     this.setState({
-      projectList: ProjectListStore.getProjectList()
+      projectList: ProjectListStore.getProjectList(),
+      isLoading: ProjectListStore.isLoading()
     });
   },
 
@@ -38271,7 +38292,8 @@ var ProjectDetailActionCreator = require("../actions/ProjectDetailActionCreator"
 var ProjectDetail = React.createClass({displayName: "ProjectDetail",
   getInitialState: function() {
     return {
-      project: ProjectDetailStore.getProject()
+      project: ProjectDetailStore.getProject(),
+      isLoading: ProjectDetailStore.isLoading()
     };
   },
 
@@ -38280,6 +38302,13 @@ var ProjectDetail = React.createClass({displayName: "ProjectDetail",
     var project = this.state.project;
     if (project == null) {
       projectForm = "";
+      if (this.state.isLoading) {
+        projectForm = (
+          React.createElement("div", {className: "text-center"}, 
+            React.createElement("img", {src: "image/loading.gif"})
+          )
+        );
+      }
     } else {
       projectForm = (
         React.createElement("form", {className: "form-horizontal", action: "#", onSubmit: this.handleSubmit}, 
@@ -38324,12 +38353,13 @@ var ProjectDetail = React.createClass({displayName: "ProjectDetail",
 
   componentDidMount: function() {
     ProjectDetailStore.addProjectChangeListener(this.handleProjectChange);
-    ProjectDetailActionCreator.loadProjectDetail(this.props.params.id);
+    setTimeout(function() {
+      ProjectDetailActionCreator.loadProjectDetail(this.props.params.id);
+    }.bind(this), 0);
   },
 
   componentWillUnmount: function() {
     ProjectDetailStore.removeProjectChangeListener(this.handleProjectChange);
-//    ProjectDetailActionCreator.unloadProjectDetail();
   },
 
   componentWillReceiveProps: function(nextProps) {
@@ -38340,7 +38370,8 @@ var ProjectDetail = React.createClass({displayName: "ProjectDetail",
 
   handleProjectChange: function() {
     this.setState({
-      project: ProjectDetailStore.getProject()
+      project: ProjectDetailStore.getProject(),
+      isLoading: ProjectDetailStore.isLoading()
     });
   },
 
@@ -38473,10 +38504,11 @@ module.exports = {
     USER_FAILED_TO_SIGN_IN: null,     // ユーザーのサインインに失敗
     USER_SIGNED_OUT: null,            // ユーザーがサインアウトした
 
-    PROJECT_LIST_REFRESHED: null,     // プロジェクト一覧の更新
+    PROJECT_LIST_LOADING: null,       // プロジェクト一覧のロード中
+    PROJECT_LIST_LOADED: null,        // プロジェクト一覧のロード完了
 
+    PROJECT_DETAIL_LOADING: null,     // プロジェクト詳細のロード中
     PROJECT_DETAIL_LOADED: null,      // プロジェクト詳細のロード完了
-    PROJECT_DETAIL_UNLOAD: null,      // プロジェクト詳細のアンロード
   }),
 
   Page: {
@@ -38728,10 +38760,11 @@ var keyMirror = require("react/lib/keyMirror");
 
 var ActionTypes = AppConstants.ActionTypes;
 var EventType = keyMirror({
-  PROJECT_CHANGE: null,
+  PROJECT_CHANGE: null
 });
 
 var _project = null;
+var _loading = false;
 
 var ProjectDetailStore = assign({}, EventEmitter.prototype, {
   emitProjectChange: function() {
@@ -38746,20 +38779,25 @@ var ProjectDetailStore = assign({}, EventEmitter.prototype, {
     this.removeListener(EventType.PROJECT_CHANGE, callback);
   },
 
-  getProject : function() {
+  getProject: function() {
     return _project;
-  }
+  },
 
+  isLoading: function() {
+    return _loading;
+  }
 });
 
 ProjectDetailStore.dispatchToken = AppDispatcher.register(function(action) {
   switch (action.type) {
-    case ActionTypes.PROJECT_DETAIL_LOADED:
-      _project = action.project;
+    case ActionTypes.PROJECT_DETAIL_LOADING:
+      _loading = true;
+      _project = null;
       ProjectDetailStore.emitProjectChange();
       break;
-    case ActionTypes.PROJECT_DETAIL_UNLOAD:
-      _project = null;
+    case ActionTypes.PROJECT_DETAIL_LOADED:
+      _loading = false;
+      _project = action.project;
       ProjectDetailStore.emitProjectChange();
       break;
   }
@@ -38782,6 +38820,7 @@ var EventType = keyMirror({
 });
 
 var _projectList = Immutable.List();
+var _loading = false;
 
 var ProjectListStore = assign({}, EventEmitter.prototype, {
   emitProjectListChange: function() {
@@ -38796,15 +38835,24 @@ var ProjectListStore = assign({}, EventEmitter.prototype, {
     this.removeListener(EventType.PROJECT_LIST_CHANGE, callback);
   },
 
-  getProjectList : function() {
+  getProjectList: function() {
     return _projectList;
-  }
+  },
 
+  isLoading: function() {
+    return _loading;
+  }
 });
 
 ProjectListStore.dispatchToken = AppDispatcher.register(function(action) {
   switch (action.type) {
-    case ActionTypes.PROJECT_LIST_REFRESHED:
+    case ActionTypes.PROJECT_LIST_LOADING:
+      _loading = true;
+      _projectList = Immutable.List();
+      ProjectListStore.emitProjectListChange();
+      break;
+    case ActionTypes.PROJECT_LIST_LOADED:
+      _loading = false;
       _projectList = action.projectList;
       ProjectListStore.emitProjectListChange();
       break;

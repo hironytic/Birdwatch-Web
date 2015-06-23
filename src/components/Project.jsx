@@ -21,36 +21,18 @@ var Project = React.createClass({
 
   getInitialState: function() {
     return {
-      projectList: ProjectListStore.getProjectList()
+      projectList: ProjectListStore.getProjectList(),
+      isLoading: ProjectListStore.isLoading()
     };
   },
 
   render: function() {
-    var projectItems = this.state.projectList.map(function(project) {
-      // var href = this.makeHref("/project/" + project.id);
-      var href = "#/project/" + project.id;
-      var isActive = this.isActive("/project/" + project.id);
-      var header = project.getName();
-      var header = (
-        <span>{project.getName()} <Label bsStyle="warning">{project.getPlatform().getName()}</Label></span>
-      );
-      return (
-        <ListGroupItem key={"id_" + project.id} active={isActive} href={href} header={header}>{project.getProjectCode()}</ListGroupItem>
-      );
-    }.bind(this)).toArray();
-
     return (
       <Grid>
         <Row>
           <Col xs={4}>
             <Panel header="プロジェクト" style={{position: "fixed", "height": "512"}}>
-              <ListGroup fill style={{height: "470", "overflowY": "scroll"}}>
-                {projectItems}
-                <ListGroupItem key="new" href="#" onClick={this.handleNewProject}>
-                  <Glyphicon glyph='plus'/>
-                  プロジェクトを作成
-                </ListGroupItem>
-              </ListGroup>
+              {this.renderProjectList()}
             </Panel>
           </Col>
           <Col xs={8}>
@@ -61,9 +43,53 @@ var Project = React.createClass({
     );
   },
 
+  renderProjectList: function() {
+    var projectItems;
+
+    if (this.state.isLoading) {
+      projectItems = (
+        <ListGroupItem key="loading">
+          <div className="text-center">
+            <img src="image/loading.gif"/>
+          </div>
+        </ListGroupItem>
+      );
+    } else {
+      projectItems = this.state.projectList.map(function(project) {
+        // var href = this.makeHref("/project/" + project.id);
+        var href = "#/project/" + project.id;
+        var isActive = this.isActive("/project/" + project.id);
+        var header = project.getName();
+        var header = (
+          <span>{project.getName()} <Label bsStyle="warning">{project.getPlatform().getName()}</Label></span>
+        );
+        return (
+          <ListGroupItem key={"id_" + project.id} active={isActive} href={href} header={header}>{project.getProjectCode()}</ListGroupItem>
+        );
+      }.bind(this));
+      if (true) {
+        projectItems = projectItems.push(
+          <ListGroupItem key="new" href="#" onClick={this.handleNewProject}>
+            <Glyphicon glyph='plus'/>
+            プロジェクトを作成
+          </ListGroupItem>
+        );
+      }
+      projectItems = projectItems.toArray();
+    }
+
+    return (
+      <ListGroup fill style={{height: "470", "overflowY": "scroll"}}>
+        {projectItems}
+      </ListGroup>
+    );
+  },
+
   componentDidMount: function() {
     ProjectListStore.addProjectListChangeListener(this.handleProjectListChange);
-    ProjectListActionCreator.refreshList();
+    setTimeout(function() {
+      ProjectListActionCreator.loadProjectList();
+    }.bind(this), 0);
   },
 
   componentWillUnmount: function() {
@@ -72,7 +98,8 @@ var Project = React.createClass({
 
   handleProjectListChange: function() {
     this.setState({
-      projectList: ProjectListStore.getProjectList()
+      projectList: ProjectListStore.getProjectList(),
+      isLoading: ProjectListStore.isLoading()
     });
   },
 

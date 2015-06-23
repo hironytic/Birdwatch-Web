@@ -8,13 +8,17 @@ var ActionTypes = AppConstants.ActionTypes;
 var Page = AppConstants.Page;
 
 module.exports = {
-  refreshList: function() {
+  loadProjectList: function() {
+    AppDispatcher.dispatch({
+      type: ActionTypes.PROJECT_LIST_LOADING
+    })
+
     var query = new Parse.Query(Project);
     query.include(Project.Key.PLATFORM);
     query.find({
       success: function(projects) {
         AppDispatcher.dispatch({
-          type: ActionTypes.PROJECT_LIST_REFRESHED,
+          type: ActionTypes.PROJECT_LIST_LOADED,
           projectList: Immutable.List(projects)
         });
       },
