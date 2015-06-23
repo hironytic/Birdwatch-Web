@@ -38078,9 +38078,7 @@ var AppFrame = React.createClass({displayName: "AppFrame",
     return (
       React.createElement("div", null, 
         React.createElement(HeaderBar, null), 
-        React.createElement("div", {style: {padding: "70px"}}, 
-          this.props.children
-        )
+        this.props.children
       )
     );
   },
@@ -38134,7 +38132,7 @@ var HeaderBar = React.createClass({displayName: "HeaderBar",
     }
 
     return (
-      React.createElement(Navbar, {brand: "Birdwatch", fixedTop: true}, 
+      React.createElement(Navbar, {brand: "Birdwatch", fluid: true}, 
         React.createElement(Nav, {right: true}, 
           signOut
         )
