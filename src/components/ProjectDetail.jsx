@@ -14,10 +14,13 @@ var ProjectDetailStore = require("../stores/ProjectDetailStore");
 var ProjectDetailActionCreator = require("../actions/ProjectDetailActionCreator");
 
 var ProjectDetail = React.createClass({
+  mixins: [ReactRouter.TransitionHook],
+
   getInitialState: function() {
     return {
       project: ProjectDetailStore.getProject(),
-      isLoading: ProjectDetailStore.isLoading()
+      isLoading: ProjectDetailStore.isLoading(),
+      isEditing: ProjectDetailStore.isEditing()
     };
   },
 
@@ -51,18 +54,32 @@ var ProjectDetail = React.createClass({
       );
     }
 
-    var header = (
-      <ButtonToolbar>
-        <ButtonGroup>
-          <Button onClick={this.handleRefresh}><Glyphicon glyph="refresh"/> 最新に更新</Button>
-          <Button><Glyphicon glyph="pencil"/> 編集</Button>
-          <Button><Glyphicon glyph="trash"/> 削除</Button>
-        </ButtonGroup>
-      </ButtonToolbar>
-    );
+    var footer = "";
+    if (!this.state.isLoading) {
+      if (this.state.isEditing) {
+        footer = (
+          <ButtonToolbar>
+            <ButtonGroup>
+              <Button key="editingDone" bsStyle="primary"><Glyphicon glyph="ok"/> 完了</Button>
+              <Button key="editingCancel" onClick={this.handleCancelEditing}><Glyphicon glyph="remove"/> キャンセル</Button>
+            </ButtonGroup>
+          </ButtonToolbar>
+        );
+      } else {
+        footer = (
+          <ButtonToolbar>
+            <ButtonGroup>
+              <Button key="refresh" onClick={this.handleRefresh}><Glyphicon glyph="refresh"/> 最新に更新</Button>
+              <Button key="startEditing" onClick={this.handleStartEditing}><Glyphicon glyph="pencil"/> 編集</Button>
+              <Button key="delete"><Glyphicon glyph="trash"/> 削除</Button>
+            </ButtonGroup>
+          </ButtonToolbar>
+        );
+      }
+    }
 
     return (
-      <Panel header={header}>
+      <Panel footer={footer}>
         {projectForm}
       </Panel>
     );
@@ -98,6 +115,7 @@ var ProjectDetail = React.createClass({
 
   componentDidMount: function() {
     ProjectDetailStore.addProjectChangeListener(this.handleProjectChange);
+    ProjectDetailStore.addEditingChangeListener(this.handleEditingChange);
     setTimeout(function() {
       ProjectDetailActionCreator.loadProjectDetail(this.props.params.id);
     }.bind(this), 0);
@@ -105,6 +123,7 @@ var ProjectDetail = React.createClass({
 
   componentWillUnmount: function() {
     ProjectDetailStore.removeProjectChangeListener(this.handleProjectChange);
+    ProjectDetailStore.removeEditingChangeListener(this.handleEditingChange);
   },
 
   componentWillReceiveProps: function(nextProps) {
@@ -120,12 +139,30 @@ var ProjectDetail = React.createClass({
     });
   },
 
+  handleEditingChange: function() {
+    this.setState({
+      isEditing: ProjectDetailStore.isEditing()
+    });
+  },
+
   handleSubmit: function(e) {
     e.preventDefault();
   },
 
   handleRefresh: function(e) {
     ProjectDetailActionCreator.loadProjectDetail(this.props.params.id);
+  },
+
+  handleStartEditing: function(e) {
+    ProjectDetailActionCreator.startEditing(this.props.params.id);
+  },
+
+  handleCancelEditing: function(e) {
+    ProjectDetailActionCreator.cancelEditing(this.props.params.id);
+  },
+
+  routerWillLeave: function(nextState, router) {
+    console.log("leave");
   }
 });
 

@@ -4,6 +4,7 @@ var Promise = require("es6-promise").Promise;
 var AppDispatcher = require("../dispatcher/AppDispatcher");
 var AppConstants = require("../constants/AppConstants");
 var Project = require("../objects/Project");
+
 var ActionTypes = AppConstants.ActionTypes;
 
 module.exports = {
@@ -27,6 +28,20 @@ module.exports = {
         type: ActionTypes.PROJECT_DETAIL_LOADED,
         project: project
       });
+    });
+  },
+
+  startEditing: function(projectId) {
+    AppDispatcher.dispatch({
+      type: ActionTypes.PROJECT_DETAIL_START_EDITING,
+      id: projectId
+    });
+  },
+
+  cancelEditing: function(projectId) {
+    AppDispatcher.dispatch({
+      type: ActionTypes.PROJECT_DETAIL_CANCEL_EDITING,
+      id: projectId
     });
   }
 };

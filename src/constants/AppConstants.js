@@ -16,7 +16,9 @@ module.exports = {
     PROJECT_LIST_LOADED: null,        // プロジェクト一覧のロード完了
 
     PROJECT_DETAIL_LOADING: null,     // プロジェクト詳細のロード中
-    PROJECT_DETAIL_LOADED: null,      // プロジェクト詳細のロード完了
+    PROJECT_DETAIL_LOADED: null,      // プロジェクト詳細のロード完了,
+    PROJECT_DETAIL_START_EDITING: null,  // プロジェクト詳細の編集開始
+    PROJECT_DETAIL_CANCEL_EDITING: null,  // プロジェクト詳細の編集をキャンセル
   }),
 
   Page: {

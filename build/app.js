@@ -38971,6 +38971,7 @@ var Promise = require("es6-promise").Promise;
 var AppDispatcher = require("../dispatcher/AppDispatcher");
 var AppConstants = require("../constants/AppConstants");
 var Project = require("../objects/Project");
+
 var ActionTypes = AppConstants.ActionTypes;
 
 module.exports = {
@@ -38994,6 +38995,20 @@ module.exports = {
         type: ActionTypes.PROJECT_DETAIL_LOADED,
         project: project
       });
+    });
+  },
+
+  startEditing: function(projectId) {
+    AppDispatcher.dispatch({
+      type: ActionTypes.PROJECT_DETAIL_START_EDITING,
+      id: projectId
+    });
+  },
+
+  cancelEditing: function(projectId) {
+    AppDispatcher.dispatch({
+      type: ActionTypes.PROJECT_DETAIL_CANCEL_EDITING,
+      id: projectId
     });
   }
 };
@@ -39384,10 +39399,13 @@ var ProjectDetailStore = require("../stores/ProjectDetailStore");
 var ProjectDetailActionCreator = require("../actions/ProjectDetailActionCreator");
 
 var ProjectDetail = React.createClass({displayName: "ProjectDetail",
+  mixins: [ReactRouter.TransitionHook],
+
   getInitialState: function() {
     return {
       project: ProjectDetailStore.getProject(),
-      isLoading: ProjectDetailStore.isLoading()
+      isLoading: ProjectDetailStore.isLoading(),
+      isEditing: ProjectDetailStore.isEditing()
     };
   },
 
@@ -39421,18 +39439,32 @@ var ProjectDetail = React.createClass({displayName: "ProjectDetail",
       );
     }
 
-    var header = (
-      React.createElement(ButtonToolbar, null, 
-        React.createElement(ButtonGroup, null, 
-          React.createElement(Button, {onClick: this.handleRefresh}, React.createElement(Glyphicon, {glyph: "refresh"}), " 最新に更新"), 
-          React.createElement(Button, null, React.createElement(Glyphicon, {glyph: "pencil"}), " 編集"), 
-          React.createElement(Button, null, React.createElement(Glyphicon, {glyph: "trash"}), " 削除")
-        )
-      )
-    );
+    var footer = "";
+    if (!this.state.isLoading) {
+      if (this.state.isEditing) {
+        footer = (
+          React.createElement(ButtonToolbar, null, 
+            React.createElement(ButtonGroup, null, 
+              React.createElement(Button, {key: "editingDone", bsStyle: "primary"}, React.createElement(Glyphicon, {glyph: "ok"}), " 完了"), 
+              React.createElement(Button, {key: "editingCancel", onClick: this.handleCancelEditing}, React.createElement(Glyphicon, {glyph: "remove"}), " キャンセル")
+            )
+          )
+        );
+      } else {
+        footer = (
+          React.createElement(ButtonToolbar, null, 
+            React.createElement(ButtonGroup, null, 
+              React.createElement(Button, {key: "refresh", onClick: this.handleRefresh}, React.createElement(Glyphicon, {glyph: "refresh"}), " 最新に更新"), 
+              React.createElement(Button, {key: "startEditing", onClick: this.handleStartEditing}, React.createElement(Glyphicon, {glyph: "pencil"}), " 編集"), 
+              React.createElement(Button, {key: "delete"}, React.createElement(Glyphicon, {glyph: "trash"}), " 削除")
+            )
+          )
+        );
+      }
+    }
 
     return (
-      React.createElement(Panel, {header: header}, 
+      React.createElement(Panel, {footer: footer}, 
         projectForm
       )
     );
@@ -39468,6 +39500,7 @@ var ProjectDetail = React.createClass({displayName: "ProjectDetail",
 
   componentDidMount: function() {
     ProjectDetailStore.addProjectChangeListener(this.handleProjectChange);
+    ProjectDetailStore.addEditingChangeListener(this.handleEditingChange);
     setTimeout(function() {
       ProjectDetailActionCreator.loadProjectDetail(this.props.params.id);
     }.bind(this), 0);
@@ -39475,6 +39508,7 @@ var ProjectDetail = React.createClass({displayName: "ProjectDetail",
 
   componentWillUnmount: function() {
     ProjectDetailStore.removeProjectChangeListener(this.handleProjectChange);
+    ProjectDetailStore.removeEditingChangeListener(this.handleEditingChange);
   },
 
   componentWillReceiveProps: function(nextProps) {
@@ -39490,12 +39524,30 @@ var ProjectDetail = React.createClass({displayName: "ProjectDetail",
     });
   },
 
+  handleEditingChange: function() {
+    this.setState({
+      isEditing: ProjectDetailStore.isEditing()
+    });
+  },
+
   handleSubmit: function(e) {
     e.preventDefault();
   },
 
   handleRefresh: function(e) {
     ProjectDetailActionCreator.loadProjectDetail(this.props.params.id);
+  },
+
+  handleStartEditing: function(e) {
+    ProjectDetailActionCreator.startEditing(this.props.params.id);
+  },
+
+  handleCancelEditing: function(e) {
+    ProjectDetailActionCreator.cancelEditing(this.props.params.id);
+  },
+
+  routerWillLeave: function(nextState, router) {
+    console.log("leave");
   }
 });
 
@@ -39627,7 +39679,9 @@ module.exports = {
     PROJECT_LIST_LOADED: null,        // プロジェクト一覧のロード完了
 
     PROJECT_DETAIL_LOADING: null,     // プロジェクト詳細のロード中
-    PROJECT_DETAIL_LOADED: null,      // プロジェクト詳細のロード完了
+    PROJECT_DETAIL_LOADED: null,      // プロジェクト詳細のロード完了,
+    PROJECT_DETAIL_START_EDITING: null,  // プロジェクト詳細の編集開始
+    PROJECT_DETAIL_CANCEL_EDITING: null,  // プロジェクト詳細の編集をキャンセル
   }),
 
   Page: {
@@ -39939,11 +39993,13 @@ var keyMirror = require("react/lib/keyMirror");
 
 var ActionTypes = AppConstants.ActionTypes;
 var EventType = keyMirror({
-  PROJECT_CHANGE: null
+  PROJECT_CHANGE: null,
+  EDITING_CHANGE: null,
 });
 
 var _project = null;
 var _loading = false;
+var _editing = false;
 
 var ProjectDetailStore = assign({}, EventEmitter.prototype, {
   emitProjectChange: function() {
@@ -39964,6 +40020,22 @@ var ProjectDetailStore = assign({}, EventEmitter.prototype, {
 
   isLoading: function() {
     return _loading;
+  },
+
+  emitEditingChange: function() {
+    this.emit(EventType.EDITING_CHANGE);
+  },
+
+  addEditingChangeListener: function(callback) {
+    this.addListener(EventType.EDITING_CHANGE, callback);
+  },
+
+  removeEditingChangeListener: function(callback) {
+    this.removeListener(EventType.EDITING_CHANGE, callback);
+  },
+
+  isEditing: function() {
+    return _editing;
   }
 });
 
@@ -39973,11 +40045,31 @@ ProjectDetailStore.dispatchToken = AppDispatcher.register(function(action) {
       _loading = true;
       _project = null;
       ProjectDetailStore.emitProjectChange();
+      if (_editing) {
+        _editing = false;
+        ProjectDetailStore.emitEditingChange();
+      }
       break;
     case ActionTypes.PROJECT_DETAIL_LOADED:
       _loading = false;
       _project = action.project;
       ProjectDetailStore.emitProjectChange();
+      if (_editing) {
+        _editing = false;
+        ProjectDetailStore.emitEditingChange();
+      }
+      break;
+    case ActionTypes.PROJECT_DETAIL_START_EDITING:
+      if (_project != null && _project.id == action.id) {
+        _editing = true;
+        ProjectDetailStore.emitEditingChange();
+      }
+      break;
+    case ActionTypes.PROJECT_DETAIL_CANCEL_EDITING:
+      if (_project != null && _project.id == action.id) {
+        _editing = false;
+        ProjectDetailStore.emitEditingChange();
+      }
       break;
   }
 });
