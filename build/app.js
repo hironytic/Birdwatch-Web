@@ -38955,6 +38955,12 @@ module.exports = {
       type: ActionTypes.ERROR_CLEARED,
       id: id
     });
+  },
+
+  clearAllErrors: function() {
+    AppDispatcher.dispatch({
+      type: ActionTypes.ERROR_ALL_CLEARED
+    });
   }
 };
 
@@ -39124,6 +39130,9 @@ var Grid = ReactBootstrap.Grid;
 var Row = ReactBootstrap.Row;
 var Col = ReactBootstrap.Col;
 var Alert = ReactBootstrap.Alert;
+var Panel = ReactBootstrap.Panel;
+var Button = ReactBootstrap.Button;
+var Glyphicon = ReactBootstrap.Glyphicon;
 
 var ErrorStore = require("../stores/ErrorStore");
 var ErrorActionCreator = require("../actions/ErrorActionCreator");
@@ -39141,23 +39150,25 @@ var ErrorList = React.createClass({displayName: "ErrorList",
     }
 
     var errorAlerts = this.state.errorList.map(function(error) {
-      var messages = [];
-      if (error.message1) {
-        messages.push(React.createElement("h4", null, error.message1));
-      }
-      if (error.message2) {
-        messages.push(React.createElement("p", null, error.message2));
-      }
       return (
-        React.createElement(Alert, {key: error.id, bsStyle: "danger", onDismiss: this.handleErrorDismiss.bind(this, error)}, messages)
+        React.createElement(Alert, {key: error.id, bsStyle: "danger", onDismiss: this.handleErrorDismiss.bind(this, error)}, 
+          (error.message1) ? React.createElement("h4", null, error.message1) : "", 
+          (error.message2) ? React.createElement("p", null, error.message2) : ""
+        )
       );
     }.bind(this)).toArray();
+
+    var clearAllErrors = "";
+    if (this.state.errorList.count() > 1) {
+      clearAllErrors = React.createElement(Panel, {bsStyle: "danger"}, React.createElement(Button, {bsStyle: "danger", className: "pull-right", onClick: this.handleClearAllErrors}, React.createElement(Glyphicon, {glyph: "remove"}), " すべてのエラーを消去"));
+    }
 
     return (
       React.createElement(Grid, {fluid: true}, 
         React.createElement(Row, null, 
           React.createElement(Col, {xs: 12}, 
-            errorAlerts
+            errorAlerts, 
+            clearAllErrors
           )
         )
       )
@@ -39180,6 +39191,10 @@ var ErrorList = React.createClass({displayName: "ErrorList",
 
   handleErrorDismiss: function(error) {
     ErrorActionCreator.clearError(error.id);
+  },
+
+  handleClearAllErrors: function() {
+    ErrorActionCreator.clearAllErrors();
   }
 });
 
@@ -39596,6 +39611,7 @@ module.exports = {
   ActionTypes: keyMirror({
     ERROR_OCCURED: null,              // エラーが発生した
     ERROR_CLEARED: null,              // エラーを消した
+    ERROR_ALL_CLEARED: null,          // すべてのエラーを消した
 
     USER_SIGNING_IN: null,            // ユーザーがサインイン中になった
     USER_SIGNED_IN: null,             // ユーザーがサインインした
@@ -39897,6 +39913,10 @@ ErrorStore.dispatchToken = AppDispatcher.register(function(action) {
       _errorList = _errorList.filterNot(function(value) {
         return value.id == action.id;
       });
+      ErrorStore.emitChange();
+      break;
+    case ActionTypes.ERROR_ALL_CLEARED:
+      _errorList = Immutable.List();
       ErrorStore.emitChange();
       break;
   }

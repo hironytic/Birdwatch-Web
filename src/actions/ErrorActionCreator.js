@@ -10,5 +10,11 @@ module.exports = {
       type: ActionTypes.ERROR_CLEARED,
       id: id
     });
+  },
+
+  clearAllErrors: function() {
+    AppDispatcher.dispatch({
+      type: ActionTypes.ERROR_ALL_CLEARED
+    });
   }
 };

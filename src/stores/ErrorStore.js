@@ -49,6 +49,10 @@ ErrorStore.dispatchToken = AppDispatcher.register(function(action) {
       });
       ErrorStore.emitChange();
       break;
+    case ActionTypes.ERROR_ALL_CLEARED:
+      _errorList = Immutable.List();
+      ErrorStore.emitChange();
+      break;
   }
 });
 

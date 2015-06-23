@@ -5,6 +5,9 @@ var Grid = ReactBootstrap.Grid;
 var Row = ReactBootstrap.Row;
 var Col = ReactBootstrap.Col;
 var Alert = ReactBootstrap.Alert;
+var Panel = ReactBootstrap.Panel;
+var Button = ReactBootstrap.Button;
+var Glyphicon = ReactBootstrap.Glyphicon;
 
 var ErrorStore = require("../stores/ErrorStore");
 var ErrorActionCreator = require("../actions/ErrorActionCreator");
@@ -22,23 +25,25 @@ var ErrorList = React.createClass({
     }
 
     var errorAlerts = this.state.errorList.map(function(error) {
-      var messages = [];
-      if (error.message1) {
-        messages.push(<h4>{error.message1}</h4>);
-      }
-      if (error.message2) {
-        messages.push(<p>{error.message2}</p>);
-      }
       return (
-        <Alert key={error.id} bsStyle="danger" onDismiss={this.handleErrorDismiss.bind(this, error)}>{messages}</Alert>
+        <Alert key={error.id} bsStyle="danger" onDismiss={this.handleErrorDismiss.bind(this, error)}>
+          {(error.message1) ? <h4>{error.message1}</h4> : ""}
+          {(error.message2) ? <p>{error.message2}</p> : ""}
+        </Alert>
       );
     }.bind(this)).toArray();
+
+    var clearAllErrors = "";
+    if (this.state.errorList.count() > 1) {
+      clearAllErrors = <Panel bsStyle="danger"><Button bsStyle="danger" className="pull-right" onClick={this.handleClearAllErrors}><Glyphicon glyph='remove'/> すべてのエラーを消去</Button></Panel>;
+    }
 
     return (
       <Grid fluid>
         <Row>
           <Col xs={12}>
             {errorAlerts}
+            {clearAllErrors}
           </Col>
         </Row>
       </Grid>
@@ -61,6 +66,10 @@ var ErrorList = React.createClass({
 
   handleErrorDismiss: function(error) {
     ErrorActionCreator.clearError(error.id);
+  },
+
+  handleClearAllErrors: function() {
+    ErrorActionCreator.clearAllErrors();
   }
 });
 
