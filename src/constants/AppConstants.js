@@ -3,6 +3,9 @@ var keyMirror = require('react/lib/keyMirror');
 
 module.exports = {
   ActionTypes: keyMirror({
+    ERROR_OCCURED: null,              // エラーが発生した
+    ERROR_CLEARED: null,              // エラーを消した
+
     USER_SIGNING_IN: null,            // ユーザーがサインイン中になった
     USER_SIGNED_IN: null,             // ユーザーがサインインした
     USER_FAILED_TO_SIGN_IN: null,     // ユーザーのサインインに失敗

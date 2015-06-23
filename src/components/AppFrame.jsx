@@ -3,6 +3,7 @@ var React = require("react");
 var ReactRouter = require("react-router");
 
 var HeaderBar = require("./HeaderBar.jsx");
+var ErrorList = require("./ErrorList.jsx");
 var CurrentUserStore = require("../stores/CurrentUserStore");
 
 var AppFrame = React.createClass({
@@ -12,6 +13,7 @@ var AppFrame = React.createClass({
     return (
       <div>
         <HeaderBar/>
+        <ErrorList/>
         {this.props.children}
       </div>
     );

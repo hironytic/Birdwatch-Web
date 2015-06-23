@@ -16,6 +16,12 @@ module.exports = {
         user: user
       });
     }, function(error) {
+      AppDispatcher.dispatch({
+        type: ActionTypes.ERROR_OCCURED,
+        message1: "サインインできませんでした。",
+        message2: error.message
+      });
+
       console.log("Failed to sign in: " + JSON.stringify(error));
       AppDispatcher.dispatch({
         type: ActionTypes.USER_FAILED_TO_SIGN_IN,

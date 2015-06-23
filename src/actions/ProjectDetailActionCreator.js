@@ -13,16 +13,23 @@ module.exports = {
     var query = new Parse.Query(Project);
     query.include(Project.Key.FAMILY);
     query.include(Project.Key.PLATFORM);
-    query.get(projectId, {
-      success: function(project) {
-        AppDispatcher.dispatch({
-          type: ActionTypes.PROJECT_DETAIL_LOADED,
-          project: project
-        });
-      },
-      error: function(error) {
-        // TODO:
-      }
+    query.get(projectId).then(function(project) {
+      return project;
+    }, function(error) {
+      AppDispatcher.dispatch({
+        type: ActionTypes.ERROR_OCCURED,
+        message1: "プロジェクトの取得に失敗",
+        message2: error.message
+      });
+      AppDispatcher.dispatch({
+        type: ActionTypes.PROJECT_DETAIL_LOADED,
+        project: null
+      });
+    }).then(function(project) {
+      AppDispatcher.dispatch({
+        type: ActionTypes.PROJECT_DETAIL_LOADED,
+        project: project
+      });
     });
   }
 };
