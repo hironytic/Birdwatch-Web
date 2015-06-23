@@ -4,6 +4,11 @@ var ReactRouter = require("react-router");
 var ReactBootstrap = require('react-bootstrap');
 var Panel = ReactBootstrap.Panel;
 var FormControls = ReactBootstrap.FormControls;
+var Table = ReactBootstrap.Table;
+var ButtonToolbar = ReactBootstrap.ButtonToolbar;
+var ButtonGroup = ReactBootstrap.ButtonGroup;
+var Button = ReactBootstrap.Button;
+var Glyphicon = ReactBootstrap.Glyphicon;
 
 var ProjectDetailStore = require("../stores/ProjectDetailStore");
 var ProjectDetailActionCreator = require("../actions/ProjectDetailActionCreator");
@@ -36,37 +41,57 @@ var ProjectDetail = React.createClass({
           <FormControls.Static label="プロダクト" labelClassName="col-xs-4" wrapperClassName="col-xs-8" value={project.getFamily().getName()}/>
           <FormControls.Static label="OS" labelClassName="col-xs-4" wrapperClassName="col-xs-8" value={project.getPlatform().getName()}/>
           <FormControls.Static label="内部バージョン" labelClassName="col-xs-4" wrapperClassName="col-xs-8" value={project.getVersion()}/>
-{/*
           <div className="form-group">
             <label className="col-sm-4 control-label">マイルストーン</label>
             <div className="col-sm-8">
-              <table className="table">
-                <thead>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>開発終了</td>
-                    <td>6月</td>
-                    <td>(2015/06/01)</td>
-                  </tr>
-                  <tr>
-                    <td>コードFix</td>
-                    <td>6/14</td>
-                    <td>(2015/06/14)</td>
-                  </tr>
-                </tbody>
-              </table>
+              {this.renderMilestones()}
             </div>
           </div>
-*/}
         </form>
       );
     }
 
+    var header = (
+      <ButtonToolbar>
+        <ButtonGroup bsSize="small">
+          <Button><Glyphicon glyph='pencil'/> 編集</Button>
+          <Button><Glyphicon glyph='trash'/> 削除</Button>
+        </ButtonGroup>
+      </ButtonToolbar>
+    );
+
     return (
-      <Panel>
+      <Panel header={header}>
         {projectForm}
       </Panel>
+    );
+  },
+
+  renderMilestones: function() {
+    return (
+      <Table condensed>
+        <thead>
+          <tr>
+            <th>イベント</th>
+            <th>表示</th>
+            <th>日付</th>
+          </tr>
+        </thead>
+        <tbody>
+{/*
+          <tr>
+            <td>開発終了</td>
+            <td>6月</td>
+            <td>(2015/06/01)</td>
+          </tr>
+          <tr>
+            <td>コードFix</td>
+            <td>6/14</td>
+            <td>(2015/06/14)</td>
+          </tr>
+*/}
+        </tbody>
+      </Table>
     );
   },
 

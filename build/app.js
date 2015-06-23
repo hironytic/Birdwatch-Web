@@ -38227,7 +38227,7 @@ var Project = React.createClass({displayName: "Project",
         var isActive = this.isActive("/project/" + project.id);
         var header = project.getName();
         var header = (
-          React.createElement("span", null, project.getName(), " ", React.createElement(Label, {bsStyle: "warning"}, project.getPlatform().getName()))
+          React.createElement("span", null, React.createElement("strong", null, project.getName()), " ", React.createElement(Label, {bsStyle: "warning"}, project.getPlatform().getName()))
         );
         return (
           React.createElement(ListGroupItem, {key: "id_" + project.id, active: isActive, href: href, header: header}, project.getProjectCode())
@@ -38283,6 +38283,11 @@ var ReactRouter = require("react-router");
 var ReactBootstrap = require('react-bootstrap');
 var Panel = ReactBootstrap.Panel;
 var FormControls = ReactBootstrap.FormControls;
+var Table = ReactBootstrap.Table;
+var ButtonToolbar = ReactBootstrap.ButtonToolbar;
+var ButtonGroup = ReactBootstrap.ButtonGroup;
+var Button = ReactBootstrap.Button;
+var Glyphicon = ReactBootstrap.Glyphicon;
 
 var ProjectDetailStore = require("../stores/ProjectDetailStore");
 var ProjectDetailActionCreator = require("../actions/ProjectDetailActionCreator");
@@ -38314,37 +38319,57 @@ var ProjectDetail = React.createClass({displayName: "ProjectDetail",
           React.createElement(FormControls.Static, {label: "プロジェクトコード", labelClassName: "col-xs-4", wrapperClassName: "col-xs-8", value: project.getProjectCode()}), 
           React.createElement(FormControls.Static, {label: "プロダクト", labelClassName: "col-xs-4", wrapperClassName: "col-xs-8", value: project.getFamily().getName()}), 
           React.createElement(FormControls.Static, {label: "OS", labelClassName: "col-xs-4", wrapperClassName: "col-xs-8", value: project.getPlatform().getName()}), 
-          React.createElement(FormControls.Static, {label: "内部バージョン", labelClassName: "col-xs-4", wrapperClassName: "col-xs-8", value: project.getVersion()})
-/*
-          <div className="form-group">
-            <label className="col-sm-4 control-label">マイルストーン</label>
-            <div className="col-sm-8">
-              <table className="table">
-                <thead>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>開発終了</td>
-                    <td>6月</td>
-                    <td>(2015/06/01)</td>
-                  </tr>
-                  <tr>
-                    <td>コードFix</td>
-                    <td>6/14</td>
-                    <td>(2015/06/14)</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-*/
+          React.createElement(FormControls.Static, {label: "内部バージョン", labelClassName: "col-xs-4", wrapperClassName: "col-xs-8", value: project.getVersion()}), 
+          React.createElement("div", {className: "form-group"}, 
+            React.createElement("label", {className: "col-sm-4 control-label"}, "マイルストーン"), 
+            React.createElement("div", {className: "col-sm-8"}, 
+              this.renderMilestones()
+            )
+          )
         )
       );
     }
 
+    var header = (
+      React.createElement(ButtonToolbar, null, 
+        React.createElement(ButtonGroup, {bsSize: "small"}, 
+          React.createElement(Button, null, React.createElement(Glyphicon, {glyph: "pencil"}), " 編集"), 
+          React.createElement(Button, null, React.createElement(Glyphicon, {glyph: "trash"}), " 削除")
+        )
+      )
+    );
+
     return (
-      React.createElement(Panel, null, 
+      React.createElement(Panel, {header: header}, 
         projectForm
+      )
+    );
+  },
+
+  renderMilestones: function() {
+    return (
+      React.createElement(Table, {condensed: true}, 
+        React.createElement("thead", null, 
+          React.createElement("tr", null, 
+            React.createElement("th", null, "イベント"), 
+            React.createElement("th", null, "表示"), 
+            React.createElement("th", null, "日付")
+          )
+        ), 
+        React.createElement("tbody", null
+/*
+          <tr>
+            <td>開発終了</td>
+            <td>6月</td>
+            <td>(2015/06/01)</td>
+          </tr>
+          <tr>
+            <td>コードFix</td>
+            <td>6/14</td>
+            <td>(2015/06/14)</td>
+          </tr>
+*/
+        )
       )
     );
   },
