@@ -31,7 +31,7 @@ var Project = React.createClass({
       <Grid fluid>
         <Row>
           <Col xs={4}>
-            <Panel header="プロジェクト" style={{height: "512"}}>
+            <Panel header="プロジェクト" bsStyle="info" style={{height: "512"}}>
               {this.renderProjectList()}
             </Panel>
           </Col>
@@ -69,17 +69,14 @@ var Project = React.createClass({
       }.bind(this));
       if (true) {
         projectItems = projectItems.push(
-          <ListGroupItem key="new" href="#" onClick={this.handleNewProject}>
-            <Glyphicon glyph='plus'/>
-            プロジェクトを作成
-          </ListGroupItem>
+          <ListGroupItem key="new" href="#" onClick={this.handleNewProject}><Glyphicon glyph='plus'/> プロジェクトを作成</ListGroupItem>
         );
       }
       projectItems = projectItems.toArray();
     }
 
     return (
-      <ListGroup fill style={{height: "470", "overflowY": "scroll"}}>
+      <ListGroup fill style={{height: "469", "overflowY": "auto"}}>
         {projectItems}
       </ListGroup>
     );

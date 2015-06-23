@@ -38197,7 +38197,7 @@ var Project = React.createClass({displayName: "Project",
       React.createElement(Grid, {fluid: true}, 
         React.createElement(Row, null, 
           React.createElement(Col, {xs: 4}, 
-            React.createElement(Panel, {header: "プロジェクト", style: {height: "512"}}, 
+            React.createElement(Panel, {header: "プロジェクト", bsStyle: "info", style: {height: "512"}}, 
               this.renderProjectList()
             )
           ), 
@@ -38235,17 +38235,14 @@ var Project = React.createClass({displayName: "Project",
       }.bind(this));
       if (true) {
         projectItems = projectItems.push(
-          React.createElement(ListGroupItem, {key: "new", href: "#", onClick: this.handleNewProject}, 
-            React.createElement(Glyphicon, {glyph: "plus"}), 
-            "プロジェクトを作成"
-          )
+          React.createElement(ListGroupItem, {key: "new", href: "#", onClick: this.handleNewProject}, React.createElement(Glyphicon, {glyph: "plus"}), " プロジェクトを作成")
         );
       }
       projectItems = projectItems.toArray();
     }
 
     return (
-      React.createElement(ListGroup, {fill: true, style: {height: "470", "overflowY": "scroll"}}, 
+      React.createElement(ListGroup, {fill: true, style: {height: "469", "overflowY": "auto"}}, 
         projectItems
       )
     );
