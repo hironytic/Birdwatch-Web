@@ -39423,7 +39423,8 @@ var ProjectDetail = React.createClass({displayName: "ProjectDetail",
 
     var header = (
       React.createElement(ButtonToolbar, null, 
-        React.createElement(ButtonGroup, {bsSize: "small"}, 
+        React.createElement(ButtonGroup, null, 
+          React.createElement(Button, {onClick: this.handleRefresh}, React.createElement(Glyphicon, {glyph: "refresh"}), " 最新に更新"), 
           React.createElement(Button, null, React.createElement(Glyphicon, {glyph: "pencil"}), " 編集"), 
           React.createElement(Button, null, React.createElement(Glyphicon, {glyph: "trash"}), " 削除")
         )
@@ -39491,6 +39492,10 @@ var ProjectDetail = React.createClass({displayName: "ProjectDetail",
 
   handleSubmit: function(e) {
     e.preventDefault();
+  },
+
+  handleRefresh: function(e) {
+    ProjectDetailActionCreator.loadProjectDetail(this.props.params.id);
   }
 });
 

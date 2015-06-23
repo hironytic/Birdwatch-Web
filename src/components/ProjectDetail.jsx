@@ -53,9 +53,10 @@ var ProjectDetail = React.createClass({
 
     var header = (
       <ButtonToolbar>
-        <ButtonGroup bsSize="small">
-          <Button><Glyphicon glyph='pencil'/> 編集</Button>
-          <Button><Glyphicon glyph='trash'/> 削除</Button>
+        <ButtonGroup>
+          <Button onClick={this.handleRefresh}><Glyphicon glyph="refresh"/> 最新に更新</Button>
+          <Button><Glyphicon glyph="pencil"/> 編集</Button>
+          <Button><Glyphicon glyph="trash"/> 削除</Button>
         </ButtonGroup>
       </ButtonToolbar>
     );
@@ -121,6 +122,10 @@ var ProjectDetail = React.createClass({
 
   handleSubmit: function(e) {
     e.preventDefault();
+  },
+
+  handleRefresh: function(e) {
+    ProjectDetailActionCreator.loadProjectDetail(this.props.params.id);
   }
 });
 
