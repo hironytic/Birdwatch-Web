@@ -61,7 +61,7 @@ var Project = React.createClass({
         var isActive = this.isActive("/project/" + project.id);
         var header = project.getName();
         var header = (
-          <span>{project.getName()} <Label bsStyle="warning">{project.getPlatform().getName()}</Label></span>
+          <span><strong>{project.getName()}</strong> <Label bsStyle="warning">{project.getPlatform().getName()}</Label></span>
         );
         return (
           <ListGroupItem key={"id_" + project.id} active={isActive} href={href} header={header}>{project.getProjectCode()}</ListGroupItem>
