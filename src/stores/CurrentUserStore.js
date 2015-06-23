@@ -13,8 +13,7 @@ var EventType = keyMirror({
 var StatusType = keyMirror({
   NOT_SIGNED_IN: null,
   SIGNING_IN: null,
-  SIGNED_IN: null,
-  FAILED_TO_SIGN_IN: null
+  SIGNED_IN: null
 });
 
 var _user = Parse.User.current();
@@ -69,7 +68,7 @@ CurrentUserStore.dispatchToken = AppDispatcher.register(function(action) {
       CurrentUserStore.emitUserChange();
       break;
     case ActionTypes.USER_FAILED_TO_SIGN_IN:
-      _status = StatusType.FAILED_TO_SIGN_IN;
+      _status = StatusType.NOT_SIGNED_IN;
       CurrentUserStore.emitStatusChange();
       _user = null;
       CurrentUserStore.emitUserChange();

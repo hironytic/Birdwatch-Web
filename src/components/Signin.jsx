@@ -36,10 +36,6 @@ var Signin = React.createClass({
         bsStyle = "default";
         disabled = true;
         break;
-      case StatusType.FAILED_TO_SIGN_IN:
-        message = "エラー";
-        bsStyle = "danger";
-        break;
     }
 
     return (
