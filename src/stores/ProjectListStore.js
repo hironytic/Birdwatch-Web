@@ -37,6 +37,7 @@ var ProjectListStore = assign({}, EventEmitter.prototype, {
 });
 
 ProjectListStore.dispatchToken = AppDispatcher.register(function(action) {
+  var index;
   switch (action.type) {
     case ActionTypes.PROJECT_LIST_LOADING:
       _loading = true;
@@ -47,6 +48,15 @@ ProjectListStore.dispatchToken = AppDispatcher.register(function(action) {
       _loading = false;
       _projectList = action.projectList;
       ProjectListStore.emitProjectListChange();
+      break;
+    case ActionTypes.PROJECT_DETAIL_LOADED:
+      index = _projectList.findIndex(function(project) {
+        return project.id == action.project.id;
+      });
+      if (index >= 0) {
+        _projectList = _projectList.set(index, action.project);
+        ProjectListStore.emitProjectListChange();
+      }
       break;
   }
 });
