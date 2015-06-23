@@ -2,7 +2,6 @@
 var AppDispatcher = require("../dispatcher/AppDispatcher");
 var AppConstants = require("../constants/AppConstants");
 var Project = require("../objects/Project");
-var PageUtils = require("./PageUtils");
 var Immutable = require("immutable");
 
 var ActionTypes = AppConstants.ActionTypes;
@@ -23,9 +22,5 @@ module.exports = {
         // TODO:
       }
     });
-  },
-
-  clickListItem: function(itemId) {
-    PageUtils.changePage(Page.PROJECT_DETAIL, itemId);
   }
 };

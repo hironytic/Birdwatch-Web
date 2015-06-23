@@ -37966,29 +37966,7 @@ React.render((
   )
 ), document.getElementById('main-content'));
 
-},{"./components/AppFrame.jsx":288,"./components/Project.jsx":290,"./components/ProjectDetail.jsx":291,"./components/Signin.jsx":292,"react":282,"react-router":101,"react-router/lib/HashHistory":83}],284:[function(require,module,exports){
-"use strict";
-var AppDispatcher = require("../dispatcher/AppDispatcher");
-var AppConstants = require("../constants/AppConstants");
-
-module.exports = {
-  changePage: function(page, parameter) {
-    if (page != null) {
-      var fragment = page;
-      if (parameter != null) {
-        // FIXME: encode parameter
-        fragment += "/" + parameter;
-      }
-      window.location.href = "#" + fragment;
-    } else {
-      AppDispatcher.dispatch({
-        type: AppConstants.ActionTypes.PAGE_CHANGED,
-      });
-    }
-  }
-};
-
-},{"../constants/AppConstants":293,"../dispatcher/AppDispatcher":294}],285:[function(require,module,exports){
+},{"./components/AppFrame.jsx":287,"./components/Project.jsx":289,"./components/ProjectDetail.jsx":290,"./components/Signin.jsx":291,"react":282,"react-router":101,"react-router/lib/HashHistory":83}],284:[function(require,module,exports){
 "use strict";
 var AppDispatcher = require("../dispatcher/AppDispatcher");
 var AppConstants = require("../constants/AppConstants");
@@ -38028,12 +38006,11 @@ module.exports = {
   }
 };
 
-},{"../constants/AppConstants":293,"../dispatcher/AppDispatcher":294,"../objects/Project":298}],286:[function(require,module,exports){
+},{"../constants/AppConstants":292,"../dispatcher/AppDispatcher":293,"../objects/Project":297}],285:[function(require,module,exports){
 "use strict";
 var AppDispatcher = require("../dispatcher/AppDispatcher");
 var AppConstants = require("../constants/AppConstants");
 var Project = require("../objects/Project");
-var PageUtils = require("./PageUtils");
 var Immutable = require("immutable");
 
 var ActionTypes = AppConstants.ActionTypes;
@@ -38054,14 +38031,10 @@ module.exports = {
         // TODO:
       }
     });
-  },
-
-  clickListItem: function(itemId) {
-    PageUtils.changePage(Page.PROJECT_DETAIL, itemId);
   }
 };
 
-},{"../constants/AppConstants":293,"../dispatcher/AppDispatcher":294,"../objects/Project":298,"./PageUtils":284,"immutable":6}],287:[function(require,module,exports){
+},{"../constants/AppConstants":292,"../dispatcher/AppDispatcher":293,"../objects/Project":297,"immutable":6}],286:[function(require,module,exports){
 "use strict";
 var AppDispatcher = require("../dispatcher/AppDispatcher");
 var AppConstants = require("../constants/AppConstants");
@@ -38096,7 +38069,7 @@ module.exports = {
   }
 };
 
-},{"../constants/AppConstants":293,"../dispatcher/AppDispatcher":294}],288:[function(require,module,exports){
+},{"../constants/AppConstants":292,"../dispatcher/AppDispatcher":293}],287:[function(require,module,exports){
 "use strict";
 var React = require("react");
 var ReactRouter = require("react-router");
@@ -38141,7 +38114,7 @@ var AppFrame = React.createClass({displayName: "AppFrame",
 
 module.exports = AppFrame;
 
-},{"../stores/CurrentUserStore":299,"./HeaderBar.jsx":289,"react":282,"react-router":101}],289:[function(require,module,exports){
+},{"../stores/CurrentUserStore":298,"./HeaderBar.jsx":288,"react":282,"react-router":101}],288:[function(require,module,exports){
 "use strict";
 var React = require("react")
 var ReactBootstrap = require('react-bootstrap')
@@ -38198,7 +38171,7 @@ var HeaderBar = React.createClass({displayName: "HeaderBar",
 
 module.exports = HeaderBar;
 
-},{"../actions/UserActionCreator":287,"../stores/CurrentUserStore":299,"react":282,"react-bootstrap":66}],290:[function(require,module,exports){
+},{"../actions/UserActionCreator":286,"../stores/CurrentUserStore":298,"react":282,"react-bootstrap":66}],289:[function(require,module,exports){
 "use strict";
 var React = require("react/addons");
 var ReactRouter = require("react-router");
@@ -38284,7 +38257,7 @@ var Project = React.createClass({displayName: "Project",
 
 module.exports = Project;
 
-},{"../actions/ProjectListActionCreator":286,"../stores/ProjectListStore":302,"react-bootstrap":66,"react-router":101,"react/addons":110}],291:[function(require,module,exports){
+},{"../actions/ProjectListActionCreator":285,"../stores/ProjectListStore":300,"react-bootstrap":66,"react-router":101,"react/addons":110}],290:[function(require,module,exports){
 "use strict";
 var React = require("react/addons");
 var ReactRouter = require("react-router");
@@ -38378,7 +38351,7 @@ var ProjectDetail = React.createClass({displayName: "ProjectDetail",
 
 module.exports = ProjectDetail;
 
-},{"../actions/ProjectDetailActionCreator":285,"../stores/ProjectDetailStore":301,"react-bootstrap":66,"react-router":101,"react/addons":110}],292:[function(require,module,exports){
+},{"../actions/ProjectDetailActionCreator":284,"../stores/ProjectDetailStore":299,"react-bootstrap":66,"react-router":101,"react/addons":110}],291:[function(require,module,exports){
 "use strict";
 var React = require("react/addons");
 var ReactRouter = require("react-router");
@@ -38489,14 +38462,12 @@ var Signin = React.createClass({displayName: "Signin",
 
 module.exports = Signin;
 
-},{"../actions/UserActionCreator":287,"../stores/CurrentUserStore":299,"./HeaderBar.jsx":289,"react-bootstrap":66,"react-router":101,"react/addons":110}],293:[function(require,module,exports){
+},{"../actions/UserActionCreator":286,"../stores/CurrentUserStore":298,"./HeaderBar.jsx":288,"react-bootstrap":66,"react-router":101,"react/addons":110}],292:[function(require,module,exports){
 "use strict";
 var keyMirror = require('react/lib/keyMirror');
 
 module.exports = {
   ActionTypes: keyMirror({
-    PAGE_CHANGED: null,               // ページが変更された
-
     USER_SIGNING_IN: null,            // ユーザーがサインイン中になった
     USER_SIGNED_IN: null,             // ユーザーがサインインした
     USER_FAILED_TO_SIGN_IN: null,     // ユーザーのサインインに失敗
@@ -38515,13 +38486,13 @@ module.exports = {
   }
 };
 
-},{"react/lib/keyMirror":266}],294:[function(require,module,exports){
+},{"react/lib/keyMirror":266}],293:[function(require,module,exports){
 "use strict";
 var Dispatcher = require('flux').Dispatcher
 
 module.exports = new Dispatcher();
 
-},{"flux":1}],295:[function(require,module,exports){
+},{"flux":1}],294:[function(require,module,exports){
 "use strict";
 
 var Key = {
@@ -38551,7 +38522,7 @@ var Family = Parse.Object.extend("Family", {
 
 module.exports = Family;
 
-},{}],296:[function(require,module,exports){
+},{}],295:[function(require,module,exports){
 "use strict";
 
 var Key = {
@@ -38581,7 +38552,7 @@ var Milestone = Parse.Object.extend("Milestone", {
 
 module.exports = Milestone;
 
-},{}],297:[function(require,module,exports){
+},{}],296:[function(require,module,exports){
 "use strict";
 
 var Key = {
@@ -38602,7 +38573,7 @@ var Platform = Parse.Object.extend("Platform", {
 
 module.exports = Platform;
 
-},{}],298:[function(require,module,exports){
+},{}],297:[function(require,module,exports){
 "use strict";
 
 var Key = {
@@ -38659,7 +38630,7 @@ var Project = Parse.Object.extend("Project", {
 
 module.exports = Project;
 
-},{}],299:[function(require,module,exports){
+},{}],298:[function(require,module,exports){
 "use strict";
 var AppConstants = require("../constants/AppConstants")
 var AppDispatcher = require("../dispatcher/AppDispatcher");
@@ -38747,92 +38718,7 @@ CurrentUserStore.dispatchToken = AppDispatcher.register(function(action) {
 
 module.exports = CurrentUserStore;
 
-},{"../constants/AppConstants":293,"../dispatcher/AppDispatcher":294,"events":4,"object-assign":7,"react/lib/keyMirror":266}],300:[function(require,module,exports){
-"use strict";
-var AppConstants = require("../constants/AppConstants")
-var AppDispatcher = require("../dispatcher/AppDispatcher");
-var EventEmitter = require("events").EventEmitter;
-var assign = require("object-assign");
-var keyMirror = require('react/lib/keyMirror');
-var CurrentUserStore = require("./CurrentUserStore");
-
-var ActionTypes = AppConstants.ActionTypes;
-var Page = AppConstants.Page;
-var EventType = keyMirror({
-  PAGE_CHANGE: null
-});
-
-var _page;
-var _parameter;
-var resolvePage = function() {
-  // 認証されていなければサインインページ
-  if (CurrentUserStore.getUser() == null) {
-    _page = Page.SIGNIN;
-    _parameter = null;
-    return;
-  }
-
-  var fragment = "";
-  var url = window.location.href;
-  var fragmentIx = url.indexOf("#");
-  if (fragmentIx >= 0) {
-    fragment = url.substring(fragmentIx + 1);
-  }
-
-  if (fragment == "") {
-    _page = Page.PROJECT_LIST;
-    _parameter = null;
-  } else {
-    // fragmentの/以下はパラメータとして扱う
-    var paramIx = fragment.indexOf("/");
-    if (paramIx >= 0) {
-      _page = fragment.substring(0, paramIx);
-      _parameter = fragment.substring(paramIx + 1);
-      // FIXME: decode parameter
-    } else {
-      _page = fragment;
-      _parameter = null;
-    }
-  }
-}
-resolvePage();
-
-var PageStore = assign({}, EventEmitter.prototype, {
-  emitPageChange: function() {
-    this.emit(EventType.PAGE_CHANGE);
-  },
-
-  addPageChangeListener: function(callback) {
-    this.addListener(EventType.PAGE_CHANGE, callback);
-  },
-
-  removePageChangeListener: function(callback) {
-    this.removeListener(EventType.PAGE_CHANGE, callback);
-  },
-
-  getPage: function() {
-    return _page;
-  },
-
-  getParameter: function() {
-    return _parameter;
-  }
-});
-
-PageStore.Page = Page;
-
-PageStore.dispatchToken = AppDispatcher.register(function(action) {
-  switch (action.type) {
-    case ActionTypes.PAGE_CHANGED:
-      resolvePage();
-      PageStore.emitPageChange();
-      break;
-  }
-});
-
-module.exports = PageStore;
-
-},{"../constants/AppConstants":293,"../dispatcher/AppDispatcher":294,"./CurrentUserStore":299,"events":4,"object-assign":7,"react/lib/keyMirror":266}],301:[function(require,module,exports){
+},{"../constants/AppConstants":292,"../dispatcher/AppDispatcher":293,"events":4,"object-assign":7,"react/lib/keyMirror":266}],299:[function(require,module,exports){
 "use strict";
 var AppConstants = require("../constants/AppConstants")
 var AppDispatcher = require("../dispatcher/AppDispatcher");
@@ -38881,7 +38767,7 @@ ProjectDetailStore.dispatchToken = AppDispatcher.register(function(action) {
 
 module.exports = ProjectDetailStore;
 
-},{"../constants/AppConstants":293,"../dispatcher/AppDispatcher":294,"events":4,"object-assign":7,"react/lib/keyMirror":266}],302:[function(require,module,exports){
+},{"../constants/AppConstants":292,"../dispatcher/AppDispatcher":293,"events":4,"object-assign":7,"react/lib/keyMirror":266}],300:[function(require,module,exports){
 "use strict";
 var AppConstants = require("../constants/AppConstants")
 var AppDispatcher = require("../dispatcher/AppDispatcher");
@@ -38927,4 +38813,4 @@ ProjectListStore.dispatchToken = AppDispatcher.register(function(action) {
 
 module.exports = ProjectListStore;
 
-},{"../constants/AppConstants":293,"../dispatcher/AppDispatcher":294,"events":4,"immutable":6,"object-assign":7,"react/lib/keyMirror":266}]},{},[284,285,286,287,293,294,295,296,297,298,299,300,301,302,283,288,289,290,291,292]);
+},{"../constants/AppConstants":292,"../dispatcher/AppDispatcher":293,"events":4,"immutable":6,"object-assign":7,"react/lib/keyMirror":266}]},{},[284,285,286,292,293,294,295,296,297,298,299,300,283,287,288,289,290,291]);
