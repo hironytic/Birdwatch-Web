@@ -39511,10 +39511,12 @@ var ProjectDetail = React.createClass({displayName: "ProjectDetail",
     ProjectDetailStore.removeEditingChangeListener(this.handleEditingChange);
   },
 
-  componentWillReceiveProps: function(nextProps) {
-    setTimeout(function() {
-      ProjectDetailActionCreator.loadProjectDetail(nextProps.params.id);
-    }.bind(this), 1);
+  componentDidUpdate: function(prevProps, prevState) {
+    if (prevProps.params.id != this.props.params.id) {
+      setTimeout(function() {
+        ProjectDetailActionCreator.loadProjectDetail(this.props.params.id);
+      }.bind(this), 1);
+    }
   },
 
   handleProjectChange: function() {
@@ -39695,7 +39697,15 @@ module.exports = {
 "use strict";
 var Dispatcher = require('flux').Dispatcher
 
-module.exports = new Dispatcher();
+var AppDispatcher = new Dispatcher();
+
+// for Debug
+// AppDispatcher.dispatch = function(action) {
+//   console.log(action);
+//   Dispatcher.prototype.dispatch.apply(AppDispatcher, arguments);
+// };
+
+module.exports = AppDispatcher;
 
 },{"flux":2}],297:[function(require,module,exports){
 "use strict";

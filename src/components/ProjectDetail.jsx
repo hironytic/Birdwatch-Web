@@ -126,10 +126,12 @@ var ProjectDetail = React.createClass({
     ProjectDetailStore.removeEditingChangeListener(this.handleEditingChange);
   },
 
-  componentWillReceiveProps: function(nextProps) {
-    setTimeout(function() {
-      ProjectDetailActionCreator.loadProjectDetail(nextProps.params.id);
-    }.bind(this), 1);
+  componentDidUpdate: function(prevProps, prevState) {
+    if (prevProps.params.id != this.props.params.id) {
+      setTimeout(function() {
+        ProjectDetailActionCreator.loadProjectDetail(this.props.params.id);
+      }.bind(this), 1);
+    }
   },
 
   handleProjectChange: function() {
