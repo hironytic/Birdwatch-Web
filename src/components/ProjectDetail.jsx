@@ -69,7 +69,7 @@ var ProjectDetail = React.createClass({
         footer = (
           <ButtonToolbar>
             <ButtonGroup>
-              <Button key="refresh" onClick={this.handleRefresh}><Glyphicon glyph="refresh"/> 最新に更新</Button>
+              <Button key="refresh" onClick={this.handleRefresh}><Glyphicon glyph="refresh"/> 最新</Button>
               <Button key="startEditing" onClick={this.handleStartEditing}><Glyphicon glyph="pencil"/> 編集</Button>
               <Button key="delete"><Glyphicon glyph="trash"/> 削除</Button>
             </ButtonGroup>

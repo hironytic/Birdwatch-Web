@@ -39454,7 +39454,7 @@ var ProjectDetail = React.createClass({displayName: "ProjectDetail",
         footer = (
           React.createElement(ButtonToolbar, null, 
             React.createElement(ButtonGroup, null, 
-              React.createElement(Button, {key: "refresh", onClick: this.handleRefresh}, React.createElement(Glyphicon, {glyph: "refresh"}), " 最新に更新"), 
+              React.createElement(Button, {key: "refresh", onClick: this.handleRefresh}, React.createElement(Glyphicon, {glyph: "refresh"}), " 最新"), 
               React.createElement(Button, {key: "startEditing", onClick: this.handleStartEditing}, React.createElement(Glyphicon, {glyph: "pencil"}), " 編集"), 
               React.createElement(Button, {key: "delete"}, React.createElement(Glyphicon, {glyph: "trash"}), " 削除")
             )
