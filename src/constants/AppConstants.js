@@ -15,15 +15,18 @@ module.exports = {
     PROJECT_LIST_LOADING: null,       // プロジェクト一覧のロード中
     PROJECT_LIST_LOADED: null,        // プロジェクト一覧のロード完了
 
-    PROJECT_DETAIL_LOADING: null,     // プロジェクト詳細のロード中
-    PROJECT_DETAIL_LOADED: null,      // プロジェクト詳細のロード完了,
-    PROJECT_DETAIL_START_EDITING: null,  // プロジェクト詳細の編集開始
-    PROJECT_DETAIL_CANCEL_EDITING: null,  // プロジェクト詳細の編集をキャンセル
+    PROJECT_DETAIL_TARGET: null,              // プロジェクト詳細の対象が決まった
+    PROJECT_DETAIL_LOADING: null,             // プロジェクト詳細のロード中
+    PROJECT_DETAIL_LOADED: null,              // プロジェクト詳細のロード完了
+    PROJECT_DETAIL_MILESTONES_LOADING: null,  // プロジェクト詳細のマイルストーンのロード中
+    PROJECT_DETAIL_MILESTONES_LOADED: null,   // プロジェクト詳細のマイルストーンのロード完了
+    PROJECT_DETAIL_START_EDITING: null,       // プロジェクト詳細の編集開始
+    PROJECT_DETAIL_CANCEL_EDITING: null,      // プロジェクト詳細の編集をキャンセル
   }),
 
   Page: {
     SIGNIN: "signin",
     PROJECT_LIST: "projects",
-    PROJECT_DETAIL: "project"
+    PROJECT_DETAIL: "project",
   }
 };

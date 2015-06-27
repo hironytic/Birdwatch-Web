@@ -38967,53 +38967,104 @@ module.exports = {
 },{"../constants/AppConstants":295,"../dispatcher/AppDispatcher":296}],286:[function(require,module,exports){
 "use strict";
 var Promise = require("es6-promise").Promise;
+var Immutable = require("immutable");
 
 var AppDispatcher = require("../dispatcher/AppDispatcher");
 var AppConstants = require("../constants/AppConstants");
 var Project = require("../objects/Project");
+var ProjectMilestone = require("../objects/ProjectMilestone");
 
 var ActionTypes = AppConstants.ActionTypes;
 
-module.exports = {
-  loadProjectDetail: function(projectId) {
+function _loadProjectDetail(projectId) {
+  AppDispatcher.dispatch({
+    type: ActionTypes.PROJECT_DETAIL_LOADING,
+    id: projectId,
+  });
+
+  var query = new Parse.Query(Project);
+  query.include(Project.Key.FAMILY);
+  query.include(Project.Key.PLATFORM);
+  Promise.resolve(query.get(projectId)).catch(function(error) {
     AppDispatcher.dispatch({
-      type: ActionTypes.PROJECT_DETAIL_LOADING
+      type: ActionTypes.ERROR_OCCURED,
+      message1: "プロジェクトの取得に失敗",
+      message2: error.message,
+    });
+    return null;
+  }).then(function(project) {
+    AppDispatcher.dispatch({
+      type: ActionTypes.PROJECT_DETAIL_LOADED,
+      id: projectId,
+      project: project,
     });
 
-    var query = new Parse.Query(Project);
-    query.include(Project.Key.FAMILY);
-    query.include(Project.Key.PLATFORM);
-    Promise.resolve(query.get(projectId)).catch(function(error) {
-      AppDispatcher.dispatch({
-        type: ActionTypes.ERROR_OCCURED,
-        message1: "プロジェクトの取得に失敗",
-        message2: error.message
-      });
-      return null;
-    }).then(function(project) {
-      AppDispatcher.dispatch({
-        type: ActionTypes.PROJECT_DETAIL_LOADED,
-        project: project
-      });
+    // マイルストーンのロード
+    _loadProjectMilestones(project);
+  });
+}
+
+function _loadProjectMilestones(project) {
+  if (project == null) {
+    return;
+  }
+
+  var id = project.id;
+  AppDispatcher.dispatch({
+    type: ActionTypes.PROJECT_DETAIL_MILESTONES_LOADING,
+    id: id,
+  });
+
+  var query = new Parse.Query(ProjectMilestone);
+  query.equalTo(ProjectMilestone.Key.PROJECT, project);
+  query.include(ProjectMilestone.Key.MILESTONE);
+  query.ascending(ProjectMilestone.Key.INTERNAL_DATE);
+  Promise.resolve(query.find()).then(function(milestones) {
+    return Immutable.List(milestones);
+  }).catch(function(error) {
+    AppDispatcher.dispatch({
+      type: ActionTypes.ERROR_OCCURED,
+      message1: "マイルストーンの取得に失敗",
+      message2: error.message,
     });
+    return Immutable.List();
+  }).then(function(milestones) {
+    AppDispatcher.dispatch({
+      type: ActionTypes.PROJECT_DETAIL_MILESTONES_LOADED,
+      id: id,
+      milestones: milestones,
+    });
+  });
+}
+
+module.exports = {
+  setProjectTarget: function(projectId) {
+    AppDispatcher.dispatch({
+      type: ActionTypes.PROJECT_DETAIL_TARGET,
+      id: projectId,
+    });
+  },
+
+  loadProjectDetail: function(projectId) {
+    _loadProjectDetail(projectId);
   },
 
   startEditing: function(projectId) {
     AppDispatcher.dispatch({
       type: ActionTypes.PROJECT_DETAIL_START_EDITING,
-      id: projectId
+      id: projectId,
     });
   },
 
   cancelEditing: function(projectId) {
     AppDispatcher.dispatch({
       type: ActionTypes.PROJECT_DETAIL_CANCEL_EDITING,
-      id: projectId
+      id: projectId,
     });
-  }
+  },
 };
 
-},{"../constants/AppConstants":295,"../dispatcher/AppDispatcher":296,"../objects/Project":300,"es6-promise":1}],287:[function(require,module,exports){
+},{"../constants/AppConstants":295,"../dispatcher/AppDispatcher":296,"../objects/Project":300,"../objects/ProjectMilestone":301,"es6-promise":1,"immutable":7}],287:[function(require,module,exports){
 "use strict";
 var Immutable = require("immutable");
 var Promise = require("es6-promise").Promise;
@@ -39137,7 +39188,7 @@ var AppFrame = React.createClass({displayName: "AppFrame",
 
 module.exports = AppFrame;
 
-},{"../stores/CurrentUserStore":301,"./ErrorList.jsx":290,"./HeaderBar.jsx":291,"react":283,"react-router":102}],290:[function(require,module,exports){
+},{"../stores/CurrentUserStore":302,"./ErrorList.jsx":290,"./HeaderBar.jsx":291,"react":283,"react-router":102}],290:[function(require,module,exports){
 "use strict";
 var React = require("react");
 var ReactBootstrap = require("react-bootstrap");
@@ -39215,7 +39266,7 @@ var ErrorList = React.createClass({displayName: "ErrorList",
 
 module.exports = ErrorList;
 
-},{"../actions/ErrorActionCreator":285,"../stores/ErrorStore":302,"react":283,"react-bootstrap":67}],291:[function(require,module,exports){
+},{"../actions/ErrorActionCreator":285,"../stores/ErrorStore":303,"react":283,"react-bootstrap":67}],291:[function(require,module,exports){
 "use strict";
 var React = require("react")
 var ReactBootstrap = require('react-bootstrap')
@@ -39272,7 +39323,7 @@ var HeaderBar = React.createClass({displayName: "HeaderBar",
 
 module.exports = HeaderBar;
 
-},{"../actions/UserActionCreator":288,"../stores/CurrentUserStore":301,"react":283,"react-bootstrap":67}],292:[function(require,module,exports){
+},{"../actions/UserActionCreator":288,"../stores/CurrentUserStore":302,"react":283,"react-bootstrap":67}],292:[function(require,module,exports){
 "use strict";
 var React = require("react/addons");
 var ReactRouter = require("react-router");
@@ -39382,7 +39433,7 @@ var Project = React.createClass({displayName: "Project",
 
 module.exports = Project;
 
-},{"../actions/ProjectListActionCreator":287,"../stores/ProjectListStore":304,"react-bootstrap":67,"react-router":102,"react/addons":111}],293:[function(require,module,exports){
+},{"../actions/ProjectListActionCreator":287,"../stores/ProjectListStore":305,"react-bootstrap":67,"react-router":102,"react/addons":111}],293:[function(require,module,exports){
 "use strict";
 var React = require("react/addons");
 var ReactRouter = require("react-router");
@@ -39403,9 +39454,12 @@ var ProjectDetail = React.createClass({displayName: "ProjectDetail",
 
   getInitialState: function() {
     return {
+      targetId: ProjectDetailStore.getTargetId(),
       project: ProjectDetailStore.getProject(),
       isLoading: ProjectDetailStore.isLoading(),
-      isEditing: ProjectDetailStore.isEditing()
+      milestones: ProjectDetailStore.getMilestones(),
+      isMilestonesLoading: ProjectDetailStore.isMilestonesLoading(),
+      isEditing: ProjectDetailStore.isEditing(),
     };
   },
 
@@ -39471,28 +39525,55 @@ var ProjectDetail = React.createClass({displayName: "ProjectDetail",
   },
 
   renderMilestones: function() {
+    var milestones = "";
+    if (this.state.isMilestonesLoading) {
+      milestones = (
+        React.createElement("tr", null, 
+          React.createElement("td", {colSpan: "3"}, 
+            React.createElement("div", {className: "text-center"}, 
+              React.createElement("img", {src: "image/loading.gif"})
+            )
+          )
+        )
+      );
+    } else if (this.state.milestones != null) {
+      milestones = this.state.milestones.map(function(milestone) {
+        var internalDate = milestone.getInternalDate();
+        var internalDateString = internalDate.getFullYear().toString() + "-" +
+                              ("0" + (internalDate.getMonth() + 1).toString()).slice(-2) + "-" +
+                              ("0" + internalDate.getDay().toString()).slice(-2);
+        if (internalDate.getHours() != 0 || internalDate.getMinutes() != 0 || internalDate.getSeconds() != 0) {
+          internalDateString = internalDateString + " " +
+                                ("0" + internalDate.getHours().toString()).slice(-2) + ":" +
+                                ("0" + internalDate.getMinutes().toString()).slice(-2);
+          if (internalDate.getSeconds() != 0) {
+            internalDateString = internalDateString + ":" +
+                                  ("0" + internalDate.getSeconds().toString()).slice(-2);
+          }
+        }
+        internalDateString = "(" + internalDateString + ")";
+        return (
+          React.createElement("tr", {key: "id_" + milestone.id}, 
+            React.createElement("td", null, milestone.getMilestone().getName()), 
+            React.createElement("td", null, milestone.getDateString()), 
+            React.createElement("td", null, internalDateString)
+          )
+        );
+      }.bind(this));
+      milestones = milestones.toArray();
+    }
+
     return (
       React.createElement(Table, {condensed: true}, 
         React.createElement("thead", null, 
           React.createElement("tr", null, 
             React.createElement("th", null, "イベント"), 
             React.createElement("th", null, "表示"), 
-            React.createElement("th", null, "日付")
+            React.createElement("th", null, "内部日付")
           )
         ), 
-        React.createElement("tbody", null
-/*
-          <tr>
-            <td>開発終了</td>
-            <td>6月</td>
-            <td>(2015/06/01)</td>
-          </tr>
-          <tr>
-            <td>コードFix</td>
-            <td>6/14</td>
-            <td>(2015/06/14)</td>
-          </tr>
-*/
+        React.createElement("tbody", null, 
+          milestones
         )
       )
     );
@@ -39501,9 +39582,8 @@ var ProjectDetail = React.createClass({displayName: "ProjectDetail",
   componentDidMount: function() {
     ProjectDetailStore.addProjectChangeListener(this.handleProjectChange);
     ProjectDetailStore.addEditingChangeListener(this.handleEditingChange);
-    setTimeout(function() {
-      ProjectDetailActionCreator.loadProjectDetail(this.props.params.id);
-    }.bind(this), 0);
+
+    setTimeout(this.readyProject, 0);
   },
 
   componentWillUnmount: function() {
@@ -39513,16 +39593,26 @@ var ProjectDetail = React.createClass({displayName: "ProjectDetail",
 
   componentDidUpdate: function(prevProps, prevState) {
     if (prevProps.params.id != this.props.params.id) {
-      setTimeout(function() {
-        ProjectDetailActionCreator.loadProjectDetail(this.props.params.id);
-      }.bind(this), 1);
+      setTimeout(this.readyProject, 0);
+    }
+  },
+
+  readyProject: function() {
+    if (this.state.targetId != this.props.params.id) {
+      ProjectDetailActionCreator.setProjectTarget(this.props.params.id);
+    }
+    if ((this.state.project == null || this.state.project.id != this.props.params.id) && !this.state.isLoading) {
+      ProjectDetailActionCreator.loadProjectDetail(this.props.params.id);
     }
   },
 
   handleProjectChange: function() {
     this.setState({
+      targetId: ProjectDetailStore.getTargetId(),
       project: ProjectDetailStore.getProject(),
-      isLoading: ProjectDetailStore.isLoading()
+      isLoading: ProjectDetailStore.isLoading(),
+      milestones: ProjectDetailStore.getMilestones(),
+      isMilestonesLoading: ProjectDetailStore.isMilestonesLoading(),
     });
   },
 
@@ -39555,7 +39645,7 @@ var ProjectDetail = React.createClass({displayName: "ProjectDetail",
 
 module.exports = ProjectDetail;
 
-},{"../actions/ProjectDetailActionCreator":286,"../stores/ProjectDetailStore":303,"react-bootstrap":67,"react-router":102,"react/addons":111}],294:[function(require,module,exports){
+},{"../actions/ProjectDetailActionCreator":286,"../stores/ProjectDetailStore":304,"react-bootstrap":67,"react-router":102,"react/addons":111}],294:[function(require,module,exports){
 "use strict";
 var React = require("react/addons");
 var ReactRouter = require("react-router");
@@ -39662,7 +39752,7 @@ var Signin = React.createClass({displayName: "Signin",
 
 module.exports = Signin;
 
-},{"../actions/UserActionCreator":288,"../stores/CurrentUserStore":301,"./HeaderBar.jsx":291,"react-bootstrap":67,"react-router":102,"react/addons":111}],295:[function(require,module,exports){
+},{"../actions/UserActionCreator":288,"../stores/CurrentUserStore":302,"./HeaderBar.jsx":291,"react-bootstrap":67,"react-router":102,"react/addons":111}],295:[function(require,module,exports){
 "use strict";
 var keyMirror = require('react/lib/keyMirror');
 
@@ -39680,16 +39770,19 @@ module.exports = {
     PROJECT_LIST_LOADING: null,       // プロジェクト一覧のロード中
     PROJECT_LIST_LOADED: null,        // プロジェクト一覧のロード完了
 
-    PROJECT_DETAIL_LOADING: null,     // プロジェクト詳細のロード中
-    PROJECT_DETAIL_LOADED: null,      // プロジェクト詳細のロード完了,
-    PROJECT_DETAIL_START_EDITING: null,  // プロジェクト詳細の編集開始
-    PROJECT_DETAIL_CANCEL_EDITING: null,  // プロジェクト詳細の編集をキャンセル
+    PROJECT_DETAIL_TARGET: null,              // プロジェクト詳細の対象が決まった
+    PROJECT_DETAIL_LOADING: null,             // プロジェクト詳細のロード中
+    PROJECT_DETAIL_LOADED: null,              // プロジェクト詳細のロード完了
+    PROJECT_DETAIL_MILESTONES_LOADING: null,  // プロジェクト詳細のマイルストーンのロード中
+    PROJECT_DETAIL_MILESTONES_LOADED: null,   // プロジェクト詳細のマイルストーンのロード完了
+    PROJECT_DETAIL_START_EDITING: null,       // プロジェクト詳細の編集開始
+    PROJECT_DETAIL_CANCEL_EDITING: null,      // プロジェクト詳細の編集をキャンセル
   }),
 
   Page: {
     SIGNIN: "signin",
     PROJECT_LIST: "projects",
-    PROJECT_DETAIL: "project"
+    PROJECT_DETAIL: "project",
   }
 };
 
@@ -39847,6 +39940,54 @@ module.exports = Project;
 
 },{}],301:[function(require,module,exports){
 "use strict";
+
+var Key = {
+  PROJECT: "project",
+  MILESTONE: "milestone",
+  INTERNAL_DATE: "internalDate",
+  DATE_STRING: "dateString"
+};
+
+var ProjectMilestone = Parse.Object.extend("ProjectMilestone", {
+  getProject: function() {
+    return this.get(Key.PROJECT);
+  },
+
+  setProject: function(value) {
+    this.set(Key.PROJECT, value);
+  },
+
+  getMilestone: function() {
+    return this.get(Key.MILESTONE);
+  },
+
+  setMilestone: function(value) {
+    this.set(Key.MILESTONE, value);
+  },
+
+  getInternalDate: function() {
+    return this.get(Key.INTERNAL_DATE);
+  },
+
+  setInternalDate: function(value) {
+    this.set(Key.INTERNAL_DATE, value);
+  },
+
+  getDateString: function() {
+    return this.get(Key.DATE_STRING);
+  },
+
+  setDateString: function(value) {
+    this.set(Key.DATE_STRING, value);
+  }
+}, {
+  Key: Key
+});
+
+module.exports = ProjectMilestone;
+
+},{}],302:[function(require,module,exports){
+"use strict";
 var AppConstants = require("../constants/AppConstants")
 var AppDispatcher = require("../dispatcher/AppDispatcher");
 var EventEmitter = require("events").EventEmitter;
@@ -39932,7 +40073,7 @@ CurrentUserStore.dispatchToken = AppDispatcher.register(function(action) {
 
 module.exports = CurrentUserStore;
 
-},{"../constants/AppConstants":295,"../dispatcher/AppDispatcher":296,"events":5,"object-assign":8,"react/lib/keyMirror":267}],302:[function(require,module,exports){
+},{"../constants/AppConstants":295,"../dispatcher/AppDispatcher":296,"events":5,"object-assign":8,"react/lib/keyMirror":267}],303:[function(require,module,exports){
 "use strict";
 var AppConstants = require("../constants/AppConstants")
 var AppDispatcher = require("../dispatcher/AppDispatcher");
@@ -39993,7 +40134,7 @@ ErrorStore.dispatchToken = AppDispatcher.register(function(action) {
 
 module.exports = ErrorStore;
 
-},{"../constants/AppConstants":295,"../dispatcher/AppDispatcher":296,"events":5,"immutable":7,"object-assign":8,"react/lib/keyMirror":267}],303:[function(require,module,exports){
+},{"../constants/AppConstants":295,"../dispatcher/AppDispatcher":296,"events":5,"immutable":7,"object-assign":8,"react/lib/keyMirror":267}],304:[function(require,module,exports){
 "use strict";
 var AppConstants = require("../constants/AppConstants")
 var AppDispatcher = require("../dispatcher/AppDispatcher");
@@ -40007,8 +40148,11 @@ var EventType = keyMirror({
   EDITING_CHANGE: null,
 });
 
+var _targetId = null;
 var _project = null;
-var _loading = false;
+var _milestones = null;
+var _isLoading = false;
+var _isMilestonesLoading = false;
 var _editing = false;
 
 var ProjectDetailStore = assign({}, EventEmitter.prototype, {
@@ -40024,12 +40168,24 @@ var ProjectDetailStore = assign({}, EventEmitter.prototype, {
     this.removeListener(EventType.PROJECT_CHANGE, callback);
   },
 
+  getTargetId: function() {
+    return _targetId;
+  },
+
   getProject: function() {
     return _project;
   },
 
+  getMilestones: function() {
+    return _milestones;
+  },
+
   isLoading: function() {
-    return _loading;
+    return _isLoading;
+  },
+
+  isMilestonesLoading: function() {
+    return _isMilestonesLoading;
   },
 
   emitEditingChange: function() {
@@ -40051,32 +40207,69 @@ var ProjectDetailStore = assign({}, EventEmitter.prototype, {
 
 ProjectDetailStore.dispatchToken = AppDispatcher.register(function(action) {
   switch (action.type) {
+    case ActionTypes.PROJECT_DETAIL_TARGET:
+      if (_targetId != action.id) {
+        _targetId = action.id;
+        _project = null;
+        _isLoading = false;
+        _isMilestonesLoading = false;
+        ProjectDetailStore.emitProjectChange();
+        if (_editing) {
+          _editing = false;
+          ProjectDetailStore.emitEditingChange();
+        }
+      }
+      break;
     case ActionTypes.PROJECT_DETAIL_LOADING:
-      _loading = true;
-      _project = null;
-      ProjectDetailStore.emitProjectChange();
-      if (_editing) {
-        _editing = false;
-        ProjectDetailStore.emitEditingChange();
+      if (_targetId == action.id) {
+        _isLoading = true;
+        ProjectDetailStore.emitProjectChange();
+        if (_editing) {
+          _editing = false;
+          ProjectDetailStore.emitEditingChange();
+        }
       }
       break;
     case ActionTypes.PROJECT_DETAIL_LOADED:
-      _loading = false;
-      _project = action.project;
-      ProjectDetailStore.emitProjectChange();
-      if (_editing) {
-        _editing = false;
-        ProjectDetailStore.emitEditingChange();
+      if (_targetId == action.id) {
+        _isLoading = false;
+        _project = action.project;
+        ProjectDetailStore.emitProjectChange();
+        if (_editing) {
+          _editing = false;
+          ProjectDetailStore.emitEditingChange();
+        }
+      }
+      break;
+    case ActionTypes.PROJECT_DETAIL_MILESTONES_LOADING:
+      if (_targetId == action.id) {
+        _isMilestonesLoading = true;
+        ProjectDetailStore.emitProjectChange();
+        if (_editing) {
+          _editing = false;
+          ProjectDetailStore.emitEditingChange();
+        }
+      }
+      break;
+    case ActionTypes.PROJECT_DETAIL_MILESTONES_LOADED:
+      if (_targetId == action.id) {
+        _isMilestonesLoading = false;
+        _milestones = action.milestones;
+        ProjectDetailStore.emitProjectChange();
+        if (_editing) {
+          _editing = false;
+          ProjectDetailStore.emitEditingChange();
+        }
       }
       break;
     case ActionTypes.PROJECT_DETAIL_START_EDITING:
-      if (_project != null && _project.id == action.id) {
+      if (_targetId == action.id) {
         _editing = true;
         ProjectDetailStore.emitEditingChange();
       }
       break;
     case ActionTypes.PROJECT_DETAIL_CANCEL_EDITING:
-      if (_project != null && _project.id == action.id) {
+      if (_targetId == action.id) {
         _editing = false;
         ProjectDetailStore.emitEditingChange();
       }
@@ -40086,7 +40279,7 @@ ProjectDetailStore.dispatchToken = AppDispatcher.register(function(action) {
 
 module.exports = ProjectDetailStore;
 
-},{"../constants/AppConstants":295,"../dispatcher/AppDispatcher":296,"events":5,"object-assign":8,"react/lib/keyMirror":267}],304:[function(require,module,exports){
+},{"../constants/AppConstants":295,"../dispatcher/AppDispatcher":296,"events":5,"object-assign":8,"react/lib/keyMirror":267}],305:[function(require,module,exports){
 "use strict";
 var AppConstants = require("../constants/AppConstants")
 var AppDispatcher = require("../dispatcher/AppDispatcher");
@@ -40152,4 +40345,4 @@ ProjectListStore.dispatchToken = AppDispatcher.register(function(action) {
 
 module.exports = ProjectListStore;
 
-},{"../constants/AppConstants":295,"../dispatcher/AppDispatcher":296,"events":5,"immutable":7,"object-assign":8,"react/lib/keyMirror":267}]},{},[285,286,287,288,295,296,297,298,299,300,301,302,303,304,284,289,290,291,292,293,294]);
+},{"../constants/AppConstants":295,"../dispatcher/AppDispatcher":296,"events":5,"immutable":7,"object-assign":8,"react/lib/keyMirror":267}]},{},[285,286,287,288,295,296,297,298,299,300,301,302,303,304,305,284,289,290,291,292,293,294]);

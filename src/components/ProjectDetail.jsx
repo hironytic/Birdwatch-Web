@@ -18,9 +18,12 @@ var ProjectDetail = React.createClass({
 
   getInitialState: function() {
     return {
+      targetId: ProjectDetailStore.getTargetId(),
       project: ProjectDetailStore.getProject(),
       isLoading: ProjectDetailStore.isLoading(),
-      isEditing: ProjectDetailStore.isEditing()
+      milestones: ProjectDetailStore.getMilestones(),
+      isMilestonesLoading: ProjectDetailStore.isMilestonesLoading(),
+      isEditing: ProjectDetailStore.isEditing(),
     };
   },
 
@@ -86,28 +89,55 @@ var ProjectDetail = React.createClass({
   },
 
   renderMilestones: function() {
+    var milestones = "";
+    if (this.state.isMilestonesLoading) {
+      milestones = (
+        <tr>
+          <td colSpan="3">
+            <div className="text-center">
+              <img src="image/loading.gif"/>
+            </div>
+          </td>
+        </tr>
+      );
+    } else if (this.state.milestones != null) {
+      milestones = this.state.milestones.map(function(milestone) {
+        var internalDate = milestone.getInternalDate();
+        var internalDateString = internalDate.getFullYear().toString() + "-" +
+                              ("0" + (internalDate.getMonth() + 1).toString()).slice(-2) + "-" +
+                              ("0" + internalDate.getDay().toString()).slice(-2);
+        if (internalDate.getHours() != 0 || internalDate.getMinutes() != 0 || internalDate.getSeconds() != 0) {
+          internalDateString = internalDateString + " " +
+                                ("0" + internalDate.getHours().toString()).slice(-2) + ":" +
+                                ("0" + internalDate.getMinutes().toString()).slice(-2);
+          if (internalDate.getSeconds() != 0) {
+            internalDateString = internalDateString + ":" +
+                                  ("0" + internalDate.getSeconds().toString()).slice(-2);
+          }
+        }
+        internalDateString = "(" + internalDateString + ")";
+        return (
+          <tr key={"id_" + milestone.id}>
+            <td>{milestone.getMilestone().getName()}</td>
+            <td>{milestone.getDateString()}</td>
+            <td>{internalDateString}</td>
+          </tr>
+        );
+      }.bind(this));
+      milestones = milestones.toArray();
+    }
+
     return (
       <Table condensed>
         <thead>
           <tr>
             <th>イベント</th>
             <th>表示</th>
-            <th>日付</th>
+            <th>内部日付</th>
           </tr>
         </thead>
         <tbody>
-{/*
-          <tr>
-            <td>開発終了</td>
-            <td>6月</td>
-            <td>(2015/06/01)</td>
-          </tr>
-          <tr>
-            <td>コードFix</td>
-            <td>6/14</td>
-            <td>(2015/06/14)</td>
-          </tr>
-*/}
+          {milestones}
         </tbody>
       </Table>
     );
@@ -116,9 +146,8 @@ var ProjectDetail = React.createClass({
   componentDidMount: function() {
     ProjectDetailStore.addProjectChangeListener(this.handleProjectChange);
     ProjectDetailStore.addEditingChangeListener(this.handleEditingChange);
-    setTimeout(function() {
-      ProjectDetailActionCreator.loadProjectDetail(this.props.params.id);
-    }.bind(this), 0);
+
+    setTimeout(this.readyProject, 0);
   },
 
   componentWillUnmount: function() {
@@ -128,16 +157,26 @@ var ProjectDetail = React.createClass({
 
   componentDidUpdate: function(prevProps, prevState) {
     if (prevProps.params.id != this.props.params.id) {
-      setTimeout(function() {
-        ProjectDetailActionCreator.loadProjectDetail(this.props.params.id);
-      }.bind(this), 1);
+      setTimeout(this.readyProject, 0);
+    }
+  },
+
+  readyProject: function() {
+    if (this.state.targetId != this.props.params.id) {
+      ProjectDetailActionCreator.setProjectTarget(this.props.params.id);
+    }
+    if ((this.state.project == null || this.state.project.id != this.props.params.id) && !this.state.isLoading) {
+      ProjectDetailActionCreator.loadProjectDetail(this.props.params.id);
     }
   },
 
   handleProjectChange: function() {
     this.setState({
+      targetId: ProjectDetailStore.getTargetId(),
       project: ProjectDetailStore.getProject(),
-      isLoading: ProjectDetailStore.isLoading()
+      isLoading: ProjectDetailStore.isLoading(),
+      milestones: ProjectDetailStore.getMilestones(),
+      isMilestonesLoading: ProjectDetailStore.isMilestonesLoading(),
     });
   },
 

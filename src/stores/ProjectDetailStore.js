@@ -11,8 +11,11 @@ var EventType = keyMirror({
   EDITING_CHANGE: null,
 });
 
+var _targetId = null;
 var _project = null;
-var _loading = false;
+var _milestones = null;
+var _isLoading = false;
+var _isMilestonesLoading = false;
 var _editing = false;
 
 var ProjectDetailStore = assign({}, EventEmitter.prototype, {
@@ -28,12 +31,24 @@ var ProjectDetailStore = assign({}, EventEmitter.prototype, {
     this.removeListener(EventType.PROJECT_CHANGE, callback);
   },
 
+  getTargetId: function() {
+    return _targetId;
+  },
+
   getProject: function() {
     return _project;
   },
 
+  getMilestones: function() {
+    return _milestones;
+  },
+
   isLoading: function() {
-    return _loading;
+    return _isLoading;
+  },
+
+  isMilestonesLoading: function() {
+    return _isMilestonesLoading;
   },
 
   emitEditingChange: function() {
@@ -55,32 +70,69 @@ var ProjectDetailStore = assign({}, EventEmitter.prototype, {
 
 ProjectDetailStore.dispatchToken = AppDispatcher.register(function(action) {
   switch (action.type) {
+    case ActionTypes.PROJECT_DETAIL_TARGET:
+      if (_targetId != action.id) {
+        _targetId = action.id;
+        _project = null;
+        _isLoading = false;
+        _isMilestonesLoading = false;
+        ProjectDetailStore.emitProjectChange();
+        if (_editing) {
+          _editing = false;
+          ProjectDetailStore.emitEditingChange();
+        }
+      }
+      break;
     case ActionTypes.PROJECT_DETAIL_LOADING:
-      _loading = true;
-      _project = null;
-      ProjectDetailStore.emitProjectChange();
-      if (_editing) {
-        _editing = false;
-        ProjectDetailStore.emitEditingChange();
+      if (_targetId == action.id) {
+        _isLoading = true;
+        ProjectDetailStore.emitProjectChange();
+        if (_editing) {
+          _editing = false;
+          ProjectDetailStore.emitEditingChange();
+        }
       }
       break;
     case ActionTypes.PROJECT_DETAIL_LOADED:
-      _loading = false;
-      _project = action.project;
-      ProjectDetailStore.emitProjectChange();
-      if (_editing) {
-        _editing = false;
-        ProjectDetailStore.emitEditingChange();
+      if (_targetId == action.id) {
+        _isLoading = false;
+        _project = action.project;
+        ProjectDetailStore.emitProjectChange();
+        if (_editing) {
+          _editing = false;
+          ProjectDetailStore.emitEditingChange();
+        }
+      }
+      break;
+    case ActionTypes.PROJECT_DETAIL_MILESTONES_LOADING:
+      if (_targetId == action.id) {
+        _isMilestonesLoading = true;
+        ProjectDetailStore.emitProjectChange();
+        if (_editing) {
+          _editing = false;
+          ProjectDetailStore.emitEditingChange();
+        }
+      }
+      break;
+    case ActionTypes.PROJECT_DETAIL_MILESTONES_LOADED:
+      if (_targetId == action.id) {
+        _isMilestonesLoading = false;
+        _milestones = action.milestones;
+        ProjectDetailStore.emitProjectChange();
+        if (_editing) {
+          _editing = false;
+          ProjectDetailStore.emitEditingChange();
+        }
       }
       break;
     case ActionTypes.PROJECT_DETAIL_START_EDITING:
-      if (_project != null && _project.id == action.id) {
+      if (_targetId == action.id) {
         _editing = true;
         ProjectDetailStore.emitEditingChange();
       }
       break;
     case ActionTypes.PROJECT_DETAIL_CANCEL_EDITING:
-      if (_project != null && _project.id == action.id) {
+      if (_targetId == action.id) {
         _editing = false;
         ProjectDetailStore.emitEditingChange();
       }
