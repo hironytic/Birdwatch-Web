@@ -1,183 +1,31 @@
 "use strict";
 var React = require("react/addons");
-var ReactRouter = require("react-router");
-var ReactBootstrap = require('react-bootstrap');
-var Panel = ReactBootstrap.Panel;
-var FormControls = ReactBootstrap.FormControls;
-var Table = ReactBootstrap.Table;
-var ButtonToolbar = ReactBootstrap.ButtonToolbar;
-var ButtonGroup = ReactBootstrap.ButtonGroup;
-var Button = ReactBootstrap.Button;
-var Glyphicon = ReactBootstrap.Glyphicon;
 
 var ProjectDetailStore = require("../stores/ProjectDetailStore");
-var ProjectDetailActionCreator = require("../actions/ProjectDetailActionCreator");
+var ProjectDetailViewer = require("./ProjectDetailViewer.jsx");
+var ProjectDetailEditor = require("./ProjectDetailEditor.jsx");
 
 var ProjectDetail = React.createClass({
-  mixins: [ReactRouter.TransitionHook],
-
   getInitialState: function() {
     return {
-      targetId: ProjectDetailStore.getTargetId(),
-      project: ProjectDetailStore.getProject(),
-      isLoading: ProjectDetailStore.isLoading(),
-      milestones: ProjectDetailStore.getMilestones(),
-      isMilestonesLoading: ProjectDetailStore.isMilestonesLoading(),
       isEditing: ProjectDetailStore.isEditing(),
     };
   },
 
   render: function() {
-    var projectForm;
-    var project = this.state.project;
-    if (project == null) {
-      projectForm = "";
-      if (this.state.isLoading) {
-        projectForm = (
-          <div className="text-center">
-            <img src="image/loading.gif"/>
-          </div>
-        );
-      }
+    if (this.state.isEditing) {
+      return <ProjectDetailEditor id={this.props.params.id}/>;
     } else {
-      projectForm = (
-        <form className="form-horizontal" action="#" onSubmit={this.handleSubmit}>
-          <FormControls.Static label="名称" labelClassName="col-xs-4" wrapperClassName="col-xs-8" value={project.getName()}/>
-          <FormControls.Static label="プロジェクトコード" labelClassName="col-xs-4" wrapperClassName="col-xs-8" value={project.getProjectCode()}/>
-          <FormControls.Static label="プロダクト" labelClassName="col-xs-4" wrapperClassName="col-xs-8" value={project.getFamily().getName()}/>
-          <FormControls.Static label="OS" labelClassName="col-xs-4" wrapperClassName="col-xs-8" value={project.getPlatform().getName()}/>
-          <FormControls.Static label="内部バージョン" labelClassName="col-xs-4" wrapperClassName="col-xs-8" value={project.getVersion()}/>
-          <div className="form-group">
-            <label className="col-sm-4 control-label">マイルストーン</label>
-            <div className="col-sm-8">
-              {this.renderMilestones()}
-            </div>
-          </div>
-        </form>
-      );
+      return <ProjectDetailViewer id={this.props.params.id}/>;
     }
-
-    var footer = "";
-    if (!this.state.isLoading) {
-      if (this.state.isEditing) {
-        footer = (
-          <ButtonToolbar>
-            <ButtonGroup>
-              <Button key="editingDone" bsStyle="primary"><Glyphicon glyph="ok"/> 完了</Button>
-              <Button key="editingCancel" onClick={this.handleCancelEditing}><Glyphicon glyph="remove"/> キャンセル</Button>
-            </ButtonGroup>
-          </ButtonToolbar>
-        );
-      } else {
-        footer = (
-          <ButtonToolbar>
-            <ButtonGroup>
-              <Button key="refresh" onClick={this.handleRefresh}><Glyphicon glyph="refresh"/> 最新</Button>
-              <Button key="startEditing" onClick={this.handleStartEditing}><Glyphicon glyph="pencil"/> 編集</Button>
-              <Button key="delete"><Glyphicon glyph="trash"/> 削除</Button>
-            </ButtonGroup>
-          </ButtonToolbar>
-        );
-      }
-    }
-
-    return (
-      <Panel footer={footer}>
-        {projectForm}
-      </Panel>
-    );
-  },
-
-  renderMilestones: function() {
-    var milestones = "";
-    if (this.state.isMilestonesLoading) {
-      milestones = (
-        <tr>
-          <td colSpan="3">
-            <div className="text-center">
-              <img src="image/loading.gif"/>
-            </div>
-          </td>
-        </tr>
-      );
-    } else if (this.state.milestones != null) {
-      milestones = this.state.milestones.map(function(milestone) {
-        var internalDate = milestone.getInternalDate();
-        var internalDateString = internalDate.getFullYear().toString() + "-" +
-                              ("0" + (internalDate.getMonth() + 1).toString()).slice(-2) + "-" +
-                              ("0" + internalDate.getDay().toString()).slice(-2);
-        if (internalDate.getHours() != 0 || internalDate.getMinutes() != 0 || internalDate.getSeconds() != 0) {
-          internalDateString = internalDateString + " " +
-                                ("0" + internalDate.getHours().toString()).slice(-2) + ":" +
-                                ("0" + internalDate.getMinutes().toString()).slice(-2);
-          if (internalDate.getSeconds() != 0) {
-            internalDateString = internalDateString + ":" +
-                                  ("0" + internalDate.getSeconds().toString()).slice(-2);
-          }
-        }
-        internalDateString = "(" + internalDateString + ")";
-        return (
-          <tr key={"id_" + milestone.id}>
-            <td>{milestone.getMilestone().getName()}</td>
-            <td>{milestone.getDateString()}</td>
-            <td>{internalDateString}</td>
-          </tr>
-        );
-      }.bind(this));
-      milestones = milestones.toArray();
-    }
-
-    return (
-      <Table condensed>
-        <thead>
-          <tr>
-            <th>イベント</th>
-            <th>表示</th>
-            <th>内部日付</th>
-          </tr>
-        </thead>
-        <tbody>
-          {milestones}
-        </tbody>
-      </Table>
-    );
   },
 
   componentDidMount: function() {
-    ProjectDetailStore.addProjectChangeListener(this.handleProjectChange);
     ProjectDetailStore.addEditingChangeListener(this.handleEditingChange);
-
-    setTimeout(this.readyProject, 0);
   },
 
   componentWillUnmount: function() {
-    ProjectDetailStore.removeProjectChangeListener(this.handleProjectChange);
     ProjectDetailStore.removeEditingChangeListener(this.handleEditingChange);
-  },
-
-  componentDidUpdate: function(prevProps, prevState) {
-    if (prevProps.params.id != this.props.params.id) {
-      setTimeout(this.readyProject, 0);
-    }
-  },
-
-  readyProject: function() {
-    if (this.state.targetId != this.props.params.id) {
-      ProjectDetailActionCreator.setProjectTarget(this.props.params.id);
-    }
-    if ((this.state.project == null || this.state.project.id != this.props.params.id) && !this.state.isLoading) {
-      ProjectDetailActionCreator.loadProjectDetail(this.props.params.id);
-    }
-  },
-
-  handleProjectChange: function() {
-    this.setState({
-      targetId: ProjectDetailStore.getTargetId(),
-      project: ProjectDetailStore.getProject(),
-      isLoading: ProjectDetailStore.isLoading(),
-      milestones: ProjectDetailStore.getMilestones(),
-      isMilestonesLoading: ProjectDetailStore.isMilestonesLoading(),
-    });
   },
 
   handleEditingChange: function() {
@@ -185,26 +33,6 @@ var ProjectDetail = React.createClass({
       isEditing: ProjectDetailStore.isEditing()
     });
   },
-
-  handleSubmit: function(e) {
-    e.preventDefault();
-  },
-
-  handleRefresh: function(e) {
-    ProjectDetailActionCreator.loadProjectDetail(this.props.params.id);
-  },
-
-  handleStartEditing: function(e) {
-    ProjectDetailActionCreator.startEditing(this.props.params.id);
-  },
-
-  handleCancelEditing: function(e) {
-    ProjectDetailActionCreator.cancelEditing(this.props.params.id);
-  },
-
-  routerWillLeave: function(nextState, router) {
-    console.log("leave");
-  }
 });
 
 module.exports = ProjectDetail;
