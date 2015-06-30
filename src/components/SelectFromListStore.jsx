@@ -16,12 +16,13 @@ var SelectFromListStore = React.createClass({
 
   render: function() {
     if (this.state.isLoading) {
+      var labelClassName = "control-label " + this.props.labelClassName;
+
       return (
-        <FormControls.Static label={this.props.label}
-                          labelClassName={this.props.labelClassName}
-                          wrapperClassName={this.props.wrapperClassName}
-                          value={(<img src="image/loading_small.gif"/>)}
-                          />
+        <div className="form-group">
+          <label className={labelClassName}>{this.props.label}</label>
+          <div className={this.props.wrapperClassName}><p className="form-control-static"><img src="image/loading_small.gif"/></p></div>
+        </div>
       );
     }
 
