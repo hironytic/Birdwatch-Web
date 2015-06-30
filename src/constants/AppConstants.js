@@ -26,10 +26,4 @@ module.exports = {
     FAMILY_LIST_LOADING: null,        // 製品ファミリ一覧のロード中
     FAMILY_LIST_LOADED: null,         // 製品ファミリ一覧のロード完了
   }),
-
-  Page: {
-    SIGNIN: "signin",
-    PROJECT_LIST: "projects",
-    PROJECT_DETAIL: "project",
-  }
 };

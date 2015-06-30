@@ -39111,7 +39111,6 @@ var AppConstants = require("../constants/AppConstants");
 var Project = require("../objects/Project");
 
 var ActionTypes = AppConstants.ActionTypes;
-var Page = AppConstants.Page;
 
 module.exports = {
   loadProjectList: function() {
@@ -39639,6 +39638,7 @@ var ProjectDetailEditor = React.createClass({displayName: "ProjectDetailEditor",
   },
 
   componentDidMount: function() {
+    // FIXME: これいつやる？
     setTimeout(function() {
       FamilyListActionCreator.loadList();
     }.bind(this), 0);
@@ -40082,12 +40082,6 @@ module.exports = {
     FAMILY_LIST_LOADING: null,        // 製品ファミリ一覧のロード中
     FAMILY_LIST_LOADED: null,         // 製品ファミリ一覧のロード完了
   }),
-
-  Page: {
-    SIGNIN: "signin",
-    PROJECT_LIST: "projects",
-    PROJECT_DETAIL: "project",
-  }
 };
 
 },{"react/lib/keyMirror":267}],300:[function(require,module,exports){

@@ -7,7 +7,6 @@ var AppConstants = require("../constants/AppConstants");
 var Project = require("../objects/Project");
 
 var ActionTypes = AppConstants.ActionTypes;
-var Page = AppConstants.Page;
 
 module.exports = {
   loadProjectList: function() {
