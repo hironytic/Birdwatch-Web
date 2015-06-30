@@ -4,6 +4,7 @@ var ReactRouter = require("react-router");
 var ReactBootstrap = require('react-bootstrap');
 var Panel = ReactBootstrap.Panel;
 var FormControls = ReactBootstrap.FormControls;
+var Input = ReactBootstrap.Input;
 var Table = ReactBootstrap.Table;
 var ButtonToolbar = ReactBootstrap.ButtonToolbar;
 var ButtonGroup = ReactBootstrap.ButtonGroup;
@@ -12,6 +13,9 @@ var Glyphicon = ReactBootstrap.Glyphicon;
 
 var ProjectDetailStore = require("../stores/ProjectDetailStore");
 var ProjectDetailActionCreator = require("../actions/ProjectDetailActionCreator");
+var FamilyListStore = require("../stores/FamilyListStore");
+var FamilyListActionCreator = require("../actions/FamilyListActionCreator");
+var SelectFromListStore = require("./SelectFromListStore.jsx");
 
 var ProjectDetailEditor = React.createClass({
   mixins: [React.addons.LinkedStateMixin, ReactRouter.TransitionHook],
@@ -21,10 +25,6 @@ var ProjectDetailEditor = React.createClass({
     return {
       targetId: ProjectDetailStore.getTargetId(),
       project: project,
-      isLoading: ProjectDetailStore.isLoading(),
-      milestones: ProjectDetailStore.getMilestones(),
-      isMilestonesLoading: ProjectDetailStore.isMilestonesLoading(),
-      isEditing: ProjectDetailStore.isEditing(),
 
       name: (project == null) ? "" : project.getName(),
       projectCode: (project == null) ? "" : project.getProjectCode(),
@@ -37,32 +37,21 @@ var ProjectDetailEditor = React.createClass({
   render: function() {
     var projectForm;
     var project = this.state.project;
-    if (project == null) {
-      projectForm = "";
-      if (this.state.isLoading) {
-        projectForm = (
-          <div className="text-center">
-            <img src="image/loading.gif"/>
+    projectForm = (
+      <form className="form-horizontal" action="#" onSubmit={this.handleSubmit}>
+        <Input type="text" label="名称" labelClassName="col-xs-4" wrapperClassName="col-xs-8" valueLink={this.linkState('name')}/>
+        <Input type="text" label="プロジェクトコード" labelClassName="col-xs-4" wrapperClassName="col-xs-8" valueLink={this.linkState('projectCode')}/>
+        <SelectFromListStore label="プロダクト" labelClassName="col-xs-4" wrapperClassName="col-xs-8" listStore={FamilyListStore} valueLink={this.linkState('family')}/>
+        <FormControls.Static label="OS" labelClassName="col-xs-4" wrapperClassName="col-xs-8" value={project.getPlatform().getName()}/>
+        <Input type="text" label="内部バージョン" labelClassName="col-xs-4" wrapperClassName="col-xs-8" valueLink={this.linkState('version')}/>
+        <div className="form-group">
+          <label className="col-sm-4 control-label">マイルストーン</label>
+          <div className="col-sm-8">
+            {this.renderMilestones()}
           </div>
-        );
-      }
-    } else {
-      projectForm = (
-        <form className="form-horizontal" action="#" onSubmit={this.handleSubmit}>
-          <FormControls.Static label="名称" labelClassName="col-xs-4" wrapperClassName="col-xs-8" value={project.getName()}/>
-          <FormControls.Static label="プロジェクトコード" labelClassName="col-xs-4" wrapperClassName="col-xs-8" value={project.getProjectCode()}/>
-          <FormControls.Static label="プロダクト" labelClassName="col-xs-4" wrapperClassName="col-xs-8" value={project.getFamily().getName()}/>
-          <FormControls.Static label="OS" labelClassName="col-xs-4" wrapperClassName="col-xs-8" value={project.getPlatform().getName()}/>
-          <FormControls.Static label="内部バージョン" labelClassName="col-xs-4" wrapperClassName="col-xs-8" value={project.getVersion()}/>
-          <div className="form-group">
-            <label className="col-sm-4 control-label">マイルストーン</label>
-            <div className="col-sm-8">
-              {this.renderMilestones()}
-            </div>
-          </div>
-        </form>
-      );
-    }
+        </div>
+      </form>
+    );
 
     var footer = "";
     footer = (
@@ -137,6 +126,10 @@ var ProjectDetailEditor = React.createClass({
   },
 
   componentDidMount: function() {
+    // FIXME: これいつやる？
+    setTimeout(function() {
+      FamilyListActionCreator.loadList();
+    }.bind(this), 0);
   },
 
   componentWillUnmount: function() {

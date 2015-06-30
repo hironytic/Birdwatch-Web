@@ -22,6 +22,9 @@ module.exports = {
     PROJECT_DETAIL_MILESTONES_LOADED: null,   // プロジェクト詳細のマイルストーンのロード完了
     PROJECT_DETAIL_START_EDITING: null,       // プロジェクト詳細の編集開始
     PROJECT_DETAIL_CANCEL_EDITING: null,      // プロジェクト詳細の編集をキャンセル
+
+    FAMILY_LIST_LOADING: null,        // 製品ファミリ一覧のロード中
+    FAMILY_LIST_LOADED: null,         // 製品ファミリ一覧のロード完了
   }),
 
   Page: {
