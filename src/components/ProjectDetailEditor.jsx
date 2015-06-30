@@ -15,6 +15,8 @@ var ProjectDetailStore = require("../stores/ProjectDetailStore");
 var ProjectDetailActionCreator = require("../actions/ProjectDetailActionCreator");
 var FamilyListStore = require("../stores/FamilyListStore");
 var FamilyListActionCreator = require("../actions/FamilyListActionCreator");
+var PlatformListStore = require("../stores/PlatformListStore");
+var PlatformListActionCreator = require("../actions/PlatformListActionCreator");
 var SelectFromListStore = require("./SelectFromListStore.jsx");
 
 var ProjectDetailEditor = React.createClass({
@@ -42,7 +44,7 @@ var ProjectDetailEditor = React.createClass({
         <Input type="text" label="名称" labelClassName="col-xs-4" wrapperClassName="col-xs-8" valueLink={this.linkState('name')}/>
         <Input type="text" label="プロジェクトコード" labelClassName="col-xs-4" wrapperClassName="col-xs-8" valueLink={this.linkState('projectCode')}/>
         <SelectFromListStore label="プロダクト" labelClassName="col-xs-4" wrapperClassName="col-xs-8" listStore={FamilyListStore} valueLink={this.linkState('family')}/>
-        <FormControls.Static label="OS" labelClassName="col-xs-4" wrapperClassName="col-xs-8" value={project.getPlatform().getName()}/>
+        <SelectFromListStore label="OS" labelClassName="col-xs-4" wrapperClassName="col-xs-8" listStore={PlatformListStore} valueLink={this.linkState('platform')}/>
         <Input type="text" label="内部バージョン" labelClassName="col-xs-4" wrapperClassName="col-xs-8" valueLink={this.linkState('version')}/>
         <div className="form-group">
           <label className="col-sm-4 control-label">マイルストーン</label>
@@ -129,6 +131,7 @@ var ProjectDetailEditor = React.createClass({
     // FIXME: これいつやる？
     setTimeout(function() {
       FamilyListActionCreator.loadList();
+      PlatformListActionCreator.loadList();
     }.bind(this), 0);
   },
 

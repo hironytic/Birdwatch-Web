@@ -4,5 +4,5 @@ var ListStoreUtils = require("../utils/ListStoreUtils");
 
 var ActionTypes = AppConstants.ActionTypes;
 
-var FamilyListStore = ListStoreUtils.createListStore(ActionTypes.FAMILY_LIST_LOADING, ActionTypes.FAMILY_LIST_LOADED);
-module.exports = FamilyListStore;
+var PlatformListStore = ListStoreUtils.createListStore(ActionTypes.PLATFORM_LIST_LOADING, ActionTypes.PLATFORM_LIST_LOADED);
+module.exports = PlatformListStore;
