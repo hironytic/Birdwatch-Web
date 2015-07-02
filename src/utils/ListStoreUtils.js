@@ -4,7 +4,12 @@ var EventEmitter = require("events").EventEmitter;
 var assign = require("object-assign");
 var keyMirror = require("react/lib/keyMirror");
 var Immutable = require("immutable");
+var Promise = require("es6-promise").Promise;
 
+var AppDispatcher = require("../dispatcher/AppDispatcher");
+var AppConstants = require("../constants/AppConstants");
+
+var ActionTypes = AppConstants.ActionTypes;
 var EventType = keyMirror({
   CHANGE: null,
 });
@@ -53,6 +58,33 @@ var ListStoreUtils = {
     });
 
     return listStore;
+  },
+
+  createListActionCreator: function(loadingActionType, loadedActionType, queryProc, errorMessage) {
+    return {
+      loadList: function() {
+        AppDispatcher.dispatch({
+          type: loadingActionType
+        });
+
+        var query = queryProc();
+        Promise.resolve(query.find()).then(function (list) {
+          return Immutable.List(list);
+        }).catch(function(error) {
+          AppDispatcher.dispatch({
+            type: ActionTypes.ERROR_OCCURED,
+            message1: errorMessage,
+            message2: error.message
+          });
+          return Immutable.List();
+        }).then(function(list) {
+            AppDispatcher.dispatch({
+              type: loadedActionType,
+              list: list
+            });
+        });
+      }
+    };
   },
 };
 
