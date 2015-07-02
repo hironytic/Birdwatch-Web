@@ -35,6 +35,7 @@ var SelectFromListStore = React.createClass({
             label={this.props.label}
             labelClassName={this.props.labelClassName}
             wrapperClassName={this.props.wrapperClassName}
+            standalone={this.props.standalone}
             value={this.state.valueId}
             onChange={this.handleSelectionChange}>
         {options}
