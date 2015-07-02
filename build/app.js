@@ -39540,11 +39540,13 @@ var ButtonToolbar = ReactBootstrap.ButtonToolbar;
 var ButtonGroup = ReactBootstrap.ButtonGroup;
 var Button = ReactBootstrap.Button;
 var Glyphicon = ReactBootstrap.Glyphicon;
+var Immutable = require("immutable");
 
 var ProjectDetailStore = require("../stores/ProjectDetailStore");
 var ProjectDetailActionCreator = require("../actions/ProjectDetailActionCreator");
 var FamilyListStore = require("../stores/FamilyListStore");
 var PlatformListStore = require("../stores/PlatformListStore");
+var MilestoneListStore = require("../stores/MilestoneListStore");
 var SelectFromListStore = require("./SelectFromListStore.jsx");
 
 var ProjectDetailEditor = React.createClass({displayName: "ProjectDetailEditor",
@@ -39561,6 +39563,14 @@ var ProjectDetailEditor = React.createClass({displayName: "ProjectDetailEditor",
       family: (project == null) ? null : project.getFamily(),
       platform: (project == null) ? null : project.getPlatform(),
       version: (project == null) ? "" : project.getVersion(),
+      projectMilestones: ProjectDetailStore.getMilestones().map(function(projectMilestone) {
+        return Immutable.Map({
+          id: projectMilestone.id,
+          milestone: projectMilestone.getMilestone(),
+          internalDate: projectMilestone.getInternalDate(),
+          dateString: projectMilestone.getDateString(),
+        });
+      }),
     };
   },
 
@@ -39602,50 +39612,38 @@ var ProjectDetailEditor = React.createClass({displayName: "ProjectDetailEditor",
 
   renderMilestones: function() {
     var milestones = "";
-    if (this.state.isMilestonesLoading) {
-      milestones = (
-        React.createElement("tr", null, 
-          React.createElement("td", {colSpan: "3"}, 
-            React.createElement("div", {className: "text-center"}, 
-              React.createElement("img", {src: "image/loading.gif"})
-            )
-          )
+    milestones = this.state.projectMilestones.map(function(projectMilestone, pmIdx) {
+      var internalDate = projectMilestone.get("internalDate");
+      var internalDateString = internalDate.getFullYear().toString() + "-" +
+                            ("0" + (internalDate.getMonth() + 1).toString()).slice(-2) + "-" +
+                            ("0" + internalDate.getDay().toString()).slice(-2);
+      if (internalDate.getHours() != 0 || internalDate.getMinutes() != 0 || internalDate.getSeconds() != 0) {
+        internalDateString = internalDateString + " " +
+                              ("0" + internalDate.getHours().toString()).slice(-2) + ":" +
+                              ("0" + internalDate.getMinutes().toString()).slice(-2);
+        if (internalDate.getSeconds() != 0) {
+          internalDateString = internalDateString + ":" +
+                                ("0" + internalDate.getSeconds().toString()).slice(-2);
+        }
+      }
+      internalDateString = "(" + internalDateString + ")";
+      return (
+        React.createElement("tr", {key: "id_" + projectMilestone.get("id")}, 
+          React.createElement("td", {className: "col-xs-4"}, React.createElement(SelectFromListStore, {listStore: MilestoneListStore, value: projectMilestone.get("milestone"), onChange: this.handleMilestoneChange.bind(this, pmIdx), standalone: true})), 
+          React.createElement("td", {className: "col-xs-4"}, React.createElement(Input, {type: "text", value: internalDateString, standalone: true})), 
+          React.createElement("td", {className: "col-xs-4"}, React.createElement(Input, {type: "text", value: projectMilestone.get("dateString"), onChange: this.handleDateStringChange.bind(this, pmIdx), standalone: true}))
         )
       );
-    } else if (this.state.milestones != null) {
-      milestones = this.state.milestones.map(function(milestone) {
-        var internalDate = milestone.getInternalDate();
-        var internalDateString = internalDate.getFullYear().toString() + "-" +
-                              ("0" + (internalDate.getMonth() + 1).toString()).slice(-2) + "-" +
-                              ("0" + internalDate.getDay().toString()).slice(-2);
-        if (internalDate.getHours() != 0 || internalDate.getMinutes() != 0 || internalDate.getSeconds() != 0) {
-          internalDateString = internalDateString + " " +
-                                ("0" + internalDate.getHours().toString()).slice(-2) + ":" +
-                                ("0" + internalDate.getMinutes().toString()).slice(-2);
-          if (internalDate.getSeconds() != 0) {
-            internalDateString = internalDateString + ":" +
-                                  ("0" + internalDate.getSeconds().toString()).slice(-2);
-          }
-        }
-        internalDateString = "(" + internalDateString + ")";
-        return (
-          React.createElement("tr", {key: "id_" + milestone.id}, 
-            React.createElement("td", null, milestone.getMilestone().getName()), 
-            React.createElement("td", null, milestone.getDateString()), 
-            React.createElement("td", null, internalDateString)
-          )
-        );
-      }.bind(this));
-      milestones = milestones.toArray();
-    }
+    }.bind(this));
+    milestones = milestones.toArray();
 
     return (
       React.createElement(Table, {condensed: true}, 
         React.createElement("thead", null, 
           React.createElement("tr", null, 
-            React.createElement("th", null, "イベント"), 
-            React.createElement("th", null, "表示"), 
-            React.createElement("th", null, "内部日付")
+            React.createElement("th", {className: "col-xs-4"}, "イベント"), 
+            React.createElement("th", {className: "col-xs-4"}, "内部日付"), 
+            React.createElement("th", {className: "col-xs-4"}, "表示")
           )
         ), 
         React.createElement("tbody", null, 
@@ -39653,6 +39651,24 @@ var ProjectDetailEditor = React.createClass({displayName: "ProjectDetailEditor",
         )
       )
     );
+  },
+
+  handleMilestoneChange: function(pmIdx, milestone) {
+    var projectMilestone = this.state.projectMilestones.get(pmIdx);
+    projectMilestone = projectMilestone.set("milestone", milestone);
+    var projectMilestones = this.state.projectMilestones.set(pmIdx, projectMilestone);
+    this.setState({
+      projectMilestones: projectMilestones,
+    });
+  },
+
+  handleDateStringChange: function(pmIdx, e) {
+    var projectMilestone = this.state.projectMilestones.get(pmIdx);
+    projectMilestone = projectMilestone.set("dateString", e.target.value);
+    var projectMilestones = this.state.projectMilestones.set(pmIdx, projectMilestone);
+    this.setState({
+      projectMilestones: projectMilestones,
+    });
   },
 
   componentDidMount: function() {
@@ -39679,7 +39695,7 @@ var ProjectDetailEditor = React.createClass({displayName: "ProjectDetailEditor",
 
 module.exports = ProjectDetailEditor;
 
-},{"../actions/ProjectDetailActionCreator":289,"../stores/FamilyListStore":310,"../stores/PlatformListStore":312,"../stores/ProjectDetailStore":313,"./SelectFromListStore.jsx":299,"react-bootstrap":67,"react-router":102,"react/addons":111}],298:[function(require,module,exports){
+},{"../actions/ProjectDetailActionCreator":289,"../stores/FamilyListStore":310,"../stores/MilestoneListStore":311,"../stores/PlatformListStore":312,"../stores/ProjectDetailStore":313,"./SelectFromListStore.jsx":299,"immutable":7,"react-bootstrap":67,"react-router":102,"react/addons":111}],298:[function(require,module,exports){
 "use strict";
 var React = require("react/addons");
 var ReactBootstrap = require('react-bootstrap');
@@ -39760,7 +39776,7 @@ var ProjectDetailViewer = React.createClass({displayName: "ProjectDetailViewer",
     if (this.state.isMilestonesLoading) {
       milestones = (
         React.createElement("tr", null, 
-          React.createElement("td", {colSpan: "3"}, 
+          React.createElement("td", {colSpan: "3", className: "col-xs-12"}, 
             React.createElement("div", {className: "text-center"}, 
               React.createElement("img", {src: "image/loading.gif"})
             )
@@ -39785,9 +39801,9 @@ var ProjectDetailViewer = React.createClass({displayName: "ProjectDetailViewer",
         internalDateString = "(" + internalDateString + ")";
         return (
           React.createElement("tr", {key: "id_" + milestone.id}, 
-            React.createElement("td", null, milestone.getMilestone().getName()), 
-            React.createElement("td", null, milestone.getDateString()), 
-            React.createElement("td", null, internalDateString)
+            React.createElement("td", {className: "col-xs-4"}, milestone.getMilestone().getName()), 
+            React.createElement("td", {className: "col-xs-4"}, internalDateString), 
+            React.createElement("td", {className: "col-xs-4"}, milestone.getDateString())
           )
         );
       }.bind(this));
@@ -39798,9 +39814,9 @@ var ProjectDetailViewer = React.createClass({displayName: "ProjectDetailViewer",
       React.createElement(Table, {condensed: true}, 
         React.createElement("thead", null, 
           React.createElement("tr", null, 
-            React.createElement("th", null, "イベント"), 
-            React.createElement("th", null, "表示"), 
-            React.createElement("th", null, "内部日付")
+            React.createElement("th", {className: "col-xs-4"}, "イベント"), 
+            React.createElement("th", {className: "col-xs-4"}, "内部日付"), 
+            React.createElement("th", {className: "col-xs-4"}, "表示")
           )
         ), 
         React.createElement("tbody", null, 
@@ -39898,6 +39914,7 @@ var SelectFromListStore = React.createClass({displayName: "SelectFromListStore",
             label: this.props.label, 
             labelClassName: this.props.labelClassName, 
             wrapperClassName: this.props.wrapperClassName, 
+            standalone: this.props.standalone, 
             value: this.state.valueId, 
             onChange: this.handleSelectionChange}, 
         options
