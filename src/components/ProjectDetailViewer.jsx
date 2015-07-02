@@ -8,6 +8,7 @@ var ButtonToolbar = ReactBootstrap.ButtonToolbar;
 var ButtonGroup = ReactBootstrap.ButtonGroup;
 var Button = ReactBootstrap.Button;
 var Glyphicon = ReactBootstrap.Glyphicon;
+var moment = require("moment");
 
 var ProjectDetailStore = require("../stores/ProjectDetailStore");
 var ProjectDetailActionCreator = require("../actions/ProjectDetailActionCreator");
@@ -88,19 +89,8 @@ var ProjectDetailViewer = React.createClass({
     } else if (this.state.milestones != null) {
       milestones = this.state.milestones.map(function(milestone) {
         var internalDate = milestone.getInternalDate();
-        var internalDateString = internalDate.getFullYear().toString() + "-" +
-                              ("0" + (internalDate.getMonth() + 1).toString()).slice(-2) + "-" +
-                              ("0" + internalDate.getDay().toString()).slice(-2);
-        if (internalDate.getHours() != 0 || internalDate.getMinutes() != 0 || internalDate.getSeconds() != 0) {
-          internalDateString = internalDateString + " " +
-                                ("0" + internalDate.getHours().toString()).slice(-2) + ":" +
-                                ("0" + internalDate.getMinutes().toString()).slice(-2);
-          if (internalDate.getSeconds() != 0) {
-            internalDateString = internalDateString + ":" +
-                                  ("0" + internalDate.getSeconds().toString()).slice(-2);
-          }
-        }
-        internalDateString = "(" + internalDateString + ")";
+        var internalMoment = moment(internalDate);
+        var internalDateString = "(" + internalMoment.format("YYYY-MM-DD HH:mm") + ")";
         return (
           <tr key={"id_" + milestone.id}>
             <td className="col-xs-4">{milestone.getMilestone().getName()}</td>
