@@ -9,6 +9,9 @@ var AppFrame = require("./components/AppFrame.jsx");
 var Signin = require("./components/Signin.jsx");
 var Project = require("./components/Project.jsx");
 var ProjectDetail = require("./components/ProjectDetail.jsx");
+var FamilyListActionCreator = require("./actions/FamilyListActionCreator");
+var PlatformListActionCreator = require("./actions/PlatformListActionCreator");
+var MilestoneListActionCreator = require("./actions/MilestoneListActionCreator");
 
 React.render((
   <Router history={new HashHistory}>
@@ -20,3 +23,7 @@ React.render((
     </Route>
   </Router>
 ), document.getElementById('main-content'));
+
+FamilyListActionCreator.loadList();
+PlatformListActionCreator.loadList();
+MilestoneListActionCreator.loadList();

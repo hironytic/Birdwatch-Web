@@ -14,9 +14,7 @@ var Glyphicon = ReactBootstrap.Glyphicon;
 var ProjectDetailStore = require("../stores/ProjectDetailStore");
 var ProjectDetailActionCreator = require("../actions/ProjectDetailActionCreator");
 var FamilyListStore = require("../stores/FamilyListStore");
-var FamilyListActionCreator = require("../actions/FamilyListActionCreator");
 var PlatformListStore = require("../stores/PlatformListStore");
-var PlatformListActionCreator = require("../actions/PlatformListActionCreator");
 var SelectFromListStore = require("./SelectFromListStore.jsx");
 
 var ProjectDetailEditor = React.createClass({
@@ -128,11 +126,6 @@ var ProjectDetailEditor = React.createClass({
   },
 
   componentDidMount: function() {
-    // FIXME: これいつやる？
-    setTimeout(function() {
-      FamilyListActionCreator.loadList();
-      PlatformListActionCreator.loadList();
-    }.bind(this), 0);
   },
 
   componentWillUnmount: function() {
