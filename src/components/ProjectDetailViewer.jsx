@@ -78,7 +78,7 @@ var ProjectDetailViewer = React.createClass({
     if (this.state.isMilestonesLoading) {
       milestones = (
         <tr>
-          <td colSpan="3">
+          <td colSpan="3" className="col-xs-12">
             <div className="text-center">
               <img src="image/loading.gif"/>
             </div>
@@ -103,9 +103,9 @@ var ProjectDetailViewer = React.createClass({
         internalDateString = "(" + internalDateString + ")";
         return (
           <tr key={"id_" + milestone.id}>
-            <td>{milestone.getMilestone().getName()}</td>
-            <td>{milestone.getDateString()}</td>
-            <td>{internalDateString}</td>
+            <td className="col-xs-4">{milestone.getMilestone().getName()}</td>
+            <td className="col-xs-4">{internalDateString}</td>
+            <td className="col-xs-4">{milestone.getDateString()}</td>
           </tr>
         );
       }.bind(this));
@@ -116,9 +116,9 @@ var ProjectDetailViewer = React.createClass({
       <Table condensed>
         <thead>
           <tr>
-            <th>イベント</th>
-            <th>表示</th>
-            <th>内部日付</th>
+            <th className="col-xs-4">イベント</th>
+            <th className="col-xs-4">内部日付</th>
+            <th className="col-xs-4">表示</th>
           </tr>
         </thead>
         <tbody>
