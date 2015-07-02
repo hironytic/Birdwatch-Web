@@ -28,5 +28,8 @@ module.exports = {
 
     PLATFORM_LIST_LOADING: null,      // プラットフォーム一覧のロード中
     PLATFORM_LIST_LOADED: null,       // プラットフォーム一覧のロード完了
+
+    MILESTONE_LIST_LOADING: null,     // マイルストーン一覧のロード中
+    MILESTONE_LIST_LOADED: null,      // マイルストーン一覧のロード完了
   }),
 };
