@@ -49167,14 +49167,14 @@ var ProjectDetailEditor = React.createClass({displayName: "ProjectDetailEditor",
     var project = this.state.project;
     projectForm = (
       React.createElement("form", {className: "form-horizontal", action: "#", onSubmit: this.handleSubmit}, 
-        React.createElement(Input, {type: "text", label: "名称", labelClassName: "col-xs-4", wrapperClassName: "col-xs-8", valueLink: this.linkState('name')}), 
-        React.createElement(Input, {type: "text", label: "プロジェクトコード", labelClassName: "col-xs-4", wrapperClassName: "col-xs-8", valueLink: this.linkState('projectCode')}), 
-        React.createElement(SelectFromListStore, {label: "プロダクト", labelClassName: "col-xs-4", wrapperClassName: "col-xs-8", listStore: FamilyListStore, valueLink: this.linkState('family')}), 
-        React.createElement(SelectFromListStore, {label: "OS", labelClassName: "col-xs-4", wrapperClassName: "col-xs-8", listStore: PlatformListStore, valueLink: this.linkState('platform')}), 
-        React.createElement(Input, {type: "text", label: "内部バージョン", labelClassName: "col-xs-4", wrapperClassName: "col-xs-8", valueLink: this.linkState('version')}), 
+        React.createElement(Input, {type: "text", label: "名称", labelClassName: "col-xs-3", wrapperClassName: "col-xs-9", valueLink: this.linkState('name')}), 
+        React.createElement(Input, {type: "text", label: "プロジェクトコード", labelClassName: "col-xs-3", wrapperClassName: "col-xs-9", valueLink: this.linkState('projectCode')}), 
+        React.createElement(SelectFromListStore, {label: "プロダクト", labelClassName: "col-xs-3", wrapperClassName: "col-xs-9", listStore: FamilyListStore, valueLink: this.linkState('family')}), 
+        React.createElement(SelectFromListStore, {label: "OS", labelClassName: "col-xs-3", wrapperClassName: "col-xs-9", listStore: PlatformListStore, valueLink: this.linkState('platform')}), 
+        React.createElement(Input, {type: "text", label: "内部バージョン", labelClassName: "col-xs-3", wrapperClassName: "col-xs-9", valueLink: this.linkState('version')}), 
         React.createElement("div", {className: "form-group"}, 
-          React.createElement("label", {className: "col-sm-4 control-label"}, "マイルストーン"), 
-          React.createElement("div", {className: "col-sm-8"}, 
+          React.createElement("label", {className: "col-sm-3 control-label"}, "マイルストーン"), 
+          React.createElement("div", {className: "col-sm-9"}, 
             this.renderMilestones()
           )
         )
@@ -49333,14 +49333,14 @@ var ProjectDetailViewer = React.createClass({displayName: "ProjectDetailViewer",
     } else {
       projectForm = (
         React.createElement("form", {className: "form-horizontal", action: "#", onSubmit: this.handleSubmit}, 
-          React.createElement(FormControls.Static, {label: "名称", labelClassName: "col-xs-4", wrapperClassName: "col-xs-8", value: project.getName()}), 
-          React.createElement(FormControls.Static, {label: "プロジェクトコード", labelClassName: "col-xs-4", wrapperClassName: "col-xs-8", value: project.getProjectCode()}), 
-          React.createElement(FormControls.Static, {label: "プロダクト", labelClassName: "col-xs-4", wrapperClassName: "col-xs-8", value: project.getFamily().getName()}), 
-          React.createElement(FormControls.Static, {label: "OS", labelClassName: "col-xs-4", wrapperClassName: "col-xs-8", value: project.getPlatform().getName()}), 
-          React.createElement(FormControls.Static, {label: "内部バージョン", labelClassName: "col-xs-4", wrapperClassName: "col-xs-8", value: project.getVersion()}), 
+          React.createElement(FormControls.Static, {label: "名称", labelClassName: "col-xs-3", wrapperClassName: "col-xs-9", value: project.getName()}), 
+          React.createElement(FormControls.Static, {label: "プロジェクトコード", labelClassName: "col-xs-3", wrapperClassName: "col-xs-9", value: project.getProjectCode()}), 
+          React.createElement(FormControls.Static, {label: "プロダクト", labelClassName: "col-xs-3", wrapperClassName: "col-xs-9", value: project.getFamily().getName()}), 
+          React.createElement(FormControls.Static, {label: "OS", labelClassName: "col-xs-3", wrapperClassName: "col-xs-9", value: project.getPlatform().getName()}), 
+          React.createElement(FormControls.Static, {label: "内部バージョン", labelClassName: "col-xs-3", wrapperClassName: "col-xs-9", value: project.getVersion()}), 
           React.createElement("div", {className: "form-group"}, 
-            React.createElement("label", {className: "col-sm-4 control-label"}, "マイルストーン"), 
-            React.createElement("div", {className: "col-sm-8"}, 
+            React.createElement("label", {className: "col-sm-3 control-label"}, "マイルストーン"), 
+            React.createElement("div", {className: "col-sm-9"}, 
               this.renderMilestones()
             )
           )

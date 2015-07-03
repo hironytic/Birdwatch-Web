@@ -39,14 +39,14 @@ var ProjectDetailViewer = React.createClass({
     } else {
       projectForm = (
         <form className="form-horizontal" action="#" onSubmit={this.handleSubmit}>
-          <FormControls.Static label="名称" labelClassName="col-xs-4" wrapperClassName="col-xs-8" value={project.getName()}/>
-          <FormControls.Static label="プロジェクトコード" labelClassName="col-xs-4" wrapperClassName="col-xs-8" value={project.getProjectCode()}/>
-          <FormControls.Static label="プロダクト" labelClassName="col-xs-4" wrapperClassName="col-xs-8" value={project.getFamily().getName()}/>
-          <FormControls.Static label="OS" labelClassName="col-xs-4" wrapperClassName="col-xs-8" value={project.getPlatform().getName()}/>
-          <FormControls.Static label="内部バージョン" labelClassName="col-xs-4" wrapperClassName="col-xs-8" value={project.getVersion()}/>
+          <FormControls.Static label="名称" labelClassName="col-xs-3" wrapperClassName="col-xs-9" value={project.getName()}/>
+          <FormControls.Static label="プロジェクトコード" labelClassName="col-xs-3" wrapperClassName="col-xs-9" value={project.getProjectCode()}/>
+          <FormControls.Static label="プロダクト" labelClassName="col-xs-3" wrapperClassName="col-xs-9" value={project.getFamily().getName()}/>
+          <FormControls.Static label="OS" labelClassName="col-xs-3" wrapperClassName="col-xs-9" value={project.getPlatform().getName()}/>
+          <FormControls.Static label="内部バージョン" labelClassName="col-xs-3" wrapperClassName="col-xs-9" value={project.getVersion()}/>
           <div className="form-group">
-            <label className="col-sm-4 control-label">マイルストーン</label>
-            <div className="col-sm-8">
+            <label className="col-sm-3 control-label">マイルストーン</label>
+            <div className="col-sm-9">
               {this.renderMilestones()}
             </div>
           </div>

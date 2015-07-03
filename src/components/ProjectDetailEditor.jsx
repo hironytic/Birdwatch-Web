@@ -57,14 +57,14 @@ var ProjectDetailEditor = React.createClass({
     var project = this.state.project;
     projectForm = (
       <form className="form-horizontal" action="#" onSubmit={this.handleSubmit}>
-        <Input type="text" label="名称" labelClassName="col-xs-4" wrapperClassName="col-xs-8" valueLink={this.linkState('name')}/>
-        <Input type="text" label="プロジェクトコード" labelClassName="col-xs-4" wrapperClassName="col-xs-8" valueLink={this.linkState('projectCode')}/>
-        <SelectFromListStore label="プロダクト" labelClassName="col-xs-4" wrapperClassName="col-xs-8" listStore={FamilyListStore} valueLink={this.linkState('family')}/>
-        <SelectFromListStore label="OS" labelClassName="col-xs-4" wrapperClassName="col-xs-8" listStore={PlatformListStore} valueLink={this.linkState('platform')}/>
-        <Input type="text" label="内部バージョン" labelClassName="col-xs-4" wrapperClassName="col-xs-8" valueLink={this.linkState('version')}/>
+        <Input type="text" label="名称" labelClassName="col-xs-3" wrapperClassName="col-xs-9" valueLink={this.linkState('name')}/>
+        <Input type="text" label="プロジェクトコード" labelClassName="col-xs-3" wrapperClassName="col-xs-9" valueLink={this.linkState('projectCode')}/>
+        <SelectFromListStore label="プロダクト" labelClassName="col-xs-3" wrapperClassName="col-xs-9" listStore={FamilyListStore} valueLink={this.linkState('family')}/>
+        <SelectFromListStore label="OS" labelClassName="col-xs-3" wrapperClassName="col-xs-9" listStore={PlatformListStore} valueLink={this.linkState('platform')}/>
+        <Input type="text" label="内部バージョン" labelClassName="col-xs-3" wrapperClassName="col-xs-9" valueLink={this.linkState('version')}/>
         <div className="form-group">
-          <label className="col-sm-4 control-label">マイルストーン</label>
-          <div className="col-sm-8">
+          <label className="col-sm-3 control-label">マイルストーン</label>
+          <div className="col-sm-9">
             {this.renderMilestones()}
           </div>
         </div>
