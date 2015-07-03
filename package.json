@@ -19,6 +19,7 @@
     "immutable": "^3.7.3",
     "moment": "^2.10.3",
     "object-assign": "^3.0.0",
+    "rc-calendar": "^3.10.1",
     "react": "^0.13.3",
     "react-bootstrap": "^0.23.4",
     "react-router": "^1.0.0-beta2",
