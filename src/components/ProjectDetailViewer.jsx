@@ -90,7 +90,7 @@ var ProjectDetailViewer = React.createClass({
       milestones = this.state.milestones.map(function(milestone) {
         var internalDate = milestone.getInternalDate();
         var internalMoment = moment(internalDate);
-        var internalDateString = "(" + internalMoment.format("YYYY-MM-DD HH:mm") + ")";
+        var internalDateString = internalMoment.format("YYYY-MM-DD");
         return (
           <tr key={"id_" + milestone.id}>
             <td className="col-xs-4">{milestone.getMilestone().getName()}</td>

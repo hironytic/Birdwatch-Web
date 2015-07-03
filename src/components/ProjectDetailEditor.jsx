@@ -12,6 +12,11 @@ var Button = ReactBootstrap.Button;
 var Glyphicon = ReactBootstrap.Glyphicon;
 var Immutable = require("immutable");
 var moment = require("moment");
+var Calendar = require("rc-calendar");
+var DatePicker = Calendar.Picker;
+var DateTimeFormat = require("gregorian-calendar-format");
+var GregorianCalendar = require("gregorian-calendar");
+var assign = require("object-assign");
 
 var ProjectDetailStore = require("../stores/ProjectDetailStore");
 var ProjectDetailActionCreator = require("../actions/ProjectDetailActionCreator");
@@ -19,6 +24,8 @@ var FamilyListStore = require("../stores/FamilyListStore");
 var PlatformListStore = require("../stores/PlatformListStore");
 var MilestoneListStore = require("../stores/MilestoneListStore");
 var SelectFromListStore = require("./SelectFromListStore.jsx");
+
+var _formatter = new DateTimeFormat("yyyy-MM-dd");
 
 var ProjectDetailEditor = React.createClass({
   mixins: [React.addons.LinkedStateMixin, ReactRouter.TransitionHook],
@@ -82,15 +89,24 @@ var ProjectDetailEditor = React.createClass({
   },
 
   renderMilestones: function() {
+    var locale = assign({}, require("gregorian-calendar/lib/locale/en-US"), {
+      timezoneOffset: moment().utcOffset(),
+    });
+
     var milestones = "";
     milestones = this.state.projectMilestones.map(function(projectMilestone, pmIdx) {
       var internalDate = projectMilestone.get("internalDate");
-      var internalMoment = moment(internalDate);
-      var internalDateString = "(" + internalMoment.format("YYYY-MM-DD HH:mm") + ")";
+      var internalDateCal = new GregorianCalendar(locale);
+      internalDateCal.setTime(internalDate.getTime());
+      var calendar = <Calendar orient={['bottom', 'right']} showTime={false}/>;
       return (
         <tr key={"id_" + projectMilestone.get("id")}>
           <td className="col-xs-4"><SelectFromListStore listStore={MilestoneListStore} value={projectMilestone.get("milestone")} onChange={this.handleMilestoneChange.bind(this, pmIdx)} standalone/></td>
-          <td className="col-xs-4"><Input type="text" value={internalDateString} standalone/></td>
+          <td className="col-xs-4">
+            <DatePicker ref='picker' formatter={_formatter} calendar={calendar} value={internalDateCal} onChange={this.handleInternalDateChange.bind(this, pmIdx)}>
+              <input type="text" className="form-control" style={{background: 'white', cursor: 'pointer'}}/>
+            </DatePicker>
+          </td>
           <td className="col-xs-4"><Input type="text" value={projectMilestone.get("dateString")} onChange={this.handleDateStringChange.bind(this, pmIdx)} standalone/></td>
         </tr>
       );
@@ -116,6 +132,16 @@ var ProjectDetailEditor = React.createClass({
   handleMilestoneChange: function(pmIdx, milestone) {
     var projectMilestone = this.state.projectMilestones.get(pmIdx);
     projectMilestone = projectMilestone.set("milestone", milestone);
+    var projectMilestones = this.state.projectMilestones.set(pmIdx, projectMilestone);
+    this.setState({
+      projectMilestones: projectMilestones,
+    });
+  },
+
+  handleInternalDateChange: function(pmIdx, value) {
+    var internalDate = new Date(value.getTime());
+    var projectMilestone = this.state.projectMilestones.get(pmIdx);
+    projectMilestone = projectMilestone.set("internalDate", internalDate);
     var projectMilestones = this.state.projectMilestones.set(pmIdx, projectMilestone);
     this.setState({
       projectMilestones: projectMilestones,
