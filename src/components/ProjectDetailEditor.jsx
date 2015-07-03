@@ -12,6 +12,7 @@ var Button = ReactBootstrap.Button;
 var Glyphicon = ReactBootstrap.Glyphicon;
 var Immutable = require("immutable");
 var moment = require("moment");
+var DatePicker = require("react-datepicker");
 
 var ProjectDetailStore = require("../stores/ProjectDetailStore");
 var ProjectDetailActionCreator = require("../actions/ProjectDetailActionCreator");
@@ -38,7 +39,7 @@ var ProjectDetailEditor = React.createClass({
         return Immutable.Map({
           id: projectMilestone.id,
           milestone: projectMilestone.getMilestone(),
-          internalDate: projectMilestone.getInternalDate(),
+          internalDate: moment(projectMilestone.getInternalDate()),
           dateString: projectMilestone.getDateString(),
         });
       }),
@@ -84,13 +85,10 @@ var ProjectDetailEditor = React.createClass({
   renderMilestones: function() {
     var milestones = "";
     milestones = this.state.projectMilestones.map(function(projectMilestone, pmIdx) {
-      var internalDate = projectMilestone.get("internalDate");
-      var internalMoment = moment(internalDate);
-      var internalDateString = "(" + internalMoment.format("YYYY-MM-DD HH:mm") + ")";
       return (
         <tr key={"id_" + projectMilestone.get("id")}>
           <td className="col-xs-4"><SelectFromListStore listStore={MilestoneListStore} value={projectMilestone.get("milestone")} onChange={this.handleMilestoneChange.bind(this, pmIdx)} standalone/></td>
-          <td className="col-xs-4"><Input type="text" value={internalDateString} standalone/></td>
+          <td className="col-xs-4"><DatePicker selected={projectMilestone.get("internalDate")} dateFormat="YYYY-MM-DD HH:mm" onChange={this.handleInternalDateChange.bind(this, pmIdx)}/></td>
           <td className="col-xs-4"><Input type="text" value={projectMilestone.get("dateString")} onChange={this.handleDateStringChange.bind(this, pmIdx)} standalone/></td>
         </tr>
       );
@@ -116,6 +114,15 @@ var ProjectDetailEditor = React.createClass({
   handleMilestoneChange: function(pmIdx, milestone) {
     var projectMilestone = this.state.projectMilestones.get(pmIdx);
     projectMilestone = projectMilestone.set("milestone", milestone);
+    var projectMilestones = this.state.projectMilestones.set(pmIdx, projectMilestone);
+    this.setState({
+      projectMilestones: projectMilestones,
+    });
+  },
+
+  handleInternalDateChange: function(pmIdx, moment) {
+    var projectMilestone = this.state.projectMilestones.get(pmIdx);
+    projectMilestone = projectMilestone.set("internalDate", moment);
     var projectMilestones = this.state.projectMilestones.set(pmIdx, projectMilestone);
     this.setState({
       projectMilestones: projectMilestones,
