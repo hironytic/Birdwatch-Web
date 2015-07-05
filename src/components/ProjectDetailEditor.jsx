@@ -25,10 +25,11 @@ var PlatformListStore = require("../stores/PlatformListStore");
 var MilestoneListStore = require("../stores/MilestoneListStore");
 var SelectFromListStore = require("./SelectFromListStore.jsx");
 
-var _formatter = new DateTimeFormat("yyyy-MM-dd");
+var FORMATTER = new DateTimeFormat("yyyy-MM-dd");
 
 var ProjectDetailEditor = React.createClass({
   mixins: [React.addons.LinkedStateMixin, ReactRouter.TransitionHook],
+  newPmID: 0,
 
   getInitialState: function() {
     var project = ProjectDetailStore.getProject();
@@ -43,6 +44,7 @@ var ProjectDetailEditor = React.createClass({
       version: (project == null) ? "" : project.getVersion(),
       projectMilestones: ProjectDetailStore.getMilestones().map(function(projectMilestone) {
         return Immutable.Map({
+          isNew: false,
           id: projectMilestone.id,
           milestone: projectMilestone.getMilestone(),
           internalDate: projectMilestone.getInternalDate(),
@@ -95,19 +97,26 @@ var ProjectDetailEditor = React.createClass({
 
     var milestones = "";
     milestones = this.state.projectMilestones.map(function(projectMilestone, pmIdx) {
+      var key;
+      if (projectMilestone.get("isNew")) {
+        key = "new_" + projectMilestone.get("id");
+      } else {
+        key = "id_" + projectMilestone.get("id");
+      }
       var internalDate = projectMilestone.get("internalDate");
       var internalDateCal = new GregorianCalendar(locale);
       internalDateCal.setTime(internalDate.getTime());
       var calendar = <Calendar orient={['bottom', 'right']} showTime={false}/>;
       return (
-        <tr key={"id_" + projectMilestone.get("id")}>
+        <tr key={key}>
+          <td className="col-xs-1"><Button bsStyle="default" onClick={this.handleRemoveMilestone.bind(this, pmIdx)}><Glyphicon glyph='minus'/></Button></td>
           <td className="col-xs-4"><SelectFromListStore listStore={MilestoneListStore} value={projectMilestone.get("milestone")} onChange={this.handleMilestoneChange.bind(this, pmIdx)} standalone/></td>
           <td className="col-xs-4">
-            <DatePicker ref='picker' formatter={_formatter} calendar={calendar} value={internalDateCal} onChange={this.handleInternalDateChange.bind(this, pmIdx)}>
+            <DatePicker ref='picker' formatter={FORMATTER} calendar={calendar} value={internalDateCal} onChange={this.handleInternalDateChange.bind(this, pmIdx)}>
               <input type="text" className="form-control" style={{background: 'white', cursor: 'pointer'}}/>
             </DatePicker>
           </td>
-          <td className="col-xs-4"><Input type="text" value={projectMilestone.get("dateString")} onChange={this.handleDateStringChange.bind(this, pmIdx)} standalone/></td>
+          <td className="col-xs-3"><Input type="text" value={projectMilestone.get("dateString")} onChange={this.handleDateStringChange.bind(this, pmIdx)} standalone/></td>
         </tr>
       );
     }.bind(this));
@@ -117,13 +126,19 @@ var ProjectDetailEditor = React.createClass({
       <Table condensed>
         <thead>
           <tr>
+            <th className="col-xs-1"></th>
             <th className="col-xs-4">イベント</th>
             <th className="col-xs-4">内部日付</th>
-            <th className="col-xs-4">表示</th>
+            <th className="col-xs-3">表示</th>
           </tr>
         </thead>
         <tbody>
           {milestones}
+          <tr key="new">
+            <td className="col-xs-12" colSpan="4">
+              <Button block onClick={this.handleNewMilestone}><Glyphicon glyph='plus'/> 新しいマイルストーン</Button>
+            </td>
+          </tr>
         </tbody>
       </Table>
     );
@@ -155,6 +170,26 @@ var ProjectDetailEditor = React.createClass({
     this.setState({
       projectMilestones: projectMilestones,
     });
+  },
+
+  handleNewMilestone: function() {
+    this.newPmID = this.newPmID + 1;
+    var id = this.newPmID.toString();
+    var projectMilestone = Immutable.Map({
+      isNew: true,
+      id: id,
+      milestone: MilestoneListStore.getList().first(),
+      internalDate: moment().add(1, "months").hours(0).minutes(0).seconds(0).milliseconds(0).toDate(),
+      dateString: "",
+    });
+    var projectMilestones = this.state.projectMilestones.push(projectMilestone);
+    this.setState({
+      projectMilestones: projectMilestones,
+    });
+  },
+
+  handleRemoveMilestone: function(pmIdx) {
+    // TODO:
   },
 
   componentDidMount: function() {

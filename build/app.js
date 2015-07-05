@@ -49135,10 +49135,11 @@ var PlatformListStore = require("../stores/PlatformListStore");
 var MilestoneListStore = require("../stores/MilestoneListStore");
 var SelectFromListStore = require("./SelectFromListStore.jsx");
 
-var _formatter = new DateTimeFormat("yyyy-MM-dd");
+var FORMATTER = new DateTimeFormat("yyyy-MM-dd");
 
 var ProjectDetailEditor = React.createClass({displayName: "ProjectDetailEditor",
   mixins: [React.addons.LinkedStateMixin, ReactRouter.TransitionHook],
+  newPmID: 0,
 
   getInitialState: function() {
     var project = ProjectDetailStore.getProject();
@@ -49153,6 +49154,7 @@ var ProjectDetailEditor = React.createClass({displayName: "ProjectDetailEditor",
       version: (project == null) ? "" : project.getVersion(),
       projectMilestones: ProjectDetailStore.getMilestones().map(function(projectMilestone) {
         return Immutable.Map({
+          isNew: false,
           id: projectMilestone.id,
           milestone: projectMilestone.getMilestone(),
           internalDate: projectMilestone.getInternalDate(),
@@ -49205,19 +49207,26 @@ var ProjectDetailEditor = React.createClass({displayName: "ProjectDetailEditor",
 
     var milestones = "";
     milestones = this.state.projectMilestones.map(function(projectMilestone, pmIdx) {
+      var key;
+      if (projectMilestone.get("isNew")) {
+        key = "new_" + projectMilestone.get("id");
+      } else {
+        key = "id_" + projectMilestone.get("id");
+      }
       var internalDate = projectMilestone.get("internalDate");
       var internalDateCal = new GregorianCalendar(locale);
       internalDateCal.setTime(internalDate.getTime());
       var calendar = React.createElement(Calendar, {orient: ['bottom', 'right'], showTime: false});
       return (
-        React.createElement("tr", {key: "id_" + projectMilestone.get("id")}, 
+        React.createElement("tr", {key: key}, 
+          React.createElement("td", {className: "col-xs-1"}, React.createElement(Button, {bsStyle: "default", onClick: this.handleRemoveMilestone.bind(this, pmIdx)}, React.createElement(Glyphicon, {glyph: "minus"}))), 
           React.createElement("td", {className: "col-xs-4"}, React.createElement(SelectFromListStore, {listStore: MilestoneListStore, value: projectMilestone.get("milestone"), onChange: this.handleMilestoneChange.bind(this, pmIdx), standalone: true})), 
           React.createElement("td", {className: "col-xs-4"}, 
-            React.createElement(DatePicker, {ref: "picker", formatter: _formatter, calendar: calendar, value: internalDateCal, onChange: this.handleInternalDateChange.bind(this, pmIdx)}, 
+            React.createElement(DatePicker, {ref: "picker", formatter: FORMATTER, calendar: calendar, value: internalDateCal, onChange: this.handleInternalDateChange.bind(this, pmIdx)}, 
               React.createElement("input", {type: "text", className: "form-control", style: {background: 'white', cursor: 'pointer'}})
             )
           ), 
-          React.createElement("td", {className: "col-xs-4"}, React.createElement(Input, {type: "text", value: projectMilestone.get("dateString"), onChange: this.handleDateStringChange.bind(this, pmIdx), standalone: true}))
+          React.createElement("td", {className: "col-xs-3"}, React.createElement(Input, {type: "text", value: projectMilestone.get("dateString"), onChange: this.handleDateStringChange.bind(this, pmIdx), standalone: true}))
         )
       );
     }.bind(this));
@@ -49227,13 +49236,19 @@ var ProjectDetailEditor = React.createClass({displayName: "ProjectDetailEditor",
       React.createElement(Table, {condensed: true}, 
         React.createElement("thead", null, 
           React.createElement("tr", null, 
+            React.createElement("th", {className: "col-xs-1"}), 
             React.createElement("th", {className: "col-xs-4"}, "イベント"), 
             React.createElement("th", {className: "col-xs-4"}, "内部日付"), 
-            React.createElement("th", {className: "col-xs-4"}, "表示")
+            React.createElement("th", {className: "col-xs-3"}, "表示")
           )
         ), 
         React.createElement("tbody", null, 
-          milestones
+          milestones, 
+          React.createElement("tr", {key: "new"}, 
+            React.createElement("td", {className: "col-xs-12", colSpan: "4"}, 
+              React.createElement(Button, {block: true, onClick: this.handleNewMilestone}, React.createElement(Glyphicon, {glyph: "plus"}), " 新しいマイルストーン")
+            )
+          )
         )
       )
     );
@@ -49265,6 +49280,26 @@ var ProjectDetailEditor = React.createClass({displayName: "ProjectDetailEditor",
     this.setState({
       projectMilestones: projectMilestones,
     });
+  },
+
+  handleNewMilestone: function() {
+    this.newPmID = this.newPmID + 1;
+    var id = this.newPmID.toString();
+    var projectMilestone = Immutable.Map({
+      isNew: true,
+      id: id,
+      milestone: MilestoneListStore.getList().first(),
+      internalDate: moment().add(1, "months").hours(0).minutes(0).seconds(0).milliseconds(0).toDate(),
+      dateString: "",
+    });
+    var projectMilestones = this.state.projectMilestones.push(projectMilestone);
+    this.setState({
+      projectMilestones: projectMilestones,
+    });
+  },
+
+  handleRemoveMilestone: function(pmIdx) {
+    // TODO:
   },
 
   componentDidMount: function() {
