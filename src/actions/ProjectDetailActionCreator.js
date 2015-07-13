@@ -70,6 +70,28 @@ function _loadProjectMilestones(project) {
   });
 }
 
+function _updateProjectDetail(project, newValues) {
+  var projectId = project.id;
+  project.setName(newValues.name);
+  project.setProjectCode(newValues.projectCode);
+  project.setFamily(newValues.family);
+  project.setPlatform(newValues.platform);
+  project.setVersion(newValues.version);
+  Promise.resolve(project.save()).then(function(project) {
+    AppDispatcher.dispatch({
+      type: ActionTypes.PROJECT_DETAIL_LOADED,
+      id: projectId,
+      project: project,
+    });
+  }).catch(function(error) {
+    AppDispatcher.dispatch({
+      type: ActionTypes.ERROR_OCCURED,
+      message1: "プロジェクトの更新に失敗",
+      message2: error.message,
+    });
+  });
+}
+
 module.exports = {
   setProjectTarget: function(projectId) {
     AppDispatcher.dispatch({
@@ -94,5 +116,9 @@ module.exports = {
       type: ActionTypes.PROJECT_DETAIL_CANCEL_EDITING,
       id: projectId,
     });
+  },
+
+  commitEditing: function(project, newValues) {
+    _updateProjectDetail(project, newValues);
   },
 };

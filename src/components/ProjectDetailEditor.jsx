@@ -77,7 +77,7 @@ var ProjectDetailEditor = React.createClass({
     footer = (
       <ButtonToolbar>
         <ButtonGroup>
-          <Button key="editingDone" bsStyle="primary"><Glyphicon glyph="ok"/> 完了</Button>
+          <Button key="editingDone" onClick={this.handleCommitEditing} bsStyle="primary"><Glyphicon glyph="ok"/> 完了</Button>
           <Button key="editingCancel" onClick={this.handleCancelEditing}><Glyphicon glyph="remove"/> キャンセル</Button>
         </ButtonGroup>
       </ButtonToolbar>
@@ -203,6 +203,18 @@ var ProjectDetailEditor = React.createClass({
 
   handleSubmit: function(e) {
     e.preventDefault();
+  },
+
+  handleCommitEditing: function(e) {
+    var newValues = {
+      name: this.state.name,
+      projectCode: this.state.projectCode,
+      family: this.state.family,
+      platform: this.state.platform,
+      version: this.state.version,
+      projectMilestones: this.state.projectMilestones,
+    };
+    ProjectDetailActionCreator.commitEditing(this.state.project, newValues);
   },
 
   handleCancelEditing: function(e) {

@@ -48672,6 +48672,28 @@ function _loadProjectMilestones(project) {
   });
 }
 
+function _updateProjectDetail(project, newValues) {
+  var projectId = project.id;
+  project.setName(newValues.name);
+  project.setProjectCode(newValues.projectCode);
+  project.setFamily(newValues.family);
+  project.setPlatform(newValues.platform);
+  project.setVersion(newValues.version);
+  Promise.resolve(project.save()).then(function(project) {
+    AppDispatcher.dispatch({
+      type: ActionTypes.PROJECT_DETAIL_LOADED,
+      id: projectId,
+      project: project,
+    });
+  }).catch(function(error) {
+    AppDispatcher.dispatch({
+      type: ActionTypes.ERROR_OCCURED,
+      message1: "プロジェクトの更新に失敗",
+      message2: error.message,
+    });
+  });
+}
+
 module.exports = {
   setProjectTarget: function(projectId) {
     AppDispatcher.dispatch({
@@ -48696,6 +48718,10 @@ module.exports = {
       type: ActionTypes.PROJECT_DETAIL_CANCEL_EDITING,
       id: projectId,
     });
+  },
+
+  commitEditing: function(project, newValues) {
+    _updateProjectDetail(project, newValues);
   },
 };
 
@@ -49187,7 +49213,7 @@ var ProjectDetailEditor = React.createClass({displayName: "ProjectDetailEditor",
     footer = (
       React.createElement(ButtonToolbar, null, 
         React.createElement(ButtonGroup, null, 
-          React.createElement(Button, {key: "editingDone", bsStyle: "primary"}, React.createElement(Glyphicon, {glyph: "ok"}), " 完了"), 
+          React.createElement(Button, {key: "editingDone", onClick: this.handleCommitEditing, bsStyle: "primary"}, React.createElement(Glyphicon, {glyph: "ok"}), " 完了"), 
           React.createElement(Button, {key: "editingCancel", onClick: this.handleCancelEditing}, React.createElement(Glyphicon, {glyph: "remove"}), " キャンセル")
         )
       )
@@ -49313,6 +49339,18 @@ var ProjectDetailEditor = React.createClass({displayName: "ProjectDetailEditor",
 
   handleSubmit: function(e) {
     e.preventDefault();
+  },
+
+  handleCommitEditing: function(e) {
+    var newValues = {
+      name: this.state.name,
+      projectCode: this.state.projectCode,
+      family: this.state.family,
+      platform: this.state.platform,
+      version: this.state.version,
+      projectMilestones: this.state.projectMilestones,
+    };
+    ProjectDetailActionCreator.commitEditing(this.state.project, newValues);
   },
 
   handleCancelEditing: function(e) {
@@ -50251,8 +50289,10 @@ ProjectDetailStore.dispatchToken = AppDispatcher.register(function(action) {
       break;
     case ActionTypes.PROJECT_DETAIL_START_EDITING:
       if (_targetId == action.id) {
-        _editing = true;
-        ProjectDetailStore.emitEditingChange();
+        if (!_isLoading && !_isMilestonesLoading) {
+          _editing = true;
+          ProjectDetailStore.emitEditingChange();
+        }
       }
       break;
     case ActionTypes.PROJECT_DETAIL_CANCEL_EDITING:

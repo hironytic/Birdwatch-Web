@@ -127,8 +127,10 @@ ProjectDetailStore.dispatchToken = AppDispatcher.register(function(action) {
       break;
     case ActionTypes.PROJECT_DETAIL_START_EDITING:
       if (_targetId == action.id) {
-        _editing = true;
-        ProjectDetailStore.emitEditingChange();
+        if (!_isLoading && !_isMilestonesLoading) {
+          _editing = true;
+          ProjectDetailStore.emitEditingChange();
+        }
       }
       break;
     case ActionTypes.PROJECT_DETAIL_CANCEL_EDITING:
