@@ -49389,7 +49389,10 @@ var ProjectDetailEditor = React.createClass({displayName: "ProjectDetailEditor",
   },
 
   handleRemoveMilestone: function(pmIdx) {
-    // TODO:
+    var projectMilestones = this.state.projectMilestones.remove(pmIdx);
+    this.setState({
+      projectMilestones: projectMilestones,
+    });
   },
 
   componentDidMount: function() {

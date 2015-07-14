@@ -186,7 +186,10 @@ var ProjectDetailEditor = React.createClass({
   },
 
   handleRemoveMilestone: function(pmIdx) {
-    // TODO:
+    var projectMilestones = this.state.projectMilestones.remove(pmIdx);
+    this.setState({
+      projectMilestones: projectMilestones,
+    });
   },
 
   componentDidMount: function() {
