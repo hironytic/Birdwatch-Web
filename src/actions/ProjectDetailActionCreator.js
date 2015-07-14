@@ -79,6 +79,7 @@ function _updateProjectDetail(targetId, newValues, newMilestones) {
   var project = ProjectDetailStore.getProject();
   var milestones = ProjectDetailStore.getMilestones();
 
+  // project自体について
   var modified = false;
   if (project.getName() != newValues.name) {
     project.setName(newValues.name);
@@ -100,21 +101,61 @@ function _updateProjectDetail(targetId, newValues, newMilestones) {
     project.setVersion(newValues.version);
     modified = true;
   }
-  Promise.resolve((modified) ? project.save() : project).then(function(project) {
-    AppDispatcher.dispatch({
-      type: ActionTypes.PROJECT_DETAIL_LOADED,
-      id: targetId,
-      project: project,
-    });
-  }).then(function() {
+  Promise.resolve((modified) ? project.save() : project).then(function() {
+    // milestonesについて
     // 追加されたもの & 変更されたもの
+    var dontRemove = Immutable.Set();
+    var addModList = newMilestones.map(function(newMilestone) {
+      var projectMilestone;
+      if (newMilestone.get("isNew")) {
+        projectMilestone = new ProjectMilestone();
+        projectMilestone.setProject(project);
+        projectMilestone.setMilestone(newMilestone.get("milestone"));
+        projectMilestone.setInternalDate(newMilestone.get("internalDate"));
+        projectMilestone.setDateString(newMilestone.get("dateString"));
+      } else {
+        var modified = false;
+        projectMilestone = milestones.find(function(mlstn) { return mlstn.id == newMilestone.get("id"); });
+        if (projectMilestone != null) {
+          dontRemove = dontRemove.add(projectMilestone.id);
 
+          if (projectMilestone.getMilestone().id != newMilestone.get("milestone").id) {
+            projectMilestone.setMilestone(newMilestone.get("milestone"));
+            modified = true;
+          }
+          if (projectMilestone.getInternalDate() != newMilestone.get("internalDate")) {
+            projectMilestone.setInternalDate(newMilestone.get("internalDate"));
+            modified = true;
+          }
+          if (projectMilestone.getDateString() != newMilestone.get("dateString")) {
+            projectMilestone.setDateString(newMilestone.get("dateString"));
+            modified = true;
+          }
+
+          if (!modified) {
+            // 変更がなければ更新の必要なし
+            projectMilestone = null;
+          }
+        }
+      }
+      return projectMilestone;
+    }).filter(function(value) { return value != null; }).toArray();
+
+    // 削除されたもの
+    var delList = milestones.filterNot(function(mlstn) { return dontRemove.includes(mlstn.id); }).toArray();
+
+    return Promise.all([
+      Promise.resolve((addModList.length > 0) ? Parse.Object.saveAll(addModList) : null),
+      Promise.resolve((delList.length > 0) ? Parse.Object.destroyAll(delList) : null),
+    ]);
   }).catch(function(error) {
     AppDispatcher.dispatch({
       type: ActionTypes.ERROR_OCCURED,
       message1: "プロジェクトの更新に失敗",
       message2: error.message,
     });
+  }).then(function() {
+    _loadProjectDetail(targetId);
   });
 }
 
@@ -144,7 +185,7 @@ module.exports = {
     });
   },
 
-  commitEditing: function(project, newValues) {
-    _updateProjectDetail(project, newValues);
+  commitEditing: function(targetId, newValues, newMilestones) {
+    _updateProjectDetail(targetId, newValues, newMilestones);
   },
 };
