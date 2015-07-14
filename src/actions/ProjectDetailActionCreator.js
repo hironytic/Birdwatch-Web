@@ -6,6 +6,7 @@ var AppDispatcher = require("../dispatcher/AppDispatcher");
 var AppConstants = require("../constants/AppConstants");
 var Project = require("../objects/Project");
 var ProjectMilestone = require("../objects/ProjectMilestone");
+var ProjectDetailStore = require("../stores/ProjectDetailStore");
 
 var ActionTypes = AppConstants.ActionTypes;
 
@@ -70,19 +71,44 @@ function _loadProjectMilestones(project) {
   });
 }
 
-function _updateProjectDetail(project, newValues) {
-  var projectId = project.id;
-  project.setName(newValues.name);
-  project.setProjectCode(newValues.projectCode);
-  project.setFamily(newValues.family);
-  project.setPlatform(newValues.platform);
-  project.setVersion(newValues.version);
-  Promise.resolve(project.save()).then(function(project) {
+function _updateProjectDetail(targetId, newValues, newMilestones) {
+  if (ProjectDetailStore.getTargetId() != targetId) {
+    return;
+  }
+
+  var project = ProjectDetailStore.getProject();
+  var milestones = ProjectDetailStore.getMilestones();
+
+  var modified = false;
+  if (project.getName() != newValues.name) {
+    project.setName(newValues.name);
+    modified = true;
+  }
+  if (project.getProjectCode() != newValues.projectCode) {
+    project.setProjectCode(newValues.projectCode);
+    modified = true;
+  }
+  if (project.getFamily().id != newValues.family.id) {
+    project.setFamily(newValues.family);
+    modified = true;
+  }
+  if (project.getPlatform().id != newValues.platform.id) {
+    project.setPlatform(newValues.platform);
+    modified = true;
+  }
+  if (project.getVersion() != newValues.version) {
+    project.setVersion(newValues.version);
+    modified = true;
+  }
+  Promise.resolve((modified) ? project.save() : project).then(function(project) {
     AppDispatcher.dispatch({
       type: ActionTypes.PROJECT_DETAIL_LOADED,
-      id: projectId,
+      id: targetId,
       project: project,
     });
+  }).then(function() {
+    // 追加されたもの & 変更されたもの
+
   }).catch(function(error) {
     AppDispatcher.dispatch({
       type: ActionTypes.ERROR_OCCURED,

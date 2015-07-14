@@ -35,7 +35,6 @@ var ProjectDetailEditor = React.createClass({
     var project = ProjectDetailStore.getProject();
     return {
       targetId: ProjectDetailStore.getTargetId(),
-      project: project,
 
       name: (project == null) ? "" : project.getName(),
       projectCode: (project == null) ? "" : project.getProjectCode(),
@@ -55,9 +54,7 @@ var ProjectDetailEditor = React.createClass({
   },
 
   render: function() {
-    var projectForm;
-    var project = this.state.project;
-    projectForm = (
+    var projectForm = (
       <form className="form-horizontal" action="#" onSubmit={this.handleSubmit}>
         <Input type="text" label="名称" labelClassName="col-xs-3" wrapperClassName="col-xs-9" valueLink={this.linkState('name')}/>
         <Input type="text" label="プロジェクトコード" labelClassName="col-xs-3" wrapperClassName="col-xs-9" valueLink={this.linkState('projectCode')}/>
@@ -214,7 +211,7 @@ var ProjectDetailEditor = React.createClass({
       version: this.state.version,
       projectMilestones: this.state.projectMilestones,
     };
-    ProjectDetailActionCreator.commitEditing(this.state.project, newValues);
+    ProjectDetailActionCreator.commitEditing(this.state.targetId, newValues, this.state.projectMilestones);
   },
 
   handleCancelEditing: function(e) {
