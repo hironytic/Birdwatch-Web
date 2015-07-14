@@ -108,7 +108,17 @@ function _updateProjectDetail(targetId, newValues, newMilestones) {
     var addModList = newMilestones.map(function(newMilestone) {
       var projectMilestone;
       if (newMilestone.get("isNew")) {
+        var milestoneACL = new Parse.ACL();
+        milestoneACL.setPublicReadAccess(false);
+        milestoneACL.setPublicWriteAccess(false);
+        milestoneACL.setRoleReadAccess("Administrator", true);
+        milestoneACL.setRoleWriteAccess("Administrator", true);
+        milestoneACL.setRoleReadAccess("Viewer", true);
+        milestoneACL.setRoleWriteAccess("Viewer", false);
+
         projectMilestone = new ProjectMilestone();
+        projectMilestone.setACL(milestoneACL);
+
         projectMilestone.setProject(project);
         projectMilestone.setMilestone(newMilestone.get("milestone"));
         projectMilestone.setInternalDate(newMilestone.get("internalDate"));
