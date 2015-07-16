@@ -34,7 +34,7 @@ function _loadProjectList() {
   });
 }
 
-function _createNewProject(router) {
+function _createNewProject() {
   var projectACL = new Parse.ACL();
   projectACL.setPublicReadAccess(false);
   projectACL.setPublicWriteAccess(false);
@@ -51,7 +51,7 @@ function _createNewProject(router) {
   project.setProjectCode("");
   project.setVersion("");
 
-  Promise.resolve(project.save()).then(function(project) {
+  return Promise.resolve(project.save()).then(function(project) {
     return project.id;
   }).catch(function(error) {
     AppDispatcher.dispatch({
@@ -61,20 +61,18 @@ function _createNewProject(router) {
     });
     return null;
   }).then(function(projectId) {
-    _loadProjectList().then(function() {
-      if (projectId != null && router != null) {
-        router.replaceWith("/project/" + projectId);
-      }
-    })
+    return _loadProjectList().then(function() {
+      return projectId;
+    });
   });
 }
 
 module.exports = {
   loadProjectList: function() {
-    _loadProjectList();
+    return _loadProjectList();
   },
 
-  createNewProject: function(router) {
-    _createNewProject(router);
+  createNewProject: function() {
+    return _createNewProject();
   },
 };

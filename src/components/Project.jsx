@@ -102,7 +102,11 @@ var Project = React.createClass({
 
   handleNewProject: function(e) {
     e.preventDefault();
-    ProjectListActionCreator.createNewProject(this.context.router);
+    ProjectListActionCreator.createNewProject().then(function(projectId) {
+      if (projectId != null) {
+        this.transitionTo("/project/" + projectId);
+      }
+    }.bind(this));
   },
 });
 
