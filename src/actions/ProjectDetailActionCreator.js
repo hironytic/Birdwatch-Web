@@ -169,6 +169,31 @@ function _updateProjectDetail(targetId, newValues, newMilestones) {
   });
 }
 
+function _deleteProject(projectId) {
+  var project = new Project();
+  project.id = projectId;
+
+  // プロジェクトに紐付いたマイルストーンを取得後、
+  // それとプロジェクトを合わせて destroyAll で削除する。
+  var query = new Parse.Query(ProjectMilestone);
+  query.equalTo(ProjectMilestone.Key.PROJECT, project);
+  return Promise.resolve(query.find()).then(function(objects) {
+    objects.push(project);
+    return Promise.resolve(Parse.Object.destroyAll(objects));
+  }).then(function() {
+    AppDispatcher.dispatch({
+      type: ActionTypes.PROJECT_DELETED,
+      id: projectId,
+    });
+  }).catch(function(error) {
+    AppDispatcher.dispatch({
+      type: ActionTypes.ERROR_OCCURED,
+      message1: "プロジェクトの削除に失敗",
+      message2: error.message,
+    });
+  });
+}
+
 module.exports = {
   setProjectTarget: function(projectId) {
     AppDispatcher.dispatch({
@@ -197,5 +222,9 @@ module.exports = {
 
   commitEditing: function(targetId, newValues, newMilestones) {
     _updateProjectDetail(targetId, newValues, newMilestones);
+  },
+
+  deleteProject: function(projectId) {
+    return _deleteProject(projectId);
   },
 };

@@ -23,6 +23,8 @@ module.exports = {
     PROJECT_DETAIL_START_EDITING: null,       // プロジェクト詳細の編集開始
     PROJECT_DETAIL_CANCEL_EDITING: null,      // プロジェクト詳細の編集をキャンセル
 
+    PROJECT_DELETED: null,            // プロジェクトが削除された
+
     FAMILY_LIST_LOADING: null,        // 製品ファミリ一覧のロード中
     FAMILY_LIST_LOADED: null,         // 製品ファミリ一覧のロード完了
 

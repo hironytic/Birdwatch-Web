@@ -1,5 +1,6 @@
 "use strict";
 var React = require("react/addons");
+var ReactRouter = require("react-router");
 var ReactBootstrap = require('react-bootstrap');
 var Panel = ReactBootstrap.Panel;
 var FormControls = ReactBootstrap.FormControls;
@@ -8,12 +9,15 @@ var ButtonToolbar = ReactBootstrap.ButtonToolbar;
 var ButtonGroup = ReactBootstrap.ButtonGroup;
 var Button = ReactBootstrap.Button;
 var Glyphicon = ReactBootstrap.Glyphicon;
+var Modal = ReactBootstrap.Modal;
 var moment = require("moment");
 
 var ProjectDetailStore = require("../stores/ProjectDetailStore");
 var ProjectDetailActionCreator = require("../actions/ProjectDetailActionCreator");
 
 var ProjectDetailViewer = React.createClass({
+  mixins: [ReactRouter.Navigation],
+
   getInitialState: function() {
     return {
       targetId: ProjectDetailStore.getTargetId(),
@@ -21,6 +25,7 @@ var ProjectDetailViewer = React.createClass({
       isLoading: ProjectDetailStore.isLoading(),
       milestones: ProjectDetailStore.getMilestones(),
       isMilestonesLoading: ProjectDetailStore.isMilestonesLoading(),
+      isShowConfirmationToDelete: false,
     };
   },
 
@@ -61,16 +66,39 @@ var ProjectDetailViewer = React.createClass({
           <ButtonGroup>
             <Button key="refresh" onClick={this.handleRefresh}><Glyphicon glyph="refresh"/> 最新</Button>
             <Button key="startEditing" onClick={this.handleStartEditing}><Glyphicon glyph="pencil"/> 編集</Button>
-            <Button key="delete"><Glyphicon glyph="trash"/> 削除</Button>
+            <Button key="delete" onClick={this.handleDelete}><Glyphicon glyph="trash"/> 削除</Button>
           </ButtonGroup>
         </ButtonToolbar>
       );
     }
 
+    var confirmationToDelete = (
+      <Modal show={this.state.isShowConfirmationToDelete} onHide={this.handleCancelDeleting}>
+        <Modal.Header closeButton>
+          <Modal.Title>プロジェクトの削除</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {(project == null) ? "" : (
+            <div>
+              <h4>{project.getName()}</h4>
+            </div>
+          )}
+          <p>このプロジェクトを削除します。よろしいですか？</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button bsStyle="danger" onClick={this.handleSurelyDelete}>削除</Button>
+          <Button onClick={this.handleCancelDeleting}>キャンセル</Button>
+        </Modal.Footer>
+      </Modal>
+    );
+
     return (
-      <Panel footer={footer}>
-        {projectForm}
-      </Panel>
+      <div>
+        <Panel footer={footer}>
+          {projectForm}
+          {confirmationToDelete}
+        </Panel>
+      </div>
     );
   },
 
@@ -163,6 +191,27 @@ var ProjectDetailViewer = React.createClass({
 
   handleStartEditing: function(e) {
     ProjectDetailActionCreator.startEditing(this.props.id);
+  },
+
+  handleDelete: function(e) {
+    this.setState({
+      isShowConfirmationToDelete: true,
+    });
+  },
+
+  handleSurelyDelete: function(e) {
+    this.setState({
+      isShowConfirmationToDelete: false,
+    });
+    ProjectDetailActionCreator.deleteProject(this.props.id).then(function() {
+      this.transitionTo("/project");
+    }.bind(this));
+  },
+
+  handleCancelDeleting: function(e) {
+    this.setState({
+      isShowConfirmationToDelete: false,
+    });
   },
 });
 

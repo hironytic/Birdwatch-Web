@@ -58,6 +58,10 @@ ProjectListStore.dispatchToken = AppDispatcher.register(function(action) {
         ProjectListStore.emitProjectListChange();
       }
       break;
+    case ActionTypes.PROJECT_DELETED:
+      _projectList = _projectList.filterNot(function(project) { return project.id == action.id; });
+      ProjectListStore.emitProjectListChange();
+      break;
   }
 });
 
