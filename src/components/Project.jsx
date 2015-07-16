@@ -102,7 +102,8 @@ var Project = React.createClass({
 
   handleNewProject: function(e) {
     e.preventDefault();
-  }
+    ProjectListActionCreator.createNewProject(this.context.router);
+  },
 });
 
 module.exports = Project;
