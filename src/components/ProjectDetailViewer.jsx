@@ -119,11 +119,15 @@ var ProjectDetailViewer = React.createClass({
         var internalDate = milestone.getInternalDate();
         var internalMoment = moment(internalDate);
         var internalDateString = internalMoment.format("YYYY-MM-DD");
+        var dateString = milestone.getDateString();
+        if (dateString == "") {
+          dateString = internalMoment.format("M/D");
+        }
         return (
           <tr key={"id_" + milestone.id}>
             <td className="col-xs-4">{milestone.getMilestone().getName()}</td>
             <td className="col-xs-4">{internalDateString}</td>
-            <td className="col-xs-4">{milestone.getDateString()}</td>
+            <td className="col-xs-4">{dateString}</td>
           </tr>
         );
       }.bind(this));

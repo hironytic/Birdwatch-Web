@@ -50997,11 +50997,15 @@ var ProjectDetailViewer = React.createClass({displayName: "ProjectDetailViewer",
         var internalDate = milestone.getInternalDate();
         var internalMoment = moment(internalDate);
         var internalDateString = internalMoment.format("YYYY-MM-DD");
+        var dateString = milestone.getDateString();
+        if (dateString == "") {
+          dateString = internalMoment.format("M/D");
+        }
         return (
           React.createElement("tr", {key: "id_" + milestone.id}, 
             React.createElement("td", {className: "col-xs-4"}, milestone.getMilestone().getName()), 
             React.createElement("td", {className: "col-xs-4"}, internalDateString), 
-            React.createElement("td", {className: "col-xs-4"}, milestone.getDateString())
+            React.createElement("td", {className: "col-xs-4"}, dateString)
           )
         );
       }.bind(this));
