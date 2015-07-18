@@ -3,6 +3,8 @@ var keyMirror = require('react/lib/keyMirror');
 
 module.exports = {
   ActionTypes: keyMirror({
+    APP_INITIALIZED: null,            // アプリの初期化が完了
+
     ERROR_OCCURED: null,              // エラーが発生した
     ERROR_CLEARED: null,              // エラーを消した
     ERROR_ALL_CLEARED: null,          // すべてのエラーを消した
