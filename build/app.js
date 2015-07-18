@@ -49871,7 +49871,14 @@ function _loadProjectMilestones(project) {
   query.include(ProjectMilestone.Key.MILESTONE);
   query.ascending(ProjectMilestone.Key.INTERNAL_DATE);
   Promise.resolve(query.find()).then(function(milestones) {
-    return Immutable.List(milestones);
+    return Immutable.List(milestones).sort(function(mlstn1, mlstn2) {
+      var dateResult = mlstn1.getInternalDate().getTime() - mlstn2.getInternalDate().getTime();
+      if (dateResult == 0) {
+        return mlstn1.getMilestone().getOrder() - mlstn2.getMilestone().getOrder();
+      } else {
+        return dateResult;
+      }
+    });
   }).catch(function(error) {
     AppDispatcher.dispatch({
       type: ActionTypes.ERROR_OCCURED,
