@@ -8,6 +8,7 @@ var ListGroupItem = ReactBootstrap.ListGroupItem;
 var Grid = ReactBootstrap.Grid;
 var Row = ReactBootstrap.Row;
 var Col = ReactBootstrap.Col;
+var ButtonToolbar = ReactBootstrap.ButtonToolbar;
 var ButtonGroup = ReactBootstrap.ButtonGroup;
 var Button = ReactBootstrap.Button;
 var Glyphicon = ReactBootstrap.Glyphicon;
@@ -31,7 +32,7 @@ var Project = React.createClass({
       <Grid fluid>
         <Row>
           <Col xs={4}>
-            <Panel header="プロジェクト" bsStyle="info" style={{height: "512"}}>
+            <Panel header="プロジェクト" bsStyle="info" style={{height: "512"}} footer={this.renderFooter()}>
               {this.renderProjectList()}
             </Panel>
           </Col>
@@ -66,13 +67,7 @@ var Project = React.createClass({
         return (
           <ListGroupItem key={"id_" + project.id} active={isActive} href={href} header={header}>{project.getProjectCode()}</ListGroupItem>
         );
-      }.bind(this));
-      if (true) {
-        projectItems = projectItems.push(
-          <ListGroupItem key="new" href="#" onClick={this.handleNewProject}><Glyphicon glyph='plus'/> プロジェクトを作成</ListGroupItem>
-        );
-      }
-      projectItems = projectItems.toArray();
+      }.bind(this)).toArray();
     }
 
     return (
@@ -80,6 +75,20 @@ var Project = React.createClass({
         {projectItems}
       </ListGroup>
     );
+  },
+
+  renderFooter: function() {
+    if (true) {
+      return (
+        <ButtonToolbar>
+          <ButtonGroup>
+            <Button onClick={this.handleNewProject}><Glyphicon glyph="plus"/> 新規プロジェクト</Button>
+          </ButtonGroup>
+        </ButtonToolbar>
+      );
+    } else {
+      return "";
+    }
   },
 
   componentDidMount: function() {

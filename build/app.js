@@ -50336,6 +50336,7 @@ var ListGroupItem = ReactBootstrap.ListGroupItem;
 var Grid = ReactBootstrap.Grid;
 var Row = ReactBootstrap.Row;
 var Col = ReactBootstrap.Col;
+var ButtonToolbar = ReactBootstrap.ButtonToolbar;
 var ButtonGroup = ReactBootstrap.ButtonGroup;
 var Button = ReactBootstrap.Button;
 var Glyphicon = ReactBootstrap.Glyphicon;
@@ -50359,7 +50360,7 @@ var Project = React.createClass({displayName: "Project",
       React.createElement(Grid, {fluid: true}, 
         React.createElement(Row, null, 
           React.createElement(Col, {xs: 4}, 
-            React.createElement(Panel, {header: "プロジェクト", bsStyle: "info", style: {height: "512"}}, 
+            React.createElement(Panel, {header: "プロジェクト", bsStyle: "info", style: {height: "512"}, footer: this.renderFooter()}, 
               this.renderProjectList()
             )
           ), 
@@ -50394,13 +50395,7 @@ var Project = React.createClass({displayName: "Project",
         return (
           React.createElement(ListGroupItem, {key: "id_" + project.id, active: isActive, href: href, header: header}, project.getProjectCode())
         );
-      }.bind(this));
-      if (true) {
-        projectItems = projectItems.push(
-          React.createElement(ListGroupItem, {key: "new", href: "#", onClick: this.handleNewProject}, React.createElement(Glyphicon, {glyph: "plus"}), " プロジェクトを作成")
-        );
-      }
-      projectItems = projectItems.toArray();
+      }.bind(this)).toArray();
     }
 
     return (
@@ -50408,6 +50403,20 @@ var Project = React.createClass({displayName: "Project",
         projectItems
       )
     );
+  },
+
+  renderFooter: function() {
+    if (true) {
+      return (
+        React.createElement(ButtonToolbar, null, 
+          React.createElement(ButtonGroup, null, 
+            React.createElement(Button, {onClick: this.handleNewProject}, React.createElement(Glyphicon, {glyph: "plus"}), " 新規プロジェクト")
+          )
+        )
+      );
+    } else {
+      return "";
+    }
   },
 
   componentDidMount: function() {
