@@ -16,6 +16,7 @@ var Label = ReactBootstrap.Label;
 
 var ProjectListStore = require("../stores/ProjectListStore");
 var ProjectListActionCreator = require("../actions/ProjectListActionCreator");
+var NewProjectModal = require("./NewProjectModal.jsx");
 
 var Project = React.createClass({
   mixins: [ReactRouter.Navigation, ReactRouter.State],
@@ -23,24 +24,28 @@ var Project = React.createClass({
   getInitialState: function() {
     return {
       projectList: ProjectListStore.getProjectList(),
-      isLoading: ProjectListStore.isLoading()
+      isLoading: ProjectListStore.isLoading(),
+      isShowNewProjectModal: false,
     };
   },
 
   render: function() {
     return (
-      <Grid fluid>
-        <Row>
-          <Col xs={4}>
-            <Panel header="プロジェクト" bsStyle="info" style={{height: "512"}} footer={this.renderFooter()}>
-              {this.renderProjectList()}
-            </Panel>
-          </Col>
-          <Col xs={8}>
-            {this.props.children}
-          </Col>
-        </Row>
-      </Grid>
+      <div>
+        <Grid fluid>
+          <Row>
+            <Col xs={4}>
+              <Panel header="プロジェクト" bsStyle="info" style={{height: "512"}} footer={this.renderFooter()}>
+                {this.renderProjectList()}
+              </Panel>
+            </Col>
+            <Col xs={8}>
+              {this.props.children}
+            </Col>
+          </Row>
+        </Grid>
+        <NewProjectModal isShow={this.state.isShowNewProjectModal} onFinish={this.handleNewProjectModalFinish}/>
+      </div>
     );
   },
 
@@ -110,13 +115,24 @@ var Project = React.createClass({
   },
 
   handleNewProject: function(e) {
-    e.preventDefault();
-    ProjectListActionCreator.createNewProject().then(function(projectId) {
-      if (projectId != null) {
-        this.transitionTo("/project/" + projectId);
-      }
-    }.bind(this));
+    this.setState({
+      isShowNewProjectModal: true,
+    });
   },
+
+  handleNewProjectModalFinish: function(data) {
+    this.setState({
+      isShowNewProjectModal: false,
+    });
+
+    if (data != null) {
+      ProjectListActionCreator.createNewProject(data).then(function(projectId) {
+        if (projectId != null) {
+          this.transitionTo("/project/" + projectId);
+        }
+      }.bind(this));
+    }
+  }
 });
 
 module.exports = Project;

@@ -5,8 +5,6 @@ var Promise = require("es6-promise").Promise;
 var AppDispatcher = require("../dispatcher/AppDispatcher");
 var AppConstants = require("../constants/AppConstants");
 var Project = require("../objects/Project");
-var FamilyListStore = require("../stores/FamilyListStore");
-var PlatformListStore = require("../stores/PlatformListStore");
 
 var ActionTypes = AppConstants.ActionTypes;
 
@@ -34,7 +32,7 @@ function _loadProjectList() {
   });
 }
 
-function _createNewProject() {
+function _createNewProject(data) {
   var projectACL = new Parse.ACL();
   projectACL.setPublicReadAccess(false);
   projectACL.setPublicWriteAccess(false);
@@ -45,11 +43,11 @@ function _createNewProject() {
 
   var project = new Project();
   project.setACL(projectACL);
-  project.setName("新規プロジェクト");
-  project.setFamily(FamilyListStore.getList().first());
-  project.setPlatform(PlatformListStore.getList().first());
-  project.setProjectCode("");
-  project.setVersion("");
+  project.setName(data.name);
+  project.setFamily(data.family);
+  project.setPlatform(data.platform);
+  project.setProjectCode(data.projectCode);
+  project.setVersion(data.version);
 
   return Promise.resolve(project.save()).then(function(project) {
     return project.id;
@@ -72,7 +70,7 @@ module.exports = {
     return _loadProjectList();
   },
 
-  createNewProject: function() {
-    return _createNewProject();
+  createNewProject: function(data) {
+    return _createNewProject(data);
   },
 };

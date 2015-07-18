@@ -68,7 +68,7 @@ var ListStoreUtils = {
         });
 
         var query = queryProc();
-        Promise.resolve(query.find()).then(function (list) {
+        return Promise.resolve(query.find()).then(function (list) {
           return Immutable.List(list);
         }).catch(function(error) {
           AppDispatcher.dispatch({

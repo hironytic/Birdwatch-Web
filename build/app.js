@@ -49698,6 +49698,7 @@ var ReactRouter = require("react-router");
 var Router = ReactRouter.Router;
 var Route = ReactRouter.Route;
 var HashHistory = require("react-router/lib/HashHistory");
+var Promise = require("es6-promise").Promise;
 
 var AppFrame = require("./components/AppFrame.jsx");
 var Signin = require("./components/Signin.jsx");
@@ -49707,22 +49708,25 @@ var FamilyListActionCreator = require("./actions/FamilyListActionCreator");
 var PlatformListActionCreator = require("./actions/PlatformListActionCreator");
 var MilestoneListActionCreator = require("./actions/MilestoneListActionCreator");
 
-React.render((
-  React.createElement(Router, {history: new HashHistory}, 
-    React.createElement(Route, {path: "/", component: AppFrame}, 
-      React.createElement(Route, {path: "signin", component: Signin}), 
-      React.createElement(Route, {path: "project", component: Project}, 
-        React.createElement(Route, {path: ":id", component: ProjectDetail})
+// FIXME: こんなのはだめだー
+Promise.all([
+  FamilyListActionCreator.loadList(),
+  PlatformListActionCreator.loadList(),
+  MilestoneListActionCreator.loadList(),
+]).then(function() {
+  React.render((
+    React.createElement(Router, {history: new HashHistory}, 
+      React.createElement(Route, {path: "/", component: AppFrame}, 
+        React.createElement(Route, {path: "signin", component: Signin}), 
+        React.createElement(Route, {path: "project", component: Project}, 
+          React.createElement(Route, {path: ":id", component: ProjectDetail})
+        )
       )
     )
-  )
-), document.getElementById('main-content'));
+  ), document.getElementById('main-content'));
+});
 
-FamilyListActionCreator.loadList();
-PlatformListActionCreator.loadList();
-MilestoneListActionCreator.loadList();
-
-},{"./actions/FamilyListActionCreator":345,"./actions/MilestoneListActionCreator":346,"./actions/PlatformListActionCreator":347,"./components/AppFrame.jsx":351,"./components/Project.jsx":354,"./components/ProjectDetail.jsx":355,"./components/Signin.jsx":359,"react":342,"react-router":161,"react-router/lib/HashHistory":143}],344:[function(require,module,exports){
+},{"./actions/FamilyListActionCreator":345,"./actions/MilestoneListActionCreator":346,"./actions/PlatformListActionCreator":347,"./components/AppFrame.jsx":351,"./components/Project.jsx":355,"./components/ProjectDetail.jsx":356,"./components/Signin.jsx":360,"es6-promise":1,"react":342,"react-router":161,"react-router/lib/HashHistory":143}],344:[function(require,module,exports){
 "use strict";
 var AppDispatcher = require("../dispatcher/AppDispatcher");
 var AppConstants = require("../constants/AppConstants");
@@ -49744,7 +49748,7 @@ module.exports = {
   }
 };
 
-},{"../constants/AppConstants":360,"../dispatcher/AppDispatcher":361}],345:[function(require,module,exports){
+},{"../constants/AppConstants":361,"../dispatcher/AppDispatcher":362}],345:[function(require,module,exports){
 "use strict";
 var ListStoreUtils = require("../utils/ListStoreUtils");
 var AppConstants = require("../constants/AppConstants");
@@ -49760,7 +49764,7 @@ var FamilyListActionCreator = ListStoreUtils.createListActionCreator(ActionTypes
 
 module.exports = FamilyListActionCreator;
 
-},{"../constants/AppConstants":360,"../objects/Family":362,"../utils/ListStoreUtils":374}],346:[function(require,module,exports){
+},{"../constants/AppConstants":361,"../objects/Family":363,"../utils/ListStoreUtils":375}],346:[function(require,module,exports){
 "use strict";
 var ListStoreUtils = require("../utils/ListStoreUtils");
 var AppConstants = require("../constants/AppConstants");
@@ -49776,7 +49780,7 @@ var MilestoneListActionCreator = ListStoreUtils.createListActionCreator(ActionTy
 
 module.exports = MilestoneListActionCreator;
 
-},{"../constants/AppConstants":360,"../objects/Milestone":363,"../utils/ListStoreUtils":374}],347:[function(require,module,exports){
+},{"../constants/AppConstants":361,"../objects/Milestone":364,"../utils/ListStoreUtils":375}],347:[function(require,module,exports){
 "use strict";
 var ListStoreUtils = require("../utils/ListStoreUtils");
 var AppConstants = require("../constants/AppConstants");
@@ -49792,7 +49796,7 @@ var PlatformListActionCreator = ListStoreUtils.createListActionCreator(ActionTyp
 
 module.exports = PlatformListActionCreator;
 
-},{"../constants/AppConstants":360,"../objects/Platform":364,"../utils/ListStoreUtils":374}],348:[function(require,module,exports){
+},{"../constants/AppConstants":361,"../objects/Platform":365,"../utils/ListStoreUtils":375}],348:[function(require,module,exports){
 "use strict";
 var Promise = require("es6-promise").Promise;
 var Immutable = require("immutable");
@@ -50024,7 +50028,7 @@ module.exports = {
   },
 };
 
-},{"../constants/AppConstants":360,"../dispatcher/AppDispatcher":361,"../objects/Project":365,"../objects/ProjectMilestone":366,"../stores/ProjectDetailStore":372,"es6-promise":1,"immutable":16}],349:[function(require,module,exports){
+},{"../constants/AppConstants":361,"../dispatcher/AppDispatcher":362,"../objects/Project":366,"../objects/ProjectMilestone":367,"../stores/ProjectDetailStore":373,"es6-promise":1,"immutable":16}],349:[function(require,module,exports){
 "use strict";
 var Immutable = require("immutable");
 var Promise = require("es6-promise").Promise;
@@ -50032,8 +50036,6 @@ var Promise = require("es6-promise").Promise;
 var AppDispatcher = require("../dispatcher/AppDispatcher");
 var AppConstants = require("../constants/AppConstants");
 var Project = require("../objects/Project");
-var FamilyListStore = require("../stores/FamilyListStore");
-var PlatformListStore = require("../stores/PlatformListStore");
 
 var ActionTypes = AppConstants.ActionTypes;
 
@@ -50061,7 +50063,7 @@ function _loadProjectList() {
   });
 }
 
-function _createNewProject() {
+function _createNewProject(data) {
   var projectACL = new Parse.ACL();
   projectACL.setPublicReadAccess(false);
   projectACL.setPublicWriteAccess(false);
@@ -50072,11 +50074,11 @@ function _createNewProject() {
 
   var project = new Project();
   project.setACL(projectACL);
-  project.setName("新規プロジェクト");
-  project.setFamily(FamilyListStore.getList().first());
-  project.setPlatform(PlatformListStore.getList().first());
-  project.setProjectCode("");
-  project.setVersion("");
+  project.setName(data.name);
+  project.setFamily(data.family);
+  project.setPlatform(data.platform);
+  project.setProjectCode(data.projectCode);
+  project.setVersion(data.version);
 
   return Promise.resolve(project.save()).then(function(project) {
     return project.id;
@@ -50099,12 +50101,12 @@ module.exports = {
     return _loadProjectList();
   },
 
-  createNewProject: function() {
-    return _createNewProject();
+  createNewProject: function(data) {
+    return _createNewProject(data);
   },
 };
 
-},{"../constants/AppConstants":360,"../dispatcher/AppDispatcher":361,"../objects/Project":365,"../stores/FamilyListStore":369,"../stores/PlatformListStore":371,"es6-promise":1,"immutable":16}],350:[function(require,module,exports){
+},{"../constants/AppConstants":361,"../dispatcher/AppDispatcher":362,"../objects/Project":366,"es6-promise":1,"immutable":16}],350:[function(require,module,exports){
 "use strict";
 var Promise = require("es6-promise").Promise;
 
@@ -50145,7 +50147,7 @@ module.exports = {
   }
 };
 
-},{"../constants/AppConstants":360,"../dispatcher/AppDispatcher":361,"es6-promise":1}],351:[function(require,module,exports){
+},{"../constants/AppConstants":361,"../dispatcher/AppDispatcher":362,"es6-promise":1}],351:[function(require,module,exports){
 "use strict";
 var React = require("react");
 var ReactRouter = require("react-router");
@@ -50190,7 +50192,7 @@ var AppFrame = React.createClass({displayName: "AppFrame",
 
 module.exports = AppFrame;
 
-},{"../stores/CurrentUserStore":367,"./ErrorList.jsx":352,"./HeaderBar.jsx":353,"react":342,"react-router":161}],352:[function(require,module,exports){
+},{"../stores/CurrentUserStore":368,"./ErrorList.jsx":352,"./HeaderBar.jsx":353,"react":342,"react-router":161}],352:[function(require,module,exports){
 "use strict";
 var React = require("react");
 var ReactBootstrap = require("react-bootstrap");
@@ -50268,7 +50270,7 @@ var ErrorList = React.createClass({displayName: "ErrorList",
 
 module.exports = ErrorList;
 
-},{"../actions/ErrorActionCreator":344,"../stores/ErrorStore":368,"react":342,"react-bootstrap":125}],353:[function(require,module,exports){
+},{"../actions/ErrorActionCreator":344,"../stores/ErrorStore":369,"react":342,"react-bootstrap":125}],353:[function(require,module,exports){
 "use strict";
 var React = require("react")
 var ReactBootstrap = require('react-bootstrap')
@@ -50325,7 +50327,98 @@ var HeaderBar = React.createClass({displayName: "HeaderBar",
 
 module.exports = HeaderBar;
 
-},{"../actions/UserActionCreator":350,"../stores/CurrentUserStore":367,"react":342,"react-bootstrap":125}],354:[function(require,module,exports){
+},{"../actions/UserActionCreator":350,"../stores/CurrentUserStore":368,"react":342,"react-bootstrap":125}],354:[function(require,module,exports){
+"use strict";
+var React = require("react/addons");
+var ReactBootstrap = require('react-bootstrap');
+var FormControls = ReactBootstrap.FormControls;
+var Modal = ReactBootstrap.Modal;
+var Button = ReactBootstrap.Button;
+var Input = ReactBootstrap.Input;
+
+var FamilyListStore = require("../stores/FamilyListStore");
+var PlatformListStore = require("../stores/PlatformListStore");
+var SelectFromListStore = require("./SelectFromListStore.jsx");
+
+var NewProjectModal = React.createClass({displayName: "NewProjectModal",
+  mixins: [React.addons.LinkedStateMixin],
+
+  getInitialState: function() {
+    return {
+      name: "",
+      projectCode: "",
+      family: FamilyListStore.getList().first(),
+      platform: PlatformListStore.getList().first(),
+      version: "",
+    };
+  },
+
+  render: function() {
+    return (
+      React.createElement(Modal, {show: this.props.isShow, onHide: this.handleCancel}, 
+        React.createElement(Modal.Header, {closeButton: true}, 
+          React.createElement(Modal.Title, null, "新規プロジェクト")
+        ), 
+        React.createElement(Modal.Body, null, 
+          React.createElement("div", {class: "container-fluid"}, 
+            React.createElement("div", {class: "row"}, 
+              React.createElement("form", {className: "form-horizontal", action: "#", onSubmit: this.handleSubmit}, 
+                React.createElement(Input, {type: "text", label: "名称", labelClassName: "col-xs-4", wrapperClassName: "col-xs-8", valueLink: this.linkState('name')}), 
+                React.createElement(Input, {type: "text", label: "プロジェクトコード", labelClassName: "col-xs-4", wrapperClassName: "col-xs-8", valueLink: this.linkState('projectCode')}), 
+                React.createElement(SelectFromListStore, {label: "プロダクト", labelClassName: "col-xs-4", wrapperClassName: "col-xs-8", listStore: FamilyListStore, valueLink: this.linkState('family')}), 
+                React.createElement(SelectFromListStore, {label: "OS", labelClassName: "col-xs-4", wrapperClassName: "col-xs-8", listStore: PlatformListStore, valueLink: this.linkState('platform')}), 
+                React.createElement(Input, {type: "text", label: "内部バージョン", labelClassName: "col-xs-4", wrapperClassName: "col-xs-8", valueLink: this.linkState('version')})
+              )
+            )
+          )
+        ), 
+        React.createElement(Modal.Footer, null, 
+          React.createElement(Button, {bsStyle: "primary", onClick: this.handleCreate}, "作成"), 
+          React.createElement(Button, {onClick: this.handleCancel}, "キャンセル")
+        )
+      )
+    );
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    // 非表示から表示に変わるときに中身をクリア
+    if (!this.props.isShow && nextProps.isShow) {
+      this.setState({
+        name: "",
+        projectCode: "",
+        family: FamilyListStore.getList().first(),
+        platform: PlatformListStore.getList().first(),
+        version: "",
+      });
+    }
+  },
+
+  handleSubmit: function(e) {
+    e.preventDefault();
+  },
+
+  handleCancel: function(e) {
+    if (this.props.onFinish) {
+      this.props.onFinish(null);
+    }
+  },
+
+  handleCreate: function(e) {
+    if (this.props.onFinish) {
+      this.props.onFinish({
+        name: this.state.name,
+        projectCode: this.state.projectCode,
+        family: this.state.family,
+        platform: this.state.platform,
+        version: this.state.version,
+      });
+    }
+  },
+});
+
+module.exports = NewProjectModal;
+
+},{"../stores/FamilyListStore":370,"../stores/PlatformListStore":372,"./SelectFromListStore.jsx":359,"react-bootstrap":125,"react/addons":170}],355:[function(require,module,exports){
 "use strict";
 var React = require("react/addons");
 var ReactRouter = require("react-router");
@@ -50344,6 +50437,7 @@ var Label = ReactBootstrap.Label;
 
 var ProjectListStore = require("../stores/ProjectListStore");
 var ProjectListActionCreator = require("../actions/ProjectListActionCreator");
+var NewProjectModal = require("./NewProjectModal.jsx");
 
 var Project = React.createClass({displayName: "Project",
   mixins: [ReactRouter.Navigation, ReactRouter.State],
@@ -50351,23 +50445,27 @@ var Project = React.createClass({displayName: "Project",
   getInitialState: function() {
     return {
       projectList: ProjectListStore.getProjectList(),
-      isLoading: ProjectListStore.isLoading()
+      isLoading: ProjectListStore.isLoading(),
+      isShowNewProjectModal: false,
     };
   },
 
   render: function() {
     return (
-      React.createElement(Grid, {fluid: true}, 
-        React.createElement(Row, null, 
-          React.createElement(Col, {xs: 4}, 
-            React.createElement(Panel, {header: "プロジェクト", bsStyle: "info", style: {height: "512"}, footer: this.renderFooter()}, 
-              this.renderProjectList()
+      React.createElement("div", null, 
+        React.createElement(Grid, {fluid: true}, 
+          React.createElement(Row, null, 
+            React.createElement(Col, {xs: 4}, 
+              React.createElement(Panel, {header: "プロジェクト", bsStyle: "info", style: {height: "512"}, footer: this.renderFooter()}, 
+                this.renderProjectList()
+              )
+            ), 
+            React.createElement(Col, {xs: 8}, 
+              this.props.children
             )
-          ), 
-          React.createElement(Col, {xs: 8}, 
-            this.props.children
           )
-        )
+        ), 
+        React.createElement(NewProjectModal, {isShow: this.state.isShowNewProjectModal, onFinish: this.handleNewProjectModalFinish})
       )
     );
   },
@@ -50438,18 +50536,29 @@ var Project = React.createClass({displayName: "Project",
   },
 
   handleNewProject: function(e) {
-    e.preventDefault();
-    ProjectListActionCreator.createNewProject().then(function(projectId) {
-      if (projectId != null) {
-        this.transitionTo("/project/" + projectId);
-      }
-    }.bind(this));
+    this.setState({
+      isShowNewProjectModal: true,
+    });
   },
+
+  handleNewProjectModalFinish: function(data) {
+    this.setState({
+      isShowNewProjectModal: false,
+    });
+
+    if (data != null) {
+      ProjectListActionCreator.createNewProject(data).then(function(projectId) {
+        if (projectId != null) {
+          this.transitionTo("/project/" + projectId);
+        }
+      }.bind(this));
+    }
+  }
 });
 
 module.exports = Project;
 
-},{"../actions/ProjectListActionCreator":349,"../stores/ProjectListStore":373,"react-bootstrap":125,"react-router":161,"react/addons":170}],355:[function(require,module,exports){
+},{"../actions/ProjectListActionCreator":349,"../stores/ProjectListStore":374,"./NewProjectModal.jsx":354,"react-bootstrap":125,"react-router":161,"react/addons":170}],356:[function(require,module,exports){
 "use strict";
 var React = require("react/addons");
 
@@ -50489,7 +50598,7 @@ var ProjectDetail = React.createClass({displayName: "ProjectDetail",
 
 module.exports = ProjectDetail;
 
-},{"../stores/ProjectDetailStore":372,"./ProjectDetailEditor.jsx":356,"./ProjectDetailViewer.jsx":357,"react/addons":170}],356:[function(require,module,exports){
+},{"../stores/ProjectDetailStore":373,"./ProjectDetailEditor.jsx":357,"./ProjectDetailViewer.jsx":358,"react/addons":170}],357:[function(require,module,exports){
 "use strict";
 var React = require("react/addons");
 var ReactRouter = require("react-router");
@@ -50720,7 +50829,7 @@ var ProjectDetailEditor = React.createClass({displayName: "ProjectDetailEditor",
 
 module.exports = ProjectDetailEditor;
 
-},{"../actions/ProjectDetailActionCreator":348,"../stores/FamilyListStore":369,"../stores/MilestoneListStore":370,"../stores/PlatformListStore":371,"../stores/ProjectDetailStore":372,"./SelectFromListStore.jsx":358,"gregorian-calendar":8,"gregorian-calendar-format":5,"gregorian-calendar/lib/locale/en-US":11,"immutable":16,"moment":17,"object-assign":18,"rc-calendar":28,"react-bootstrap":125,"react-router":161,"react/addons":170}],357:[function(require,module,exports){
+},{"../actions/ProjectDetailActionCreator":348,"../stores/FamilyListStore":370,"../stores/MilestoneListStore":371,"../stores/PlatformListStore":372,"../stores/ProjectDetailStore":373,"./SelectFromListStore.jsx":359,"gregorian-calendar":8,"gregorian-calendar-format":5,"gregorian-calendar/lib/locale/en-US":11,"immutable":16,"moment":17,"object-assign":18,"rc-calendar":28,"react-bootstrap":125,"react-router":161,"react/addons":170}],358:[function(require,module,exports){
 "use strict";
 var React = require("react/addons");
 var ReactRouter = require("react-router");
@@ -50940,7 +51049,7 @@ var ProjectDetailViewer = React.createClass({displayName: "ProjectDetailViewer",
 
 module.exports = ProjectDetailViewer;
 
-},{"../actions/ProjectDetailActionCreator":348,"../stores/ProjectDetailStore":372,"moment":17,"react-bootstrap":125,"react-router":161,"react/addons":170}],358:[function(require,module,exports){
+},{"../actions/ProjectDetailActionCreator":348,"../stores/ProjectDetailStore":373,"moment":17,"react-bootstrap":125,"react-router":161,"react/addons":170}],359:[function(require,module,exports){
 "use strict";
 var React = require("react");
 var ReactBootstrap = require('react-bootstrap');
@@ -51042,7 +51151,7 @@ var SelectFromListStore = React.createClass({displayName: "SelectFromListStore",
 
 module.exports = SelectFromListStore;
 
-},{"react":342,"react-bootstrap":125}],359:[function(require,module,exports){
+},{"react":342,"react-bootstrap":125}],360:[function(require,module,exports){
 "use strict";
 var React = require("react/addons");
 var ReactRouter = require("react-router");
@@ -51149,7 +51258,7 @@ var Signin = React.createClass({displayName: "Signin",
 
 module.exports = Signin;
 
-},{"../actions/UserActionCreator":350,"../stores/CurrentUserStore":367,"./HeaderBar.jsx":353,"react-bootstrap":125,"react-router":161,"react/addons":170}],360:[function(require,module,exports){
+},{"../actions/UserActionCreator":350,"../stores/CurrentUserStore":368,"./HeaderBar.jsx":353,"react-bootstrap":125,"react-router":161,"react/addons":170}],361:[function(require,module,exports){
 "use strict";
 var keyMirror = require('react/lib/keyMirror');
 
@@ -51188,7 +51297,7 @@ module.exports = {
   }),
 };
 
-},{"react/lib/keyMirror":326}],361:[function(require,module,exports){
+},{"react/lib/keyMirror":326}],362:[function(require,module,exports){
 "use strict";
 var Dispatcher = require('flux').Dispatcher
 
@@ -51202,7 +51311,7 @@ var AppDispatcher = new Dispatcher();
 
 module.exports = AppDispatcher;
 
-},{"flux":2}],362:[function(require,module,exports){
+},{"flux":2}],363:[function(require,module,exports){
 "use strict";
 
 var Key = {
@@ -51232,7 +51341,7 @@ var Family = Parse.Object.extend("Family", {
 
 module.exports = Family;
 
-},{}],363:[function(require,module,exports){
+},{}],364:[function(require,module,exports){
 "use strict";
 
 var Key = {
@@ -51262,7 +51371,7 @@ var Milestone = Parse.Object.extend("Milestone", {
 
 module.exports = Milestone;
 
-},{}],364:[function(require,module,exports){
+},{}],365:[function(require,module,exports){
 "use strict";
 
 var Key = {
@@ -51283,7 +51392,7 @@ var Platform = Parse.Object.extend("Platform", {
 
 module.exports = Platform;
 
-},{}],365:[function(require,module,exports){
+},{}],366:[function(require,module,exports){
 "use strict";
 
 var Key = {
@@ -51340,7 +51449,7 @@ var Project = Parse.Object.extend("Project", {
 
 module.exports = Project;
 
-},{}],366:[function(require,module,exports){
+},{}],367:[function(require,module,exports){
 "use strict";
 
 var Key = {
@@ -51388,7 +51497,7 @@ var ProjectMilestone = Parse.Object.extend("ProjectMilestone", {
 
 module.exports = ProjectMilestone;
 
-},{}],367:[function(require,module,exports){
+},{}],368:[function(require,module,exports){
 "use strict";
 var AppConstants = require("../constants/AppConstants")
 var AppDispatcher = require("../dispatcher/AppDispatcher");
@@ -51475,7 +51584,7 @@ CurrentUserStore.dispatchToken = AppDispatcher.register(function(action) {
 
 module.exports = CurrentUserStore;
 
-},{"../constants/AppConstants":360,"../dispatcher/AppDispatcher":361,"events":14,"object-assign":18,"react/lib/keyMirror":326}],368:[function(require,module,exports){
+},{"../constants/AppConstants":361,"../dispatcher/AppDispatcher":362,"events":14,"object-assign":18,"react/lib/keyMirror":326}],369:[function(require,module,exports){
 "use strict";
 var AppConstants = require("../constants/AppConstants")
 var AppDispatcher = require("../dispatcher/AppDispatcher");
@@ -51536,7 +51645,7 @@ ErrorStore.dispatchToken = AppDispatcher.register(function(action) {
 
 module.exports = ErrorStore;
 
-},{"../constants/AppConstants":360,"../dispatcher/AppDispatcher":361,"events":14,"immutable":16,"object-assign":18,"react/lib/keyMirror":326}],369:[function(require,module,exports){
+},{"../constants/AppConstants":361,"../dispatcher/AppDispatcher":362,"events":14,"immutable":16,"object-assign":18,"react/lib/keyMirror":326}],370:[function(require,module,exports){
 "use strict";
 var AppConstants = require("../constants/AppConstants");
 var ListStoreUtils = require("../utils/ListStoreUtils");
@@ -51546,7 +51655,7 @@ var ActionTypes = AppConstants.ActionTypes;
 var FamilyListStore = ListStoreUtils.createListStore(ActionTypes.FAMILY_LIST_LOADING, ActionTypes.FAMILY_LIST_LOADED);
 module.exports = FamilyListStore;
 
-},{"../constants/AppConstants":360,"../utils/ListStoreUtils":374}],370:[function(require,module,exports){
+},{"../constants/AppConstants":361,"../utils/ListStoreUtils":375}],371:[function(require,module,exports){
 "use strict";
 var AppConstants = require("../constants/AppConstants");
 var ListStoreUtils = require("../utils/ListStoreUtils");
@@ -51556,7 +51665,7 @@ var ActionTypes = AppConstants.ActionTypes;
 var MilestoneListStore = ListStoreUtils.createListStore(ActionTypes.MILESTONE_LIST_LOADING, ActionTypes.MILESTONE_LIST_LOADED);
 module.exports = MilestoneListStore;
 
-},{"../constants/AppConstants":360,"../utils/ListStoreUtils":374}],371:[function(require,module,exports){
+},{"../constants/AppConstants":361,"../utils/ListStoreUtils":375}],372:[function(require,module,exports){
 "use strict";
 var AppConstants = require("../constants/AppConstants");
 var ListStoreUtils = require("../utils/ListStoreUtils");
@@ -51566,7 +51675,7 @@ var ActionTypes = AppConstants.ActionTypes;
 var PlatformListStore = ListStoreUtils.createListStore(ActionTypes.PLATFORM_LIST_LOADING, ActionTypes.PLATFORM_LIST_LOADED);
 module.exports = PlatformListStore;
 
-},{"../constants/AppConstants":360,"../utils/ListStoreUtils":374}],372:[function(require,module,exports){
+},{"../constants/AppConstants":361,"../utils/ListStoreUtils":375}],373:[function(require,module,exports){
 "use strict";
 var AppConstants = require("../constants/AppConstants")
 var AppDispatcher = require("../dispatcher/AppDispatcher");
@@ -51713,7 +51822,7 @@ ProjectDetailStore.dispatchToken = AppDispatcher.register(function(action) {
 
 module.exports = ProjectDetailStore;
 
-},{"../constants/AppConstants":360,"../dispatcher/AppDispatcher":361,"events":14,"object-assign":18,"react/lib/keyMirror":326}],373:[function(require,module,exports){
+},{"../constants/AppConstants":361,"../dispatcher/AppDispatcher":362,"events":14,"object-assign":18,"react/lib/keyMirror":326}],374:[function(require,module,exports){
 "use strict";
 var AppConstants = require("../constants/AppConstants")
 var AppDispatcher = require("../dispatcher/AppDispatcher");
@@ -51783,7 +51892,7 @@ ProjectListStore.dispatchToken = AppDispatcher.register(function(action) {
 
 module.exports = ProjectListStore;
 
-},{"../constants/AppConstants":360,"../dispatcher/AppDispatcher":361,"events":14,"immutable":16,"object-assign":18,"react/lib/keyMirror":326}],374:[function(require,module,exports){
+},{"../constants/AppConstants":361,"../dispatcher/AppDispatcher":362,"events":14,"immutable":16,"object-assign":18,"react/lib/keyMirror":326}],375:[function(require,module,exports){
 "use strict";
 var AppDispatcher = require("../dispatcher/AppDispatcher");
 var EventEmitter = require("events").EventEmitter;
@@ -51854,7 +51963,7 @@ var ListStoreUtils = {
         });
 
         var query = queryProc();
-        Promise.resolve(query.find()).then(function (list) {
+        return Promise.resolve(query.find()).then(function (list) {
           return Immutable.List(list);
         }).catch(function(error) {
           AppDispatcher.dispatch({
@@ -51876,4 +51985,4 @@ var ListStoreUtils = {
 
 module.exports = ListStoreUtils;
 
-},{"../constants/AppConstants":360,"../dispatcher/AppDispatcher":361,"es6-promise":1,"events":14,"immutable":16,"object-assign":18,"react/lib/keyMirror":326}]},{},[344,345,346,347,348,349,350,360,361,362,363,364,365,366,367,368,369,370,371,372,373,374,343,351,352,353,354,355,356,357,358,359]);
+},{"../constants/AppConstants":361,"../dispatcher/AppDispatcher":362,"es6-promise":1,"events":14,"immutable":16,"object-assign":18,"react/lib/keyMirror":326}]},{},[344,345,346,347,348,349,350,361,362,363,364,365,366,367,368,369,370,371,372,373,374,375,343,351,352,353,354,355,356,357,358,359,360]);
