@@ -50329,7 +50329,8 @@ var React = require("react")
 var ReactBootstrap = require('react-bootstrap')
 var Navbar = ReactBootstrap.Navbar;
 var Nav = ReactBootstrap.Nav;
-var NavItem = ReactBootstrap.NavItem;
+var DropdownButton = ReactBootstrap.DropdownButton;
+var MenuItem = ReactBootstrap.MenuItem;
 var CurrentUserStore = require("../stores/CurrentUserStore");
 var UserActionCreator = require("../actions/UserActionCreator");
 
@@ -50341,24 +50342,28 @@ var HeaderBar = React.createClass({displayName: "HeaderBar",
   },
 
   render: function() {
-    var signOut = '';
-    if (this.state.user != null) {
-      signOut = (
-        React.createElement(NavItem, {onClick: this.handleSignOut}, "サインアウト")
-      );
-    }
-
     return (
       React.createElement(Navbar, {brand: "Birdwatch", fluid: true}, 
         React.createElement(Nav, {right: true}, 
-          signOut
+          this.renderUserMenu()
         )
       )
     );
   },
 
-  handleSignOut: function(e) {
-    e.preventDefault();
+  renderUserMenu: function() {
+    if (this.state.user == null) {
+      return "";
+    }
+
+    return (
+      React.createElement(DropdownButton, {title: this.state.user.get("username"), navItem: true}, 
+        React.createElement(MenuItem, {onSelect: this.handleSignOut}, "サインアウト")
+      )
+    );
+  },
+
+  handleSignOut: function() {
     UserActionCreator.signout();
   },
 
