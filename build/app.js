@@ -51857,6 +51857,17 @@ var ProjectDetailStore = assign({}, EventEmitter.prototype, {
 
 ProjectDetailStore.dispatchToken = AppDispatcher.register(function(action) {
   switch (action.type) {
+    case ActionTypes.USER_SIGNED_OUT:
+      _targetId = null;
+      _project = null;
+      _isLoading = false;
+      _isMilestonesLoading = false;
+      ProjectDetailStore.emitProjectChange();
+      if (_editing) {
+        _editing = false;
+        ProjectDetailStore.emitEditingChange();
+      }
+      break;
     case ActionTypes.PROJECT_DETAIL_TARGET:
       if (_targetId != action.id) {
         _targetId = action.id;
