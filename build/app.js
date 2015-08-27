@@ -49727,16 +49727,26 @@ var AppConstants = require("../constants/AppConstants");
 var FamilyListActionCreator = require("../actions/FamilyListActionCreator");
 var PlatformListActionCreator = require("../actions/PlatformListActionCreator");
 var MilestoneListActionCreator = require("../actions/MilestoneListActionCreator");
+var CurrentUserStore = require("../stores/CurrentUserStore");
 
 var ActionTypes = AppConstants.ActionTypes;
 
 module.exports = {
   initialize: function() {
-    Promise.all([
-      FamilyListActionCreator.loadList(),
-      PlatformListActionCreator.loadList(),
-      MilestoneListActionCreator.loadList(),
-    ]).then(function() {
+    var promise;
+
+    if (CurrentUserStore.getStatus() != CurrentUserStore.StatusType.SIGNED_IN) {
+      // サインインしていなければ何もしなくていい
+      promise = Promise.resolve(null);
+    } else {
+      promise = Promise.all([
+        FamilyListActionCreator.loadList(),
+        PlatformListActionCreator.loadList(),
+        MilestoneListActionCreator.loadList(),
+      ]);
+    }
+
+    promise = promise.then(function() {
       AppDispatcher.dispatch({
         type: ActionTypes.APP_INITIALIZED,
       });
@@ -49744,7 +49754,7 @@ module.exports = {
   },
 };
 
-},{"../actions/FamilyListActionCreator":346,"../actions/MilestoneListActionCreator":347,"../actions/PlatformListActionCreator":348,"../constants/AppConstants":362,"../dispatcher/AppDispatcher":363,"es6-promise":1}],345:[function(require,module,exports){
+},{"../actions/FamilyListActionCreator":346,"../actions/MilestoneListActionCreator":347,"../actions/PlatformListActionCreator":348,"../constants/AppConstants":362,"../dispatcher/AppDispatcher":363,"../stores/CurrentUserStore":370,"es6-promise":1}],345:[function(require,module,exports){
 "use strict";
 var AppDispatcher = require("../dispatcher/AppDispatcher");
 var AppConstants = require("../constants/AppConstants");
@@ -50137,6 +50147,9 @@ var Promise = require("es6-promise").Promise;
 
 var AppDispatcher = require("../dispatcher/AppDispatcher");
 var AppConstants = require("../constants/AppConstants");
+var FamilyListActionCreator = require("../actions/FamilyListActionCreator");
+var PlatformListActionCreator = require("../actions/PlatformListActionCreator");
+var MilestoneListActionCreator = require("../actions/MilestoneListActionCreator");
 
 var ActionTypes = AppConstants.ActionTypes;
 
@@ -50147,9 +50160,16 @@ module.exports = {
     });
 
     Promise.resolve(Parse.User.logIn(userName, password)).then(function(user) {
-      AppDispatcher.dispatch({
-        type: ActionTypes.USER_SIGNED_IN,
-        user: user
+      // ログインできたら、各種マスタを取得してから、ログインできたことにする
+      return Promise.all([
+        FamilyListActionCreator.loadList(),
+        PlatformListActionCreator.loadList(),
+        MilestoneListActionCreator.loadList(),
+      ]).then(function() {
+        AppDispatcher.dispatch({
+          type: ActionTypes.USER_SIGNED_IN,
+          user: user
+        });
       });
     }).catch(function(error) {
       AppDispatcher.dispatch({
@@ -50172,7 +50192,7 @@ module.exports = {
   }
 };
 
-},{"../constants/AppConstants":362,"../dispatcher/AppDispatcher":363,"es6-promise":1}],352:[function(require,module,exports){
+},{"../actions/FamilyListActionCreator":346,"../actions/MilestoneListActionCreator":347,"../actions/PlatformListActionCreator":348,"../constants/AppConstants":362,"../dispatcher/AppDispatcher":363,"es6-promise":1}],352:[function(require,module,exports){
 "use strict";
 var React = require("react");
 var ReactRouter = require("react-router");

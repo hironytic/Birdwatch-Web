@@ -3,6 +3,9 @@ var Promise = require("es6-promise").Promise;
 
 var AppDispatcher = require("../dispatcher/AppDispatcher");
 var AppConstants = require("../constants/AppConstants");
+var FamilyListActionCreator = require("../actions/FamilyListActionCreator");
+var PlatformListActionCreator = require("../actions/PlatformListActionCreator");
+var MilestoneListActionCreator = require("../actions/MilestoneListActionCreator");
 
 var ActionTypes = AppConstants.ActionTypes;
 
@@ -13,9 +16,16 @@ module.exports = {
     });
 
     Promise.resolve(Parse.User.logIn(userName, password)).then(function(user) {
-      AppDispatcher.dispatch({
-        type: ActionTypes.USER_SIGNED_IN,
-        user: user
+      // ログインできたら、各種マスタを取得してから、ログインできたことにする
+      return Promise.all([
+        FamilyListActionCreator.loadList(),
+        PlatformListActionCreator.loadList(),
+        MilestoneListActionCreator.loadList(),
+      ]).then(function() {
+        AppDispatcher.dispatch({
+          type: ActionTypes.USER_SIGNED_IN,
+          user: user
+        });
       });
     }).catch(function(error) {
       AppDispatcher.dispatch({
