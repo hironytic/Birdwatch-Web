@@ -49697,6 +49697,7 @@ var React = require("react");
 var ReactRouter = require("react-router");
 var Router = ReactRouter.Router;
 var Route = ReactRouter.Route;
+var Redirect = ReactRouter.Redirect;
 var HashHistory = require("react-router/lib/HashHistory");
 
 var AppFrame = require("./components/AppFrame.jsx");
@@ -49707,12 +49708,14 @@ var AppActionCreator = require("./actions/AppActionCreator");
 
 React.render((
   React.createElement(Router, {history: new HashHistory}, 
-    React.createElement(Route, {path: "/", component: AppFrame}, 
+    React.createElement(Route, {component: AppFrame}, 
       React.createElement(Route, {path: "signin", component: Signin}), 
       React.createElement(Route, {path: "project", component: Project}, 
         React.createElement(Route, {path: ":id", component: ProjectDetail})
       )
-    )
+    ), 
+
+    React.createElement(Redirect, {from: "/", to: "/project"})
   )
 ), document.getElementById('main-content'));
 
