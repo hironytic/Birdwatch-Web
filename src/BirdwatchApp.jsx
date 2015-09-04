@@ -10,6 +10,7 @@ var AppFrame = require("./components/AppFrame.jsx");
 var Signin = require("./components/Signin.jsx");
 var Project = require("./components/Project.jsx");
 var ProjectDetail = require("./components/ProjectDetail.jsx");
+var Timeline = require("./components/Timeline.jsx");
 var AppActionCreator = require("./actions/AppActionCreator");
 
 React.render((
@@ -19,6 +20,7 @@ React.render((
       <Route path="project" component={Project}>
         <Route path=":id" component={ProjectDetail}/>
       </Route>
+      <Route path="timeline" component={Timeline}/>
     </Route>
 
     <Redirect from="/" to="/project" />

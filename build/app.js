@@ -49704,6 +49704,7 @@ var AppFrame = require("./components/AppFrame.jsx");
 var Signin = require("./components/Signin.jsx");
 var Project = require("./components/Project.jsx");
 var ProjectDetail = require("./components/ProjectDetail.jsx");
+var Timeline = require("./components/Timeline.jsx");
 var AppActionCreator = require("./actions/AppActionCreator");
 
 React.render((
@@ -49712,7 +49713,8 @@ React.render((
       React.createElement(Route, {path: "signin", component: Signin}), 
       React.createElement(Route, {path: "project", component: Project}, 
         React.createElement(Route, {path: ":id", component: ProjectDetail})
-      )
+      ), 
+      React.createElement(Route, {path: "timeline", component: Timeline})
     ), 
 
     React.createElement(Redirect, {from: "/", to: "/project"})
@@ -49721,7 +49723,7 @@ React.render((
 
 AppActionCreator.initialize();
 
-},{"./actions/AppActionCreator":344,"./components/AppFrame.jsx":352,"./components/Project.jsx":356,"./components/ProjectDetail.jsx":357,"./components/Signin.jsx":361,"react":342,"react-router":161,"react-router/lib/HashHistory":143}],344:[function(require,module,exports){
+},{"./actions/AppActionCreator":344,"./components/AppFrame.jsx":352,"./components/Project.jsx":356,"./components/ProjectDetail.jsx":357,"./components/Signin.jsx":361,"./components/Timeline.jsx":362,"react":342,"react-router":161,"react-router/lib/HashHistory":143}],344:[function(require,module,exports){
 "use strict";
 var Promise = require("es6-promise").Promise;
 
@@ -49757,7 +49759,7 @@ module.exports = {
   },
 };
 
-},{"../actions/FamilyListActionCreator":346,"../actions/MilestoneListActionCreator":347,"../actions/PlatformListActionCreator":348,"../constants/AppConstants":362,"../dispatcher/AppDispatcher":363,"../stores/CurrentUserStore":370,"es6-promise":1}],345:[function(require,module,exports){
+},{"../actions/FamilyListActionCreator":346,"../actions/MilestoneListActionCreator":347,"../actions/PlatformListActionCreator":348,"../constants/AppConstants":363,"../dispatcher/AppDispatcher":364,"../stores/CurrentUserStore":371,"es6-promise":1}],345:[function(require,module,exports){
 "use strict";
 var AppDispatcher = require("../dispatcher/AppDispatcher");
 var AppConstants = require("../constants/AppConstants");
@@ -49779,7 +49781,7 @@ module.exports = {
   }
 };
 
-},{"../constants/AppConstants":362,"../dispatcher/AppDispatcher":363}],346:[function(require,module,exports){
+},{"../constants/AppConstants":363,"../dispatcher/AppDispatcher":364}],346:[function(require,module,exports){
 "use strict";
 var ListStoreUtils = require("../utils/ListStoreUtils");
 var AppConstants = require("../constants/AppConstants");
@@ -49795,7 +49797,7 @@ var FamilyListActionCreator = ListStoreUtils.createListActionCreator(ActionTypes
 
 module.exports = FamilyListActionCreator;
 
-},{"../constants/AppConstants":362,"../objects/Family":364,"../utils/ListStoreUtils":377}],347:[function(require,module,exports){
+},{"../constants/AppConstants":363,"../objects/Family":365,"../utils/ListStoreUtils":378}],347:[function(require,module,exports){
 "use strict";
 var ListStoreUtils = require("../utils/ListStoreUtils");
 var AppConstants = require("../constants/AppConstants");
@@ -49811,7 +49813,7 @@ var MilestoneListActionCreator = ListStoreUtils.createListActionCreator(ActionTy
 
 module.exports = MilestoneListActionCreator;
 
-},{"../constants/AppConstants":362,"../objects/Milestone":365,"../utils/ListStoreUtils":377}],348:[function(require,module,exports){
+},{"../constants/AppConstants":363,"../objects/Milestone":366,"../utils/ListStoreUtils":378}],348:[function(require,module,exports){
 "use strict";
 var ListStoreUtils = require("../utils/ListStoreUtils");
 var AppConstants = require("../constants/AppConstants");
@@ -49827,7 +49829,7 @@ var PlatformListActionCreator = ListStoreUtils.createListActionCreator(ActionTyp
 
 module.exports = PlatformListActionCreator;
 
-},{"../constants/AppConstants":362,"../objects/Platform":366,"../utils/ListStoreUtils":377}],349:[function(require,module,exports){
+},{"../constants/AppConstants":363,"../objects/Platform":367,"../utils/ListStoreUtils":378}],349:[function(require,module,exports){
 "use strict";
 var Promise = require("es6-promise").Promise;
 var Immutable = require("immutable");
@@ -50066,7 +50068,7 @@ module.exports = {
   },
 };
 
-},{"../constants/AppConstants":362,"../dispatcher/AppDispatcher":363,"../objects/Project":367,"../objects/ProjectMilestone":368,"../stores/ProjectDetailStore":375,"es6-promise":1,"immutable":16}],350:[function(require,module,exports){
+},{"../constants/AppConstants":363,"../dispatcher/AppDispatcher":364,"../objects/Project":368,"../objects/ProjectMilestone":369,"../stores/ProjectDetailStore":376,"es6-promise":1,"immutable":16}],350:[function(require,module,exports){
 "use strict";
 var Immutable = require("immutable");
 var Promise = require("es6-promise").Promise;
@@ -50144,7 +50146,7 @@ module.exports = {
   },
 };
 
-},{"../constants/AppConstants":362,"../dispatcher/AppDispatcher":363,"../objects/Project":367,"es6-promise":1,"immutable":16}],351:[function(require,module,exports){
+},{"../constants/AppConstants":363,"../dispatcher/AppDispatcher":364,"../objects/Project":368,"es6-promise":1,"immutable":16}],351:[function(require,module,exports){
 "use strict";
 var Promise = require("es6-promise").Promise;
 
@@ -50195,7 +50197,7 @@ module.exports = {
   }
 };
 
-},{"../actions/FamilyListActionCreator":346,"../actions/MilestoneListActionCreator":347,"../actions/PlatformListActionCreator":348,"../constants/AppConstants":362,"../dispatcher/AppDispatcher":363,"es6-promise":1}],352:[function(require,module,exports){
+},{"../actions/FamilyListActionCreator":346,"../actions/MilestoneListActionCreator":347,"../actions/PlatformListActionCreator":348,"../constants/AppConstants":363,"../dispatcher/AppDispatcher":364,"es6-promise":1}],352:[function(require,module,exports){
 "use strict";
 var React = require("react");
 var ReactRouter = require("react-router");
@@ -50268,7 +50270,7 @@ var AppFrame = React.createClass({displayName: "AppFrame",
 
 module.exports = AppFrame;
 
-},{"../stores/AppStore":369,"../stores/CurrentUserStore":370,"./ErrorList.jsx":353,"./HeaderBar.jsx":354,"react":342,"react-bootstrap":125,"react-router":161}],353:[function(require,module,exports){
+},{"../stores/AppStore":370,"../stores/CurrentUserStore":371,"./ErrorList.jsx":353,"./HeaderBar.jsx":354,"react":342,"react-bootstrap":125,"react-router":161}],353:[function(require,module,exports){
 "use strict";
 var React = require("react");
 var ReactBootstrap = require("react-bootstrap");
@@ -50346,18 +50348,22 @@ var ErrorList = React.createClass({displayName: "ErrorList",
 
 module.exports = ErrorList;
 
-},{"../actions/ErrorActionCreator":345,"../stores/ErrorStore":371,"react":342,"react-bootstrap":125}],354:[function(require,module,exports){
+},{"../actions/ErrorActionCreator":345,"../stores/ErrorStore":372,"react":342,"react-bootstrap":125}],354:[function(require,module,exports){
 "use strict";
 var React = require("react")
+var ReactRouter = require("react-router");
 var ReactBootstrap = require('react-bootstrap')
 var Navbar = ReactBootstrap.Navbar;
 var Nav = ReactBootstrap.Nav;
+var NavItem = ReactBootstrap.NavItem;
 var DropdownButton = ReactBootstrap.DropdownButton;
 var MenuItem = ReactBootstrap.MenuItem;
 var CurrentUserStore = require("../stores/CurrentUserStore");
 var UserActionCreator = require("../actions/UserActionCreator");
 
 var HeaderBar = React.createClass({displayName: "HeaderBar",
+  mixins: [ReactRouter.State, ReactRouter.Navigation],
+
   getInitialState: function() {
     return {
       user: CurrentUserStore.getUser()
@@ -50365,8 +50371,20 @@ var HeaderBar = React.createClass({displayName: "HeaderBar",
   },
 
   render: function() {
+    var activeKey;
+    if (this.isActive("project")) {
+      activeKey = "project";
+    } else if (this.isActive("timeline")) {
+      activeKey = "timeline";
+    }
+
+    var userSignedIn = (this.state.user != null);
     return (
       React.createElement(Navbar, {brand: "Birdwatch", fluid: true}, 
+        React.createElement(Nav, {bsStyle: "pills", activeKey: activeKey, onSelect: this.handleNavSelect}, 
+          React.createElement(NavItem, {eventKey: "timeline", disabled: !userSignedIn}, "Timeline"), 
+          React.createElement(NavItem, {eventKey: "project", disabled: !userSignedIn}, "Project")
+        ), 
         React.createElement(Nav, {right: true}, 
           this.renderUserMenu()
         )
@@ -50402,13 +50420,20 @@ var HeaderBar = React.createClass({displayName: "HeaderBar",
     this.setState({
       user: CurrentUserStore.getUser()
     });
-  }
+  },
 
+  handleNavSelect: function(selectedKey) {
+    if (this.isActive(selectedKey)) {
+      return;
+    }
+
+    this.transitionTo("/" + selectedKey);
+  },
 });
 
 module.exports = HeaderBar;
 
-},{"../actions/UserActionCreator":351,"../stores/CurrentUserStore":370,"react":342,"react-bootstrap":125}],355:[function(require,module,exports){
+},{"../actions/UserActionCreator":351,"../stores/CurrentUserStore":371,"react":342,"react-bootstrap":125,"react-router":161}],355:[function(require,module,exports){
 "use strict";
 var React = require("react/addons");
 var ReactBootstrap = require('react-bootstrap');
@@ -50499,7 +50524,7 @@ var NewProjectModal = React.createClass({displayName: "NewProjectModal",
 
 module.exports = NewProjectModal;
 
-},{"../stores/FamilyListStore":372,"../stores/PlatformListStore":374,"./SelectFromListStore.jsx":360,"react-bootstrap":125,"react/addons":170}],356:[function(require,module,exports){
+},{"../stores/FamilyListStore":373,"../stores/PlatformListStore":375,"./SelectFromListStore.jsx":360,"react-bootstrap":125,"react/addons":170}],356:[function(require,module,exports){
 "use strict";
 var React = require("react/addons");
 var ReactRouter = require("react-router");
@@ -50639,7 +50664,7 @@ var Project = React.createClass({displayName: "Project",
 
 module.exports = Project;
 
-},{"../actions/ProjectListActionCreator":350,"../stores/ProjectListStore":376,"./NewProjectModal.jsx":355,"react-bootstrap":125,"react-router":161,"react/addons":170}],357:[function(require,module,exports){
+},{"../actions/ProjectListActionCreator":350,"../stores/ProjectListStore":377,"./NewProjectModal.jsx":355,"react-bootstrap":125,"react-router":161,"react/addons":170}],357:[function(require,module,exports){
 "use strict";
 var React = require("react/addons");
 
@@ -50679,7 +50704,7 @@ var ProjectDetail = React.createClass({displayName: "ProjectDetail",
 
 module.exports = ProjectDetail;
 
-},{"../stores/ProjectDetailStore":375,"./ProjectDetailEditor.jsx":358,"./ProjectDetailViewer.jsx":359,"react/addons":170}],358:[function(require,module,exports){
+},{"../stores/ProjectDetailStore":376,"./ProjectDetailEditor.jsx":358,"./ProjectDetailViewer.jsx":359,"react/addons":170}],358:[function(require,module,exports){
 "use strict";
 var React = require("react/addons");
 var ReactRouter = require("react-router");
@@ -50910,7 +50935,7 @@ var ProjectDetailEditor = React.createClass({displayName: "ProjectDetailEditor",
 
 module.exports = ProjectDetailEditor;
 
-},{"../actions/ProjectDetailActionCreator":349,"../stores/FamilyListStore":372,"../stores/MilestoneListStore":373,"../stores/PlatformListStore":374,"../stores/ProjectDetailStore":375,"./SelectFromListStore.jsx":360,"gregorian-calendar":8,"gregorian-calendar-format":5,"gregorian-calendar/lib/locale/en-US":11,"immutable":16,"moment":17,"object-assign":18,"rc-calendar":28,"react-bootstrap":125,"react-router":161,"react/addons":170}],359:[function(require,module,exports){
+},{"../actions/ProjectDetailActionCreator":349,"../stores/FamilyListStore":373,"../stores/MilestoneListStore":374,"../stores/PlatformListStore":375,"../stores/ProjectDetailStore":376,"./SelectFromListStore.jsx":360,"gregorian-calendar":8,"gregorian-calendar-format":5,"gregorian-calendar/lib/locale/en-US":11,"immutable":16,"moment":17,"object-assign":18,"rc-calendar":28,"react-bootstrap":125,"react-router":161,"react/addons":170}],359:[function(require,module,exports){
 "use strict";
 var React = require("react/addons");
 var ReactRouter = require("react-router");
@@ -51134,7 +51159,7 @@ var ProjectDetailViewer = React.createClass({displayName: "ProjectDetailViewer",
 
 module.exports = ProjectDetailViewer;
 
-},{"../actions/ProjectDetailActionCreator":349,"../stores/ProjectDetailStore":375,"moment":17,"react-bootstrap":125,"react-router":161,"react/addons":170}],360:[function(require,module,exports){
+},{"../actions/ProjectDetailActionCreator":349,"../stores/ProjectDetailStore":376,"moment":17,"react-bootstrap":125,"react-router":161,"react/addons":170}],360:[function(require,module,exports){
 "use strict";
 var React = require("react");
 var ReactBootstrap = require('react-bootstrap');
@@ -51343,7 +51368,29 @@ var Signin = React.createClass({displayName: "Signin",
 
 module.exports = Signin;
 
-},{"../actions/UserActionCreator":351,"../stores/CurrentUserStore":370,"./HeaderBar.jsx":354,"react-bootstrap":125,"react-router":161,"react/addons":170}],362:[function(require,module,exports){
+},{"../actions/UserActionCreator":351,"../stores/CurrentUserStore":371,"./HeaderBar.jsx":354,"react-bootstrap":125,"react-router":161,"react/addons":170}],362:[function(require,module,exports){
+"use strict";
+var React = require("react/addons");
+
+var Timeline = React.createClass({displayName: "Timeline",
+  // getInitialState: function() {
+  //   return {
+  //     projectList: ProjectListStore.getProjectList(),
+  //     isLoading: ProjectListStore.isLoading(),
+  //     isShowNewProjectModal: false,
+  //   };
+  // },
+
+  render: function() {
+    return (
+      React.createElement("div", null, "Timeline here")
+    );
+  }
+});
+
+module.exports = Timeline;
+
+},{"react/addons":170}],363:[function(require,module,exports){
 "use strict";
 var keyMirror = require('react/lib/keyMirror');
 
@@ -51384,7 +51431,7 @@ module.exports = {
   }),
 };
 
-},{"react/lib/keyMirror":326}],363:[function(require,module,exports){
+},{"react/lib/keyMirror":326}],364:[function(require,module,exports){
 "use strict";
 var Dispatcher = require('flux').Dispatcher
 
@@ -51398,7 +51445,7 @@ var AppDispatcher = new Dispatcher();
 
 module.exports = AppDispatcher;
 
-},{"flux":2}],364:[function(require,module,exports){
+},{"flux":2}],365:[function(require,module,exports){
 "use strict";
 
 var Key = {
@@ -51428,7 +51475,7 @@ var Family = Parse.Object.extend("Family", {
 
 module.exports = Family;
 
-},{}],365:[function(require,module,exports){
+},{}],366:[function(require,module,exports){
 "use strict";
 
 var Key = {
@@ -51458,7 +51505,7 @@ var Milestone = Parse.Object.extend("Milestone", {
 
 module.exports = Milestone;
 
-},{}],366:[function(require,module,exports){
+},{}],367:[function(require,module,exports){
 "use strict";
 
 var Key = {
@@ -51479,7 +51526,7 @@ var Platform = Parse.Object.extend("Platform", {
 
 module.exports = Platform;
 
-},{}],367:[function(require,module,exports){
+},{}],368:[function(require,module,exports){
 "use strict";
 
 var Key = {
@@ -51536,7 +51583,7 @@ var Project = Parse.Object.extend("Project", {
 
 module.exports = Project;
 
-},{}],368:[function(require,module,exports){
+},{}],369:[function(require,module,exports){
 "use strict";
 
 var Key = {
@@ -51584,7 +51631,7 @@ var ProjectMilestone = Parse.Object.extend("ProjectMilestone", {
 
 module.exports = ProjectMilestone;
 
-},{}],369:[function(require,module,exports){
+},{}],370:[function(require,module,exports){
 "use strict";
 var AppConstants = require("../constants/AppConstants")
 var AppDispatcher = require("../dispatcher/AppDispatcher");
@@ -51629,7 +51676,7 @@ AppStore.dispatchToken = AppDispatcher.register(function(action) {
 
 module.exports = AppStore;
 
-},{"../constants/AppConstants":362,"../dispatcher/AppDispatcher":363,"events":14,"immutable":16,"object-assign":18,"react/lib/keyMirror":326}],370:[function(require,module,exports){
+},{"../constants/AppConstants":363,"../dispatcher/AppDispatcher":364,"events":14,"immutable":16,"object-assign":18,"react/lib/keyMirror":326}],371:[function(require,module,exports){
 "use strict";
 var AppConstants = require("../constants/AppConstants")
 var AppDispatcher = require("../dispatcher/AppDispatcher");
@@ -51716,7 +51763,7 @@ CurrentUserStore.dispatchToken = AppDispatcher.register(function(action) {
 
 module.exports = CurrentUserStore;
 
-},{"../constants/AppConstants":362,"../dispatcher/AppDispatcher":363,"events":14,"object-assign":18,"react/lib/keyMirror":326}],371:[function(require,module,exports){
+},{"../constants/AppConstants":363,"../dispatcher/AppDispatcher":364,"events":14,"object-assign":18,"react/lib/keyMirror":326}],372:[function(require,module,exports){
 "use strict";
 var AppConstants = require("../constants/AppConstants")
 var AppDispatcher = require("../dispatcher/AppDispatcher");
@@ -51777,7 +51824,7 @@ ErrorStore.dispatchToken = AppDispatcher.register(function(action) {
 
 module.exports = ErrorStore;
 
-},{"../constants/AppConstants":362,"../dispatcher/AppDispatcher":363,"events":14,"immutable":16,"object-assign":18,"react/lib/keyMirror":326}],372:[function(require,module,exports){
+},{"../constants/AppConstants":363,"../dispatcher/AppDispatcher":364,"events":14,"immutable":16,"object-assign":18,"react/lib/keyMirror":326}],373:[function(require,module,exports){
 "use strict";
 var AppConstants = require("../constants/AppConstants");
 var ListStoreUtils = require("../utils/ListStoreUtils");
@@ -51787,7 +51834,7 @@ var ActionTypes = AppConstants.ActionTypes;
 var FamilyListStore = ListStoreUtils.createListStore(ActionTypes.FAMILY_LIST_LOADING, ActionTypes.FAMILY_LIST_LOADED);
 module.exports = FamilyListStore;
 
-},{"../constants/AppConstants":362,"../utils/ListStoreUtils":377}],373:[function(require,module,exports){
+},{"../constants/AppConstants":363,"../utils/ListStoreUtils":378}],374:[function(require,module,exports){
 "use strict";
 var AppConstants = require("../constants/AppConstants");
 var ListStoreUtils = require("../utils/ListStoreUtils");
@@ -51797,7 +51844,7 @@ var ActionTypes = AppConstants.ActionTypes;
 var MilestoneListStore = ListStoreUtils.createListStore(ActionTypes.MILESTONE_LIST_LOADING, ActionTypes.MILESTONE_LIST_LOADED);
 module.exports = MilestoneListStore;
 
-},{"../constants/AppConstants":362,"../utils/ListStoreUtils":377}],374:[function(require,module,exports){
+},{"../constants/AppConstants":363,"../utils/ListStoreUtils":378}],375:[function(require,module,exports){
 "use strict";
 var AppConstants = require("../constants/AppConstants");
 var ListStoreUtils = require("../utils/ListStoreUtils");
@@ -51807,7 +51854,7 @@ var ActionTypes = AppConstants.ActionTypes;
 var PlatformListStore = ListStoreUtils.createListStore(ActionTypes.PLATFORM_LIST_LOADING, ActionTypes.PLATFORM_LIST_LOADED);
 module.exports = PlatformListStore;
 
-},{"../constants/AppConstants":362,"../utils/ListStoreUtils":377}],375:[function(require,module,exports){
+},{"../constants/AppConstants":363,"../utils/ListStoreUtils":378}],376:[function(require,module,exports){
 "use strict";
 var AppConstants = require("../constants/AppConstants")
 var AppDispatcher = require("../dispatcher/AppDispatcher");
@@ -51965,7 +52012,7 @@ ProjectDetailStore.dispatchToken = AppDispatcher.register(function(action) {
 
 module.exports = ProjectDetailStore;
 
-},{"../constants/AppConstants":362,"../dispatcher/AppDispatcher":363,"events":14,"object-assign":18,"react/lib/keyMirror":326}],376:[function(require,module,exports){
+},{"../constants/AppConstants":363,"../dispatcher/AppDispatcher":364,"events":14,"object-assign":18,"react/lib/keyMirror":326}],377:[function(require,module,exports){
 "use strict";
 var AppConstants = require("../constants/AppConstants")
 var AppDispatcher = require("../dispatcher/AppDispatcher");
@@ -52035,7 +52082,7 @@ ProjectListStore.dispatchToken = AppDispatcher.register(function(action) {
 
 module.exports = ProjectListStore;
 
-},{"../constants/AppConstants":362,"../dispatcher/AppDispatcher":363,"events":14,"immutable":16,"object-assign":18,"react/lib/keyMirror":326}],377:[function(require,module,exports){
+},{"../constants/AppConstants":363,"../dispatcher/AppDispatcher":364,"events":14,"immutable":16,"object-assign":18,"react/lib/keyMirror":326}],378:[function(require,module,exports){
 "use strict";
 var AppDispatcher = require("../dispatcher/AppDispatcher");
 var EventEmitter = require("events").EventEmitter;
@@ -52128,4 +52175,4 @@ var ListStoreUtils = {
 
 module.exports = ListStoreUtils;
 
-},{"../constants/AppConstants":362,"../dispatcher/AppDispatcher":363,"es6-promise":1,"events":14,"immutable":16,"object-assign":18,"react/lib/keyMirror":326}]},{},[344,345,346,347,348,349,350,351,362,363,364,365,366,367,368,369,370,371,372,373,374,375,376,377,343,352,353,354,355,356,357,358,359,360,361]);
+},{"../constants/AppConstants":363,"../dispatcher/AppDispatcher":364,"es6-promise":1,"events":14,"immutable":16,"object-assign":18,"react/lib/keyMirror":326}]},{},[344,345,346,347,348,349,350,351,363,364,365,366,367,368,369,370,371,372,373,374,375,376,377,378,343,352,353,354,355,356,357,358,359,360,361,362]);
