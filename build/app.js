@@ -49782,7 +49782,7 @@ React.render((
       React.createElement(Route, {path: "timeline", component: Timeline})
     ), 
 
-    React.createElement(Redirect, {from: "/", to: "/project"})
+    React.createElement(Redirect, {from: "/", to: "/timeline"})
   )
 ), document.getElementById('main-content'));
 
@@ -51512,7 +51512,7 @@ var Timeline = React.createClass({displayName: "Timeline",
     return (
       React.createElement(Grid, {fluid: true}, 
         React.createElement(Row, null, 
-          React.createElement(Col, {xs: 8, xsOffset: 4}, 
+          React.createElement(Col, {xs: 8, xsOffset: 2}, 
             React.createElement(ListGroup, null, 
                 this.renderTimelineList()
             )

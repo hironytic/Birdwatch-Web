@@ -28,7 +28,7 @@ var Timeline = React.createClass({
     return (
       <Grid fluid>
         <Row>
-          <Col xs={8} xsOffset={4}>
+          <Col xs={8} xsOffset={2}>
             <ListGroup>
                 {this.renderTimelineList()}
             </ListGroup>

@@ -23,7 +23,7 @@ React.render((
       <Route path="timeline" component={Timeline}/>
     </Route>
 
-    <Redirect from="/" to="/project" />
+    <Redirect from="/" to="/timeline" />
   </Router>
 ), document.getElementById('main-content'));
 
