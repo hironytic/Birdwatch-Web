@@ -35,5 +35,8 @@ module.exports = {
 
     MILESTONE_LIST_LOADING: null,     // マイルストーン一覧のロード中
     MILESTONE_LIST_LOADED: null,      // マイルストーン一覧のロード完了
+
+    TIMELINE_LOADING: null,           // タイムラインのロード中
+    TIMELINE_LOADED: null,            // タイムラインのロード完了
   }),
 };

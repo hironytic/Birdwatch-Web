@@ -65,7 +65,6 @@ var Project = React.createClass({
         // var href = this.makeHref("/project/" + project.id);
         var href = "#/project/" + project.id;
         var isActive = this.isActive("/project/" + project.id);
-        var header = project.getName();
         var header = (
           <span><strong>{project.getName()}</strong> <Label bsStyle="warning">{project.getPlatform().getName()}</Label></span>
         );

@@ -31,8 +31,8 @@ var HeaderBar = React.createClass({
     return (
       <Navbar brand="Birdwatch" fluid>
         <Nav bsStyle="pills" activeKey={activeKey} onSelect={this.handleNavSelect}>
-          <NavItem eventKey="timeline" disabled={!userSignedIn}>Timeline</NavItem>
-          <NavItem eventKey="project" disabled={!userSignedIn}>Project</NavItem>
+          <NavItem eventKey="timeline" disabled={!userSignedIn}>タイムライン</NavItem>
+          <NavItem eventKey="project" disabled={!userSignedIn}>プロジェクト管理</NavItem>
         </Nav>
         <Nav right>
           {this.renderUserMenu()}
