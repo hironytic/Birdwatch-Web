@@ -11,8 +11,6 @@ var Label = ReactBootstrap.Label;
 var moment = require("moment");
 var moment_ja = require("moment/locale/ja");
 
-moment.locale("ja");
-
 var TimelineStore = require("../stores/TimelineStore");
 var TimelineActionCreator = require("../actions/TimelineActionCreator");
 
