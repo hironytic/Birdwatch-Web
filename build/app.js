@@ -52276,7 +52276,7 @@ var ProjectDetailEditor = React.createClass({displayName: "ProjectDetailEditor",
   },
 
   handleInternalDateChange: function(pmIdx, value) {
-    var internalDate = new Date(value.getTime());
+    var internalDate = moment(value.getTime()).hours(0).minutes(0).seconds(0).toDate();
     var projectMilestone = this.state.projectMilestones.get(pmIdx);
     projectMilestone = projectMilestone.set("internalDate", internalDate);
     var projectMilestones = this.state.projectMilestones.set(pmIdx, projectMilestone);
