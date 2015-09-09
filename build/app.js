@@ -52301,7 +52301,7 @@ var ProjectDetailEditor = React.createClass({displayName: "ProjectDetailEditor",
       isNew: true,
       id: id,
       milestone: MilestoneListStore.getList().first(),
-      internalDate: moment().add(1, "months").hours(0).minutes(0).seconds(0).milliseconds(0).toDate(),
+      internalDate: moment().hours(0).minutes(0).seconds(0).milliseconds(0).toDate(),
       dateString: "",
     });
     var projectMilestones = this.state.projectMilestones.push(projectMilestone);
