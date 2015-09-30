@@ -52007,7 +52007,9 @@ var Project = React.createClass({displayName: "Project",
         )
       );
     } else {
-      projectItems = this.state.projectList.map(function(project) {
+      projectItems = this.state.projectList.sortBy(function(project) {
+        return (project.getName() + " " + project.getPlatform().getName() + project.getVersion() + " ").toLowerCase();
+      }).map(function(project) {
         // var href = this.makeHref("/project/" + project.id);
         var href = "#/project/" + project.id;
         var isActive = this.isActive("/project/" + project.id);
