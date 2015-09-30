@@ -52012,7 +52012,7 @@ var Project = React.createClass({displayName: "Project",
         var href = "#/project/" + project.id;
         var isActive = this.isActive("/project/" + project.id);
         var header = (
-          React.createElement("span", null, React.createElement("strong", null, project.getName()), " ", React.createElement(Label, {bsStyle: "warning"}, project.getPlatform().getName()))
+          React.createElement("span", null, React.createElement("strong", null, project.getName()), " ", React.createElement("span", null, project.getVersion()), " ", React.createElement(Label, {bsStyle: "warning"}, project.getPlatform().getName()))
         );
         return (
           React.createElement(ListGroupItem, {key: "id_" + project.id, active: isActive, href: href, header: header}, project.getProjectCode())
@@ -52855,7 +52855,7 @@ var Timeline = React.createClass({displayName: "Timeline",
             React.createElement(Grid, {fluid: true}, 
               React.createElement(Row, null, 
                 React.createElement(Col, {xs: 8}, 
-                  React.createElement("strong", null, project.getName()), " ", React.createElement(Label, {bsStyle: "warning"}, project.getPlatform().getName())
+                  React.createElement("strong", null, project.getName()), " ", React.createElement("span", null, project.getVersion()), " ", React.createElement(Label, {bsStyle: "warning"}, project.getPlatform().getName())
                 ), 
                 React.createElement(Col, {xs: 4, className: "text-right"}, 
                   internalMoment.from(today)

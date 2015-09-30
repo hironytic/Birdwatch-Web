@@ -66,7 +66,7 @@ var Timeline = React.createClass({
             <Grid fluid>
               <Row>
                 <Col xs={8}>
-                  <strong>{project.getName()}</strong> <Label bsStyle="warning">{project.getPlatform().getName()}</Label>
+                  <strong>{project.getName()}</strong> <span>{project.getVersion()}</span> <Label bsStyle="warning">{project.getPlatform().getName()}</Label>
                 </Col>
                 <Col xs={4} className="text-right">
                   {internalMoment.from(today)}
